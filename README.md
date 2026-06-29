@@ -1,45 +1,56 @@
-# 🧠 Friday - Your Personal AI Assistant - Part 2
-
-This is a Python-based AI assistant inspired by *Jarvis*, capable of:
-
-- 🔍 Searching the web  
-- 🌤️ Weather checking
-- 📨 Sending Emails 
-- 📷 Vision through camera (Web app)
-- 🗣️ Speech
-- 📝 Chat (Web app) 
-- 🧠 Smart Memory System
-- 🎵 Spotify Integration
-
+<div align="center">
+  <h1>🤖 J.A.R.V.I.S.</h1>
+  <p><i>Just A Rather Very Intelligent System</i></p>
+  <p>A highly capable, multimodal desktop assistant powered by LiveKit and Google's Gemini Native Audio.</p>
+</div>
 
 ---
 
-## 📽️ Tutorial Video
+## ⚙️ Core Directives (Capabilities)
 
-Here is part 1 , **make sure to follow this tutorial to set up the voice agent correctly**:  
-🎥 [Watch here](https://youtu.be/An4NwL8QSQ4?si=v1dNDDonmpCG1Els)
+J.A.R.V.I.S. operates as an autonomous desktop agent with deep system access, offering the following capabilities:
 
-Here is part 2 **to use the memory system and the n8n MCP server follow this tutorial**:
-🎥 [Watch here](https://www.youtube.com/watch?v=gqmSKEUpRv8&ab_channel=Thanh-yDavidNguyen)
-
+- **🧠 Smart Memory (Mem0):** Persistent context tracking across sessions. J.A.R.V.I.S. remembers you.
+- **💻 System Override:** Full control over your Windows PC (run commands, open apps like Spotify, control files).
+- **🖱️ Motor Functions:** Precision mouse movement and clicking via `PyAutoGUI`.
+- **⌨️ Keyboard Override:** Direct text input and complex keyboard shortcut execution.
+- **🗣️ Vocal Interface:** Low-latency, natural speech interaction using Gemini Native Audio (Voice: Charon).
+- **👁️ Visual Processing:** Vision capabilities enabled through LiveKit camera feeds.
+- **🌐 Global Network Access:** Real-time web search (DuckDuckGo), weather data (`wttr.in`), and direct URL navigation.
+- **📨 Communications Protocol:** Automated email dispatch via SMTP.
+- **🔌 External Nodes (MCP):** Expandable via n8n MCP Server connections for automated workflows.
 
 ---
-1. Create the Virtual Envrionment first!
-2. Activate it
-3. Install all the required libraries in the requirements.txt file
-4. In the .ENV - File you should paste your API-Keys and your LiveKit Secret, LiveKit URL.
-   If you want to use the Send Email Tool also specify your Gmail Account and App Password. 
-5. Make sure that your LiveKit Account is set-up correctly. 
-6. Make sure that your Mem0 Account is set-up correctly.
-7. Make sure to have a MCP Server correctly set-up.
 
+## 🚀 System Initialization Sequence (Setup)
 
-## Licenses
+To bring J.A.R.V.I.S. online, follow these exact initialization steps:
 
-- Proprietary portions: All files except `mcp_client` and portions of `agent.py` not authored by Thanh-Y Nguyen — Copyright © 2025 Thanh-Y Nguyen.  
-  Licensed for private/educational use only. Redistribution, publication, or commercial use is prohibited without written permission.  
+1. **Construct Environment:** Create a new Python virtual environment.
+2. **Engage Environment:** Activate the virtual environment.
+3. **Install Dependencies:** Execute `pip install -r requirements.txt`.
+4. **Configure Core Constants:** 
+   - Create a `.env` file and populate it with your API Keys, LiveKit Secret, and LiveKit URL.
+   - For email capabilities, input your `GMAIL_USER` and `GMAIL_APP_PASSWORD`.
+5. **Verify LiveKit:** Ensure your LiveKit Account is correctly configured and operational.
+6. **Verify Mem0:** Ensure your Mem0 Account is active for the memory subsystem.
+7. **Verify MCP:** Set up your n8n MCP Server if utilizing external node workflows.
 
-- Third-party components:
+---
+
+## 📡 Archives & Holo-Logs (Tutorials)
+
+For detailed visual assistance in setting up the system architectures, consult the databanks:
+
+- 🎥 **Phase 1 (Voice Agent Core Setup):** [Access Video Log](https://youtu.be/An4NwL8QSQ4?si=v1dNDDonmpCG1Els)
+- 🎥 **Phase 2 (Memory System & MCP Server):** [Access Video Log](https://www.youtube.com/watch?v=gqmSKEUpRv8&ab_channel=Thanh-yDavidNguyen)
+
+---
+
+## 📜 Legal & Licensing
+
+- **Proprietary Portions:** All files except `mcp_client` and portions of `agent.py` not authored by Thanh-Y Nguyen — Copyright © 2025 Thanh-Y Nguyen. Licensed for private/educational use only. Redistribution, publication, or commercial use is prohibited without written permission.  
+- **Third-Party Components:**
   - `mcp_client` — Copyright © LiveKit, Inc., MIT License.  
   - Portions of `agent.py` not authored by Thanh-Y Nguyen — MIT or other applicable license.  
-  See `LICENSE-LIVEKIT` for details.
+  - *See `thirdparty/LICENSE-LIVEKIT` for details.*
