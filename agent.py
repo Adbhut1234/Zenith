@@ -43,7 +43,7 @@ class Assistant(Agent):
 
 async def entrypoint(ctx: agents.JobContext):
 
-    async def shutdown_hook(chat_ctx: ChatContext, mem0: AsyncMemoryClient, memory_str: str):
+    async def shutdown_hook(chat_ctx: ChatContext, mem0: AsyncMemoryClient, memory_str: str, user_name: str):
         logging.info("Shutting down, saving chat context to memory...")
 
         messages_formatted = [
@@ -69,7 +69,7 @@ async def entrypoint(ctx: agents.JobContext):
                 })
 
         logging.info(f"Formatted messages to add to memory: {messages_formatted}")
-        await mem0.add(messages_formatted, user_id="Adi")
+        await mem0.add(messages_formatted, user_id=user_name)
         logging.info("Chat context saved to memory.")
 
 
@@ -129,7 +129,7 @@ async def entrypoint(ctx: agents.JobContext):
         instructions=SESSION_INSTRUCTION,
     )
 
-    ctx.add_shutdown_callback(lambda: shutdown_hook(session._agent.chat_ctx, mem0, memory_str))
+    ctx.add_shutdown_callback(lambda: shutdown_hook(session._agent.chat_ctx, mem0, memory_str, user_name))
 
 if __name__ == "__main__":
     agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))
