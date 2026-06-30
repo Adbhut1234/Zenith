@@ -19,7 +19,7 @@ class Assistant(Agent):
         super().__init__(
             instructions=AGENT_INSTRUCTION,
             llm=google.beta.realtime.RealtimeModel(
-                 model="gemini-2.5-flash-native-audio-latest",
+                 model="gemini-3.1-flash-live-preview",
                  voice="Charon",
                  temperature=0.8,
                  modalities=["AUDIO"],
@@ -49,9 +49,11 @@ async def entrypoint(ctx: agents.JobContext):
         messages_formatted = [
         ]
 
-        logging.info(f"Chat context messages: {getattr(chat_ctx, 'messages', chat_ctx.items)}")
+        messages_attr = getattr(chat_ctx, 'messages', chat_ctx.items)
+        items = messages_attr() if callable(messages_attr) else messages_attr
+        logging.info(f"Chat context messages: {items}")
 
-        for item in getattr(chat_ctx, 'messages', chat_ctx.items):
+        for item in items:
             if not hasattr(item, 'content') or not hasattr(item, 'role'):
                 continue
 
@@ -101,6 +103,16 @@ async def entrypoint(ctx: agents.JobContext):
             content=f"The user's name is {user_name}, and this is relvant context about him: {memory_str}."
         )
 
+    # Prompt the assistant to greet the user
+    initial_ctx.add_message(
+        role="system",
+        content=SESSION_INSTRUCTION
+    )
+    initial_ctx.add_message(
+        role="user",
+        content="Hello J.A.R.V.I.S, please greet me."
+    )
+
     agent = Assistant(chat_ctx=initial_ctx)
 
     await session.start(
@@ -116,10 +128,6 @@ async def entrypoint(ctx: agents.JobContext):
     )
 
     await ctx.connect()
-
-    await session.generate_reply(
-        instructions=SESSION_INSTRUCTION,
-    )
 
     ctx.add_shutdown_callback(lambda: shutdown_hook(session._agent.chat_ctx, mem0, memory_str))
 
