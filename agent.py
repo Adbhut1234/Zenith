@@ -108,10 +108,6 @@ async def entrypoint(ctx: agents.JobContext):
         role="system",
         content=SESSION_INSTRUCTION
     )
-    initial_ctx.add_message(
-        role="user",
-        content="Hello J.A.R.V.I.S, please greet me."
-    )
 
     agent = Assistant(chat_ctx=initial_ctx)
 
@@ -128,6 +124,10 @@ async def entrypoint(ctx: agents.JobContext):
     )
 
     await ctx.connect()
+
+    await session.generate_reply(
+        instructions=SESSION_INSTRUCTION,
+    )
 
     ctx.add_shutdown_callback(lambda: shutdown_hook(session._agent.chat_ctx, mem0, memory_str))
 
