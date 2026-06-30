@@ -207,9 +207,11 @@ async def move_and_click_mouse(
     click: bool = True
 ) -> str:
     """
-    Move the mouse to a specific (x, y) coordinate on the screen and optionally click.
-    The top-left corner is (0, 0).
-    Use this to click on buttons or icons you see on the screen.
+    Move the mouse to a known (x, y) coordinate and optionally click.
+    ONLY use this when exact coordinates are explicitly given (e.g. the user
+    says "click at 500, 300", or you just ran control_computer and it reported
+    the coordinate). Do NOT use this to click something you haven't confirmed
+    the location of — use control_computer for that instead.
     """
     try:
         logging.info(f"Moving mouse to ({x}, {y})")
@@ -228,9 +230,10 @@ async def type_keyboard_text(
     press_enter: bool = True
 ) -> str:
     """
-    Type text on the keyboard exactly where the cursor is currently focused.
-    Optionally presses Enter after typing.
-    Use this to fill out forms, search bars, or write documents.
+    Type text wherever the cursor is currently focused. Use this for quick
+    follow-up text entry right after a click you already made (e.g. via
+    control_computer), not as the primary way to fill out a form from scratch
+    — for that, use control_computer so each field can be visually verified.
     """
     try:
         logging.info(f"Typing text: {text}")
