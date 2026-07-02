@@ -63,11 +63,17 @@ async def computer_use_loop(task: str, max_steps: int = 15) -> str:
                 f"Actions taken so far: {json.dumps(history[-5:])}\n"
                 f"Look at the screenshot. Decide the SINGLE next action.\n{ACTION_SCHEMA}"
             )
-            response = await client.aio.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=[prompt, screenshot_part],
-                config=types.GenerateContentConfig(response_mime_type="application/json"),
-            )
+            try:
+                response = await client.aio.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=[prompt, screenshot_part],
+                    config=types.GenerateContentConfig(response_mime_type="application/json"),
+                )
+            except Exception as e:
+                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                    logging.warning("API rate limit hit during computer_use_loop.")
+                    return "Task aborted due to API rate limits (429 Quota Exceeded). Please wait a minute before trying again or upgrade your API tier."
+                raise e
             try:
                 action = json.loads(response.text)
             except json.JSONDecodeError:
