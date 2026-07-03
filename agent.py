@@ -1,3 +1,4 @@
+import asyncio
 from dotenv import load_dotenv
 
 from livekit import agents
@@ -149,18 +150,33 @@ async def entrypoint(ctx: agents.JobContext):
     # Start the overlay UI
     start_ui()
 
+    interaction_state = {"last_active": asyncio.get_event_loop().time(), "state": "idle"}
+
     @session.on("user_speech_started")
     def on_user_speech_started(*args, **kwargs):
         print(">>> UI TRIGGER: USER SPEAKING (LISTENING) <<<")
         update_ui("listening")
+        interaction_state["last_active"] = asyncio.get_event_loop().time()
+        interaction_state["state"] = "listening"
 
-    # Foolproof Watchdog: Monitors the actual text generation to prevent getting stuck
+    @session.on("agent_speech_started")
+    def on_agent_speech_started(*args, **kwargs):
+        print(">>> UI TRIGGER: AGENT SPEAKING <<<")
+        update_ui("speaking")
+        interaction_state["last_active"] = asyncio.get_event_loop().time()
+        interaction_state["state"] = "speaking"
+
+    @session.on("agent_speech_committed")
+    def on_agent_speech_committed(*args, **kwargs):
+        print(">>> UI TRIGGER: AGENT COMMITTED (WAITING) <<<")
+        update_ui("waiting")
+        interaction_state["last_active"] = asyncio.get_event_loop().time()
+        interaction_state["state"] = "waiting"
+
+    # Watchdog: Monitors UI state timeouts to return to idle
     async def ui_watchdog():
         import ui_state
         await asyncio.sleep(4) # Let the 3-second startup animation play first!
-        last_content = ""
-        idle_time = 0
-        current_ui_state = "idle"
         
         while True:
             await asyncio.sleep(0.5)
@@ -168,54 +184,18 @@ async def entrypoint(ctx: agents.JobContext):
                 if ui_state.current_custom_text:
                     custom_text = ui_state.current_custom_text
                     ui_state.current_custom_text = None
-                    current_ui_state = "custom"
                     update_ui(f"custom:{custom_text}")
-                    
-                if not getattr(session, '_agent', None) or not session._agent.chat_ctx:
-                    continue
+                    interaction_state["last_active"] = asyncio.get_event_loop().time()
+                    interaction_state["state"] = "custom"
                 
-                msgs = session._agent.chat_ctx.messages()
-                if not msgs:
-                    continue
-                    
-                last_msg = msgs[-1]
-                if last_msg.role == "assistant":
-                    current_content = str(last_msg.content)
-                    if current_content == last_content:
-                        idle_time += 0.5
-                        
-                        # Immediate hibernate if the AI says a goodbye word
-                        is_hibernating = any(word in current_content.lower() for word in ["hibernate", "hibernating", "goodbye", "sleep"])
-                        
-                        if is_hibernating:
-                            if idle_time >= 1.5 and current_ui_state != "idle":
-                                current_ui_state = "idle"
-                                update_ui("idle")
-                        else:
-                            if 1.5 <= idle_time < 15.0 and current_ui_state != "waiting":
-                                current_ui_state = "waiting"
-                                update_ui("waiting")
-                            elif idle_time >= 15.0 and current_ui_state != "idle":
-                                current_ui_state = "idle"
-                                update_ui("idle")
-                    else:
-                        idle_time = 0
-                        last_content = current_content
-                        if current_ui_state not in ["speaking", "custom"]:
-                            current_ui_state = "speaking"
-                            update_ui("speaking")
-                else:
-                    idle_time += 0.5
-                    if 1.5 <= idle_time < 15.0 and current_ui_state != "waiting":
-                        current_ui_state = "waiting"
-                        update_ui("waiting")
-                    elif idle_time >= 15.0 and current_ui_state != "idle":
-                        current_ui_state = "idle"
-                        update_ui("idle")
+                now = asyncio.get_event_loop().time()
+                # If waiting and inactive for 15 seconds, go idle
+                if interaction_state["state"] in ["waiting", "custom"] and now - interaction_state["last_active"] > 15.0:
+                    update_ui("idle")
+                    interaction_state["state"] = "idle"
             except Exception as e:
                 pass
 
-    import asyncio
     asyncio.create_task(ui_watchdog())
 
     await session.start(
