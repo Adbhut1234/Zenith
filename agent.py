@@ -152,21 +152,21 @@ async def entrypoint(ctx: agents.JobContext):
 
     interaction_state = {"last_active": asyncio.get_event_loop().time(), "state": "idle"}
 
-    @session.on("user_speech_started")
+    @agent.on("user_started_speaking")
     def on_user_speech_started(*args, **kwargs):
         print(">>> UI TRIGGER: USER SPEAKING (LISTENING) <<<")
         update_ui("listening")
         interaction_state["last_active"] = asyncio.get_event_loop().time()
         interaction_state["state"] = "listening"
 
-    @session.on("agent_speech_started")
+    @agent.on("agent_started_speaking")
     def on_agent_speech_started(*args, **kwargs):
         print(">>> UI TRIGGER: AGENT SPEAKING <<<")
         update_ui("speaking")
         interaction_state["last_active"] = asyncio.get_event_loop().time()
         interaction_state["state"] = "speaking"
 
-    @session.on("agent_speech_committed")
+    @agent.on("agent_stopped_speaking")
     def on_agent_speech_committed(*args, **kwargs):
         print(">>> UI TRIGGER: AGENT COMMITTED (WAITING) <<<")
         update_ui("waiting")
