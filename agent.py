@@ -11,7 +11,36 @@ from mem0 import AsyncMemoryClient
 import os
 import json
 import logging
+import subprocess
+import atexit
+import sys
+
 load_dotenv()
+
+# --- UI Subprocess Management ---
+ui_process = None
+
+def start_ui():
+    global ui_process
+    ui_process = subprocess.Popen([sys.executable, 'jarvis_overlay.py'], stdin=subprocess.PIPE, text=True)
+
+def update_ui(state):
+    global ui_process
+    if ui_process and ui_process.poll() is None:
+        try:
+            ui_process.stdin.write(f"{state}\n")
+            ui_process.stdin.flush()
+        except:
+            pass
+
+def stop_ui():
+    global ui_process
+    if ui_process:
+        ui_process.terminate()
+
+atexit.register(stop_ui)
+# --------------------------------
+
 
 
 class Assistant(Agent):
@@ -116,6 +145,78 @@ async def entrypoint(ctx: agents.JobContext):
     )
 
     agent = Assistant(chat_ctx=initial_ctx)
+    
+    # Start the overlay UI
+    start_ui()
+
+    @session.on("user_speech_started")
+    def on_user_speech_started(*args, **kwargs):
+        print(">>> UI TRIGGER: USER SPEAKING (LISTENING) <<<")
+        update_ui("listening")
+
+    # Foolproof Watchdog: Monitors the actual text generation to prevent getting stuck
+    async def ui_watchdog():
+        import ui_state
+        await asyncio.sleep(4) # Let the 3-second startup animation play first!
+        last_content = ""
+        idle_time = 0
+        current_ui_state = "idle"
+        
+        while True:
+            await asyncio.sleep(0.5)
+            try:
+                if ui_state.current_custom_text:
+                    custom_text = ui_state.current_custom_text
+                    ui_state.current_custom_text = None
+                    current_ui_state = "custom"
+                    update_ui(f"custom:{custom_text}")
+                    
+                if not getattr(session, '_agent', None) or not session._agent.chat_ctx:
+                    continue
+                
+                msgs = session._agent.chat_ctx.messages()
+                if not msgs:
+                    continue
+                    
+                last_msg = msgs[-1]
+                if last_msg.role == "assistant":
+                    current_content = str(last_msg.content)
+                    if current_content == last_content:
+                        idle_time += 0.5
+                        
+                        # Immediate hibernate if the AI says a goodbye word
+                        is_hibernating = any(word in current_content.lower() for word in ["hibernate", "hibernating", "goodbye", "sleep"])
+                        
+                        if is_hibernating:
+                            if idle_time >= 1.5 and current_ui_state != "idle":
+                                current_ui_state = "idle"
+                                update_ui("idle")
+                        else:
+                            if 1.5 <= idle_time < 15.0 and current_ui_state != "waiting":
+                                current_ui_state = "waiting"
+                                update_ui("waiting")
+                            elif idle_time >= 15.0 and current_ui_state != "idle":
+                                current_ui_state = "idle"
+                                update_ui("idle")
+                    else:
+                        idle_time = 0
+                        last_content = current_content
+                        if current_ui_state not in ["speaking", "custom"]:
+                            current_ui_state = "speaking"
+                            update_ui("speaking")
+                else:
+                    idle_time += 0.5
+                    if 1.5 <= idle_time < 15.0 and current_ui_state != "waiting":
+                        current_ui_state = "waiting"
+                        update_ui("waiting")
+                    elif idle_time >= 15.0 and current_ui_state != "idle":
+                        current_ui_state = "idle"
+                        update_ui("idle")
+            except Exception as e:
+                pass
+
+    import asyncio
+    asyncio.create_task(ui_watchdog())
 
     await session.start(
         room=ctx.room,

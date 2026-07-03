@@ -11,3 +11,5 @@ python-dotenv
 pydantic-ai-slim[openai,mcp]
 google-genai
 pywinauto
+PyQt5
+PyQtWebEngine

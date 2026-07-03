@@ -12,6 +12,7 @@ import subprocess
 import webbrowser
 import pyautogui
 import asyncio
+import ui_state
 
 @function_tool()
 async def get_weather(
@@ -21,6 +22,7 @@ async def get_weather(
     Get the current weather for a given city.
     """
     try:
+        ui_state.set_text(f"🌤️ Checking weather for {city}...")
         response = requests.get(
             f"https://wttr.in/{city}?format=3")
         if response.status_code == 200:
@@ -41,6 +43,7 @@ async def search_web(
     Search the web using DuckDuckGo.
     """
     try:
+        ui_state.set_text(f"🔍 Searching web for '{query}'...")
         results = DuckDuckGoSearchRun().run(tool_input=query)
         logging.info(f"Search results for '{query}': {results}")
         return results
@@ -66,6 +69,7 @@ async def send_email(
         cc_email: Optional CC email address
     """
     try:
+        ui_state.set_text(f"📧 Sending email to {to_email}...")
         # Gmail SMTP configuration
         smtp_server = "smtp.gmail.com"
         smtp_port = 587
@@ -140,6 +144,7 @@ async def execute_pc_command(
             logging.info(f"Command execution requires confirmation: {command}")
             return f"Action requires user confirmation. Command '{command}' was NOT executed. Please verbally ask the user to confirm. If they say yes, call this tool again with user_confirmed=True."
 
+        ui_state.set_text(f"💻 Executing command...")
         logging.info(f"Executing PC command: {command} (Reasoning: {reasoning}, Confirmed: {user_confirmed})")
         # Run the command using powershell/cmd
         result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=10)
@@ -166,6 +171,7 @@ async def open_website(
     Make sure the URL starts with http:// or https://.
     """
     try:
+        ui_state.set_text(f"🌐 Opening website...")
         logging.info(f"Opening website: {url}")
         webbrowser.open(url)
         return f"Successfully opened {url} in the browser."
@@ -183,6 +189,7 @@ async def write_and_open_file(
     Use this when the user asks you to write an application, script, or document and show it to them.
     """
     try:
+        ui_state.set_text(f"📝 Writing to file...")
         logging.info(f"Writing to file: {filename}")
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(content)
@@ -272,6 +279,7 @@ async def control_computer(context: RunContext, task: str) -> str:
     (e.g. "open Spotify and play my workout playlist", "fill out this form").
     """
     try:
+        ui_state.set_text(f"👁️ Controlling screen for '{task}'...")
         return await computer_use_loop(task)
     except Exception as e:
         logging.error(f"control_computer failed: {e}")
@@ -286,6 +294,7 @@ async def open_application(context: RunContext, app_name: str) -> str:
     instead of guessing 'start <name>' in execute_pc_command.
     """
     try:
+        ui_state.set_text(f"🚀 Opening {app_name}...")
         logging.info(f"Opening application via Windows Search: {app_name}")
         await asyncio.to_thread(pyautogui.press, 'win')
         await asyncio.sleep(0.5)
