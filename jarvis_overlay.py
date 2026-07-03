@@ -30,7 +30,7 @@ class JarvisOverlay(QWidget):
         # The pill in jarvis_ui.html is 450x80, the glow spans 600x600.
         # We need a window large enough to show the pill and its glow without clipping.
         win_width = 600
-        win_height = 220
+        win_height = 150
         
         screen = QApplication.primaryScreen().geometry()
         self.x_center = (screen.width() - win_width) // 2
