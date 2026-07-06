@@ -7,25 +7,27 @@
 ---
 
 ## ⚡ What's New
-- **Gemini Multimodal Live API:** Fully migrated to `gemini-3.1-flash-live-preview` for ultra-low latency, bidirectional native audio streams.
-- **Visual Computer Control Loop:** Uses a discrete vision sub-loop powered by `gemini-2.5-flash` (`computer_use.py`). JARVIS now takes screen captures, analyzes UI elements, and autonomously determines the exact `x, y` pixel coordinates required to click, type, and verify multi-step computer tasks, entirely eliminating blind GUI coordinate hallucinations. 
+- **Gemini 3.1 Flash Live API:** Fully migrated to `gemini-3.1-flash-live-preview` for ultra-low latency, bidirectional native audio streams, utilizing the Charon voice.
+- **Native Windows UIA Control:** Completely replaced the legacy vision-based screen control with a high-speed, text-based Windows UI Automation (UIA) engine via `pywinauto`. It reads the actual UI element tree and uses `gemini-2.5-flash` to execute native interactions (focus, click, type), entirely eliminating screenshots and coordinate guessing.
+- **Apple-Style Liquid UI Pill:** Introduced a sleek, always-on-top, transparent overlay built with PyQtWebEngine. It seamlessly syncs with JARVIS's internal states (listening, waiting, speaking) to provide a premium, non-blocking visual experience.
 - **Dynamic User Memory:** `Mem0` integration now dynamically isolates and persists memory based on the active user identity (`user_name`) rather than a hardcoded bucket.
 
 ---
 
-## ⚙️ Core Directives (Capabilities)
+## ⚙️ Core Capabilities
 
 J.A.R.V.I.S. operates as an autonomous desktop agent with deep system access, offering the following capabilities:
 
 - **🧠 Smart Memory (Mem0):** Persistent context tracking across sessions. J.A.R.V.I.S. remembers you and retrieves prior context natively on boot.
-- **👁️ Visually Grounded Computer Control:** Instead of guessing coordinates, JARVIS uses a vision-language model loop to visually analyze your desktop and drive UI interactions precisely.
-- **💻 System Override:** Full command-line control over your Windows PC (execute commands, open apps like Spotify, control files).
-- **🖱️ Motor Functions:** Precision mouse movement and clicking via `PyAutoGUI`, tethered strictly to confirmed visual coordinates.
-- **⌨️ Keyboard Override:** Direct text input and complex keyboard shortcut execution.
-- **🗣️ Vocal Interface:** High-speed, natural speech interaction (Voice: Charon).
+- **👁️ Native UI Automation (UIA):** Instead of guessing coordinates or using vision models, JARVIS reads the exact accessibility tree of your Windows applications to drive UI interactions precisely and reliably.
+- **💻 System Override:** Full command-line control over your Windows PC (execute commands, manage files, write code).
+- **🚀 Universal App Launching:** Launches installed applications dynamically via Windows Search, without relying on hardcoded shell paths.
+- **🖱️ & ⌨️ Motor Functions:** Precision mouse movement, clicking, and keyboard shortcuts via `PyAutoGUI`.
+- **🗣️ Vocal Interface:** High-speed, natural, and sarcastic speech interaction reflecting the classic JARVIS persona.
 - **🌐 Global Network Access:** Real-time web search (DuckDuckGo), weather data (`wttr.in`), and direct URL navigation.
-- **📨 Communications Protocol:** Automated email dispatch via SMTP.
-- **🔌 External Nodes (MCP):** Expandable via n8n MCP Server connections for automated workflows.
+- **📨 Communications Protocol:** Automated email dispatch via Gmail SMTP.
+- **🎧 Spotify Integration:** Native workflows for searching tracks and controlling Spotify playback.
+- **🔌 External Nodes (MCP):** Expandable via MCP Server connections for automated workflows.
 
 ---
 
@@ -33,16 +35,16 @@ J.A.R.V.I.S. operates as an autonomous desktop agent with deep system access, of
 
 To bring J.A.R.V.I.S. online, follow these exact initialization steps:
 
-1. **Construct Environment:** Create a new Python virtual environment.
-2. **Engage Environment:** Activate the virtual environment.
+1. **Construct Environment:** Create a new Python virtual environment (`python -m venv venv`).
+2. **Engage Environment:** Activate the virtual environment (`.\venv\Scripts\activate` on Windows).
 3. **Install Dependencies:** Execute `pip install -r requirements.txt`.
 4. **Configure Core Constants:** 
-   - Create a `.env` file and populate it with your `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET`.
-   - Add your `GOOGLE_API_KEY` to authenticate the Gemini Multimodal Live API and the Vision GenAI Client.
+   - Create a `.env` file from `.env.example`.
+   - Populate it with your `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET`.
+   - Add your `GOOGLE_API_KEY` to authenticate the Gemini API.
    - For email capabilities, input your `GMAIL_USER` and `GMAIL_APP_PASSWORD`.
 5. **Verify Services:** Ensure your LiveKit and Mem0 accounts are active and configured.
-6. **Deploy:** Start the console mode by running `python agent.py console`.
-
+6. **Deploy:** Start the assistant in console mode by running `python agent.py console`.
 
 ---
 
