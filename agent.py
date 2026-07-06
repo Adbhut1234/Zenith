@@ -152,26 +152,26 @@ async def entrypoint(ctx: agents.JobContext):
 
     interaction_state = {"last_active": asyncio.get_event_loop().time(), "state": "idle"}
 
-    @agent.on("user_started_speaking")
-    def on_user_speech_started(*args, **kwargs):
-        print(">>> UI TRIGGER: USER SPEAKING (LISTENING) <<<")
-        update_ui("listening")
-        interaction_state["last_active"] = asyncio.get_event_loop().time()
-        interaction_state["state"] = "listening"
+    @session.on("user_state_changed")
+    def on_user_state_changed(event):
+        if event.new_state == "speaking":
+            print(">>> UI TRIGGER: USER SPEAKING (LISTENING) <<<")
+            update_ui("listening")
+            interaction_state["last_active"] = asyncio.get_event_loop().time()
+            interaction_state["state"] = "listening"
 
-    @agent.on("agent_started_speaking")
-    def on_agent_speech_started(*args, **kwargs):
-        print(">>> UI TRIGGER: AGENT SPEAKING <<<")
-        update_ui("speaking")
-        interaction_state["last_active"] = asyncio.get_event_loop().time()
-        interaction_state["state"] = "speaking"
-
-    @agent.on("agent_stopped_speaking")
-    def on_agent_speech_committed(*args, **kwargs):
-        print(">>> UI TRIGGER: AGENT COMMITTED (WAITING) <<<")
-        update_ui("waiting")
-        interaction_state["last_active"] = asyncio.get_event_loop().time()
-        interaction_state["state"] = "waiting"
+    @session.on("agent_state_changed")
+    def on_agent_state_changed(event):
+        if event.new_state == "speaking":
+            print(">>> UI TRIGGER: AGENT SPEAKING <<<")
+            update_ui("speaking")
+            interaction_state["last_active"] = asyncio.get_event_loop().time()
+            interaction_state["state"] = "speaking"
+        elif event.new_state == "thinking":
+            print(">>> UI TRIGGER: AGENT COMMITTED (WAITING) <<<")
+            update_ui("waiting")
+            interaction_state["last_active"] = asyncio.get_event_loop().time()
+            interaction_state["state"] = "waiting"
 
     # Watchdog: Monitors UI state timeouts to return to idle
     async def ui_watchdog():
