@@ -5,6 +5,7 @@ from google import genai
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 _uia_lock = asyncio.Lock()
+_uia_cancel = asyncio.Event()
 
 UIA_SCHEMA = """
 Respond ONLY with valid JSON, no other text:
@@ -112,14 +113,20 @@ async def uia_loop(task: str, max_steps: int = 20) -> str:
     Falls back with UIANotSupportedError if the target app doesn't support UIA.
     """
     if _uia_lock.locked():
-        return "Still working on the previous task — please wait."
+        _uia_cancel.set()          # signal the running loop to stop
+        await asyncio.sleep(0.3)   # give it a moment to notice
 
+    _uia_cancel.clear()
     async with _uia_lock:
         history = []
         focused_window = None
         window_ref = None
 
         for step in range(max_steps):
+            if _uia_cancel.is_set():
+                logging.info("UIA loop cancelled — new task incoming")
+                return "Previous task cancelled."
+
             state_text, window_ref = await asyncio.to_thread(_get_ui_state, focused_window)
 
             prompt = (
@@ -144,6 +151,10 @@ async def uia_loop(task: str, max_steps: int = 20) -> str:
                 logging.error(f"UIA bad JSON at step {step}: {e}")
                 continue
             except Exception as e:
+                if "503" in str(e) or "UNAVAILABLE" in str(e):
+                    logging.warning(f"Gemini 503 at step {step}, retrying in 3s...")
+                    await asyncio.sleep(3)
+                    continue
                 logging.error(f"UIA API error: {e}")
                 return f"Task failed: {str(e)}"
 

@@ -304,3 +304,18 @@ async def open_application(context: RunContext, app_name: str) -> str:
         return f"Opened '{app_name}' via Windows Search."
     except Exception as e:
         return f"Failed to open '{app_name}': {str(e)}"
+
+@function_tool()
+async def get_now_playing(context: RunContext) -> str:
+    """Get the name of the song currently playing in YouTube Music Desktop App."""
+    try:
+        from pywinauto import Desktop
+        desktop = Desktop(backend="uia")
+        w = desktop.window(title_re=".*YouTube Music.*")
+        title = w.window_text()
+        # Title format: "Song Name - Artist | YouTube Music Desktop App"
+        if " | " in title:
+            return f"Currently playing: {title.split(' | ')[0]}"
+        return f"Window title: {title}"
+    except Exception as e:
+        return f"Could not read now playing: {e}"
