@@ -53,6 +53,30 @@ To bring J.A.R.V.I.S. online, follow these exact initialization steps:
 
 ---
 
+## 🔑 Obtaining Your API Keys
+
+To run J.A.R.V.I.S., you need a few external services. Here is how to get the required keys:
+
+**1. Google Gemini API Key (`GOOGLE_API_KEY`)**
+- Go to [Google AI Studio](https://aistudio.google.com/).
+- Sign in with your Google account.
+- Click **"Get API key"** in the left sidebar and create a new key.
+
+**2. LiveKit Cloud (`LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`)**
+- Go to [LiveKit Cloud](https://cloud.livekit.io/).
+- Sign up and create a new Project.
+- Navigate to **Settings > Keys** in your project dashboard.
+- Generate a new key pair. You will get the API Key, API Secret, and your project's WebSocket URL.
+
+**3. Gmail App Password (For Email Automation)**
+- Go to your [Google Account Security page](https://myaccount.google.com/security).
+- Ensure **2-Step Verification** is turned on.
+- Search for "App Passwords" in the top search bar (or find it under 2-Step Verification settings).
+- Create a new App Password (select "Other" and name it "JARVIS").
+- Use this 16-character password as your `GMAIL_APP_PASSWORD`, and your email address as `GMAIL_USER`.
+
+---
+
 ## 👨‍💻 Author
 
 Built and maintained by **Adi Pandey**.
