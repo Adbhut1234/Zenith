@@ -101,8 +101,14 @@ async def entrypoint(ctx: agents.JobContext):
                 })
 
         logging.info(f"Formatted messages to add to memory: {messages_formatted}")
-        await mem0.add(messages_formatted, user_id=user_name)
-        logging.info("Chat context saved to memory.")
+        if messages_formatted:
+            try:
+                await mem0.add(messages_formatted, user_id=user_name)
+                logging.info("Chat context saved to memory.")
+            except Exception as e:
+                logging.error(f"Failed to save chat context to mem0: {e}")
+        else:
+            logging.info("No new chat context to save to memory.")
 
 
     session = AgentSession(
@@ -133,6 +139,14 @@ async def entrypoint(ctx: agents.JobContext):
         initial_ctx.add_message(
             role="assistant",
             content=f"The user's name is {user_name}, and this is relvant context about him: {memory_str}."
+        )
+
+    # Inject personal info defined in the dashboard if available
+    personal_info = os.getenv('USER_PERSONAL_INFO')
+    if personal_info:
+        initial_ctx.add_message(
+            role="system",
+            content=f"User's Personal Background & Preferences: {personal_info}"
         )
 
     # Prompt the assistant to greet the user

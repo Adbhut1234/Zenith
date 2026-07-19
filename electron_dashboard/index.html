@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Apple/Gemini Dark Mode Theme */
+            --bg-color: #000000;
+            --surface: rgba(28, 28, 30, 0.6);
+            --surface-hover: rgba(44, 44, 46, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a6;
+            --accent-gemini: linear-gradient(135deg, #4285f4, #9b72cb, #d96570);
+            --accent-solid: #9b72cb;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Aurora Background (Gemini Vibe) */
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(66, 133, 244, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(155, 114, 203, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(217, 101, 112, 0.1) 0%, transparent 50%);
+            filter: blur(60px);
+            animation: breathe 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--accent-gemini);
+            box-shadow: 0 4px 15px rgba(155, 114, 203, 0.4);
+        }
+
+        .brand h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: var(--surface);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .page {
+            display: none;
+            padding: 4rem 5rem;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--accent-gemini);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background: var(--surface-hover);
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .card .value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #34c759;
+            margin-right: 8px;
+            box-shadow: 0 0 10px #34c759;
+        }
+
+        /* Settings Form (Apple Style) */
+        .settings-group {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .settings-group-title {
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            gap: 2rem;
+        }
+
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-row.vertical {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .row-label {
+            flex: 1;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .row-desc {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .row-input {
+            flex: 2;
+            width: 100%;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid transparent;
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-solid);
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 0 3px rgba(155, 114, 203, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+
+        .btn-save {
+            background: var(--text-primary);
+            color: #000;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-save:active {
+            transform: scale(0.98);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(44, 44, 46, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="ambient-bg"></div>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"></div>
+            <h1>J.A.R.V.I.S.</h1>
+        </div>
+        
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="switchTab('dashboard', this)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+                Dashboard
+            </div>
+            <div class="nav-item" onclick="switchTab('settings', this)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Configurations
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        
+        <!-- DASHBOARD PAGE -->
+        <div id="dashboard" class="page active">
+            <div class="page-header">
+                <h2 id="greetingText">Welcome back.</h2>
+                <p>System is online and secure. Awaiting commands.</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Core Engine Status</h3>
+                    <div class="value" id="engineStatusText">
+                        <span class="status-indicator"></span> Online
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Active Neural Model</h3>
+                    <div class="value">Gemini 3.1 Flash</div>
+                </div>
+                <div class="card">
+                    <h3>Memory Context</h3>
+                    <div class="value">Mem0 Isolated</div>
+                </div>
+                <div class="card" id="launchCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; border-color: rgba(102, 252, 241, 0.4); background: rgba(102, 252, 241, 0.05); cursor: pointer;" onclick="validateAndLaunchJarvis()">
+                    <div class="value" id="launchText" style="color: #66fcf1; display: flex; align-items: center; gap: 10px;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Launch J.A.R.V.I.S.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS PAGE -->
+        <div id="settings" class="page">
+            <div class="page-header">
+                <h2>Configurations</h2>
+                <p>Manage system identity, API keys, and connection protocols.</p>
+            </div>
+            
+            <form id="configForm">
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">User Identity Override</div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">
+                            Alias / Name
+                            <span class="row-desc">How JARVIS addresses you</span>
+                        </div>
+                        <div class="row-input">
+                            <input type="text" id="JARVIS_USER_ID" name="JARVIS_USER_ID" placeholder="e.g. Tony Stark">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-row vertical">
+                        <div class="row-label">
+                            Personal Background & Context
+                            <span class="row-desc">Injected into the neural core upon initialization. Let JARVIS know your preferences, job, or operating parameters.</span>
+                        </div>
+                        <div class="row-input">
+                            <textarea id="USER_PERSONAL_INFO" name="USER_PERSONAL_INFO" placeholder="I am a software engineer building AI. I prefer concise, sarcastic responses..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Neural Engine & Memory Authentication</div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">Google Gemini API Key</div>
+                        <div class="row-input">
+                            <input type="password" id="GOOGLE_API_KEY" name="GOOGLE_API_KEY" placeholder="AIzaSy...">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">Mem0 API Key</div>
+                        <div class="row-input">
+                            <input type="password" id="MEM0_API_KEY" name="MEM0_API_KEY">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">LiveKit Telemetry</div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">Server WSS URL</div>
+                        <div class="row-input">
+                            <input type="text" id="LIVEKIT_URL" name="LIVEKIT_URL" placeholder="wss://your-project.livekit.cloud">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">API Key</div>
+                        <div class="row-input">
+                            <input type="password" id="LIVEKIT_API_KEY" name="LIVEKIT_API_KEY">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">API Secret</div>
+                        <div class="row-input">
+                            <input type="password" id="LIVEKIT_API_SECRET" name="LIVEKIT_API_SECRET">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Communications Protocol (Email)</div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">SMTP Gmail Address</div>
+                        <div class="row-input">
+                            <input type="text" id="GMAIL_USER" name="GMAIL_USER" placeholder="user@gmail.com">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">Google App Password</div>
+                        <div class="row-input">
+                            <input type="password" id="GMAIL_APP_PASSWORD" name="GMAIL_APP_PASSWORD">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: right; margin-bottom: 4rem;">
+                    <button type="submit" class="btn-save" id="saveBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Save Configuration
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <div class="toast" id="toast">
+        <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMsg">Settings Saved Successfully</span>
+    </div>
+
+    <!-- Error Modal Popup -->
+    <div id="errorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; max-width: 400px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.5);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ff3b30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Incomplete Configuration</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem; line-height: 1.5;">J.A.R.V.I.S. requires active Neural Engine and Telemetry API keys to boot. Please fill out the core settings in the Configurations tab.</p>
+            <button class="btn-save" style="width: 100%; justify-content: center; background: #ff3b30; color: #fff;" onclick="closeErrorModal()">Fix Configurations</button>
+        </div>
+    </div>
+
+    <script>
+        function closeErrorModal() {
+            document.getElementById('errorModal').style.display = 'none';
+            switchTab('settings', document.querySelectorAll('.nav-item')[1]);
+        }
+
+        async function validateAndLaunchJarvis() {
+            if (window.api && window.api.readEnv) {
+                const config = await window.api.readEnv();
+                
+                // Essential keys required for Jarvis to run
+                if (!config.GOOGLE_API_KEY || !config.LIVEKIT_URL || !config.LIVEKIT_API_KEY || !config.LIVEKIT_API_SECRET) {
+                    document.getElementById('errorModal').style.display = 'flex';
+                    return;
+                }
+
+                // If valid, start Jarvis
+                try {
+                    const btn = document.getElementById('engineStatusText');
+                    btn.innerHTML = `<span class="status-indicator" style="background:#ff9500;box-shadow:0 0 10px #ff9500;"></span> Booting Sequence...`;
+                    
+                    const result = await window.api.startJarvis();
+                    if (result.status === 'success') {
+                        showToast('J.A.R.V.I.S. Initialization Sequence Engaged.', 'success');
+                        setTimeout(() => {
+                            btn.innerHTML = `<span class="status-indicator"></span> Online`;
+                            // Update Launch card to Stop card
+                            const launchCard = document.getElementById('launchCard');
+                            const launchText = document.getElementById('launchText');
+                            launchCard.style.borderColor = 'rgba(255, 59, 48, 0.4)';
+                            launchCard.style.background = 'rgba(255, 59, 48, 0.05)';
+                            launchCard.onclick = stopJarvisAction;
+                            launchText.style.color = '#ff3b30';
+                            launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Stop J.A.R.V.I.S.`;
+                        }, 2500);
+                    } else {
+                        showToast(result.message, 'error');
+                        btn.innerHTML = `<span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Offline`;
+                    }
+                } catch (error) {
+                    showToast('System Error starting agent.', 'error');
+                }
+            }
+        }
+
+        async function stopJarvisAction() {
+            if (window.api && window.api.stopJarvis) {
+                try {
+                    const result = await window.api.stopJarvis();
+                    if (result.status === 'success') {
+                        showToast('J.A.R.V.I.S. Terminated.', 'success');
+                        
+                        document.getElementById('engineStatusText').innerHTML = `<span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Offline`;
+                        
+                        // Reset card back to Launch
+                        const launchCard = document.getElementById('launchCard');
+                        const launchText = document.getElementById('launchText');
+                        launchCard.style.borderColor = 'rgba(102, 252, 241, 0.4)';
+                        launchCard.style.background = 'rgba(102, 252, 241, 0.05)';
+                        launchCard.onclick = validateAndLaunchJarvis;
+                        launchText.style.color = '#66fcf1';
+                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Launch J.A.R.V.I.S.`;
+                    }
+                } catch (e) {
+                    showToast('Error stopping J.A.R.V.I.S.', 'error');
+                }
+            }
+        }
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (window.api && window.api.readEnv) {
+                const config = await window.api.readEnv();
+                
+                if (config.JARVIS_USER_ID) {
+                    document.getElementById('greetingText').innerText = `Good evening, ${config.JARVIS_USER_ID}.`;
+                }
+
+                for (const key in config) {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        el.value = config[key];
+                    }
+                }
+            }
+        });
+
+        document.getElementById('configForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('saveBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Processing...`;
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                if (window.api && window.api.saveEnv) {
+                    const result = await window.api.saveEnv(data);
+                    
+                    if (result.status === 'success') {
+                        showToast(result.message, 'success');
+                        if (data.JARVIS_USER_ID) {
+                            document.getElementById('greetingText').innerText = `Good evening, ${data.JARVIS_USER_ID}.`;
+                        }
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                }
+            } catch (error) {
+                showToast('System Error: IPC connection failed.', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+            }
+        });
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            
+            const icon = document.getElementById('toastIcon');
+            if (type === 'error') {
+                icon.setAttribute('stroke', '#ff3b30');
+                icon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+            } else {
+                icon.setAttribute('stroke', '#34c759');
+                icon.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>`;
+            }
+
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
