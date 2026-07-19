@@ -71,7 +71,12 @@ To bring J.A.R.V.I.S. online, you will need to acquire API keys from a few servi
   - `LIVEKIT_API_KEY`
   - `LIVEKIT_API_SECRET`
 
-### 3. Gmail App Passwords (Optional, for sending emails)
+### 3. Mem0 Platform (Required for Long-Term Memory)
+- Go to [Mem0 Platform](https://app.mem0.ai/).
+- Sign in and navigate to the API Keys section in your dashboard.
+- Generate a new key. This is your `MEM0_API_KEY`.
+
+### 4. Gmail App Passwords (Optional, for sending emails)
 - Go to your Google Account -> **Security**.
 - Ensure **2-Step Verification** is enabled.
 - Search for **App Passwords** in the search bar.
