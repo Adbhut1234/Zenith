@@ -145,3 +145,7 @@ ipcMain.handle('stop-jarvis', () => {
     return { status: 'error', message: error.message };
   }
 });
+
+ipcMain.handle('check-jarvis-status', () => {
+  return jarvisProcess !== null;
+});

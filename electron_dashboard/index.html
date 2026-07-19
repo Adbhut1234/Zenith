@@ -400,7 +400,7 @@
                 <div class="card">
                     <h3>Core Engine Status</h3>
                     <div class="value" id="engineStatusText">
-                        <span class="status-indicator"></span> Online
+                        <span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Offline
                     </div>
                 </div>
                 <div class="card">
@@ -611,9 +611,41 @@
     </div>
 
     <script>
+        let isBooting = false;
+
         function closeErrorModal() {
             document.getElementById('errorModal').style.display = 'none';
             switchTab('settings', document.querySelectorAll('.nav-item')[1]);
+        }
+
+        async function updateJarvisStatus() {
+            if (isBooting) return;
+            if (window.api && window.api.checkJarvisStatus) {
+                const isRunning = await window.api.checkJarvisStatus();
+                const btn = document.getElementById('engineStatusText');
+                const launchCard = document.getElementById('launchCard');
+                const launchText = document.getElementById('launchText');
+
+                if (isRunning) {
+                    if (!btn.innerHTML.includes('Online')) {
+                        btn.innerHTML = `<span class="status-indicator"></span> Online`;
+                        launchCard.style.borderColor = 'rgba(255, 59, 48, 0.4)';
+                        launchCard.style.background = 'rgba(255, 59, 48, 0.05)';
+                        launchCard.onclick = stopJarvisAction;
+                        launchText.style.color = '#ff3b30';
+                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Stop J.A.R.V.I.S.`;
+                    }
+                } else {
+                    if (!btn.innerHTML.includes('Offline')) {
+                        btn.innerHTML = `<span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Offline`;
+                        launchCard.style.borderColor = 'rgba(102, 252, 241, 0.4)';
+                        launchCard.style.background = 'rgba(102, 252, 241, 0.05)';
+                        launchCard.onclick = validateAndLaunchJarvis;
+                        launchText.style.color = '#66fcf1';
+                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Launch J.A.R.V.I.S.`;
+                    }
+                }
+            }
         }
 
         async function validateAndLaunchJarvis() {
@@ -628,6 +660,7 @@
 
                 // If valid, start Jarvis
                 try {
+                    isBooting = true;
                     const btn = document.getElementById('engineStatusText');
                     btn.innerHTML = `<span class="status-indicator" style="background:#ff9500;box-shadow:0 0 10px #ff9500;"></span> Booting Sequence...`;
                     
@@ -635,17 +668,11 @@
                     if (result.status === 'success') {
                         showToast('J.A.R.V.I.S. Initialization Sequence Engaged.', 'success');
                         setTimeout(() => {
-                            btn.innerHTML = `<span class="status-indicator"></span> Online`;
-                            // Update Launch card to Stop card
-                            const launchCard = document.getElementById('launchCard');
-                            const launchText = document.getElementById('launchText');
-                            launchCard.style.borderColor = 'rgba(255, 59, 48, 0.4)';
-                            launchCard.style.background = 'rgba(255, 59, 48, 0.05)';
-                            launchCard.onclick = stopJarvisAction;
-                            launchText.style.color = '#ff3b30';
-                            launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Stop J.A.R.V.I.S.`;
+                            isBooting = false;
+                            updateJarvisStatus();
                         }, 2500);
                     } else {
+                        isBooting = false;
                         showToast(result.message, 'error');
                         btn.innerHTML = `<span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Offline`;
                     }
@@ -661,17 +688,7 @@
                     const result = await window.api.stopJarvis();
                     if (result.status === 'success') {
                         showToast('J.A.R.V.I.S. Terminated.', 'success');
-                        
-                        document.getElementById('engineStatusText').innerHTML = `<span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Offline`;
-                        
-                        // Reset card back to Launch
-                        const launchCard = document.getElementById('launchCard');
-                        const launchText = document.getElementById('launchText');
-                        launchCard.style.borderColor = 'rgba(102, 252, 241, 0.4)';
-                        launchCard.style.background = 'rgba(102, 252, 241, 0.05)';
-                        launchCard.onclick = validateAndLaunchJarvis;
-                        launchText.style.color = '#66fcf1';
-                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Launch J.A.R.V.I.S.`;
+                        updateJarvisStatus();
                     }
                 } catch (e) {
                     showToast('Error stopping J.A.R.V.I.S.', 'error');
@@ -687,6 +704,9 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            updateJarvisStatus();
+            setInterval(updateJarvisStatus, 2000);
+            
             if (window.api && window.api.readEnv) {
                 const config = await window.api.readEnv();
                 

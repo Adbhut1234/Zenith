@@ -4,5 +4,6 @@ contextBridge.exposeInMainWorld('api', {
   readEnv: () => ipcRenderer.invoke('read-env'),
   saveEnv: (data) => ipcRenderer.invoke('save-env', data),
   startJarvis: () => ipcRenderer.invoke('start-jarvis'),
-  stopJarvis: () => ipcRenderer.invoke('stop-jarvis')
+  stopJarvis: () => ipcRenderer.invoke('stop-jarvis'),
+  checkJarvisStatus: () => ipcRenderer.invoke('check-jarvis-status')
 });
