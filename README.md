@@ -53,27 +53,30 @@ To bring J.A.R.V.I.S. online, follow these exact initialization steps:
 
 ---
 
-## 🔑 Obtaining Your API Keys
+## 🔑 API Keys Guide
 
-To run J.A.R.V.I.S., you need a few external services. Here is how to get the required keys:
+To bring J.A.R.V.I.S. online, you will need to acquire API keys from a few services. You can enter these directly into the Settings menu in the Electron Dashboard or add them to your `.env` file.
 
-**1. Google Gemini API Key (`GOOGLE_API_KEY`)**
-- Go to [Google AI Studio](https://aistudio.google.com/).
+### 1. Google Gemini API (Required for the AI Brain)
+- Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
 - Sign in with your Google account.
-- Click **"Get API key"** in the left sidebar and create a new key.
+- Click **Create API key** and copy it. This is your `GOOGLE_API_KEY`.
 
-**2. LiveKit Cloud (`LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`)**
-- Go to [LiveKit Cloud](https://cloud.livekit.io/).
-- Sign up and create a new Project.
-- Navigate to **Settings > Keys** in your project dashboard.
-- Generate a new key pair. You will get the API Key, API Secret, and your project's WebSocket URL.
+### 2. LiveKit Cloud (Required for Voice & Audio Streaming)
+- Go to [LiveKit Cloud](https://cloud.livekit.io/) and sign up.
+- Create a new project.
+- Navigate to **Settings** > **Keys** in your project dashboard.
+- Generate a new API Key. You will be provided with three essential values:
+  - `LIVEKIT_URL` (The WebSocket URL)
+  - `LIVEKIT_API_KEY`
+  - `LIVEKIT_API_SECRET`
 
-**3. Gmail App Password (For Email Automation)**
-- Go to your [Google Account Security page](https://myaccount.google.com/security).
-- Ensure **2-Step Verification** is turned on.
-- Search for "App Passwords" in the top search bar (or find it under 2-Step Verification settings).
-- Create a new App Password (select "Other" and name it "JARVIS").
-- Use this 16-character password as your `GMAIL_APP_PASSWORD`, and your email address as `GMAIL_USER`.
+### 3. Gmail App Passwords (Optional, for sending emails)
+- Go to your Google Account -> **Security**.
+- Ensure **2-Step Verification** is enabled.
+- Search for **App Passwords** in the search bar.
+- Create a new App Password (e.g., named "JARVIS").
+- Copy the 16-character code. This is your `GMAIL_APP_PASSWORD`. Use your regular Gmail address for `GMAIL_USER`.
 
 ---
 
