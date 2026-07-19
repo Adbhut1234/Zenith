@@ -361,6 +361,10 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 Configurations
             </div>
+            <div class="nav-item" onclick="switchTab('guide', this)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                Setup Guide
+            </div>
         </div>
     </nav>
 
@@ -505,6 +509,70 @@
                 </div>
 
             </form>
+        </div>
+
+        <!-- SETUP GUIDE PAGE -->
+        <div id="guide" class="page">
+            <div class="page-header">
+                <h2>API Keys & Setup</h2>
+                <p>Complete guide to acquiring the necessary API keys for J.A.R.V.I.S.</p>
+            </div>
+            
+            <div class="settings-group">
+                <div class="settings-group-title">1. Google Gemini API (AI Brain)</div>
+                <div class="settings-row vertical">
+                    <div class="row-label" style="font-weight: 400; font-size: 0.95rem; line-height: 1.6;">
+                        <ul style="padding-left: 20px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 8px;">Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--accent-solid);">Google AI Studio</a> and sign in.</li>
+                            <li style="margin-bottom: 8px;">Click <strong>Create API key</strong>.</li>
+                            <li style="margin-bottom: 8px;">Copy the key and paste it into the <em>Google Gemini API Key</em> field in the Configurations tab.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">2. LiveKit Cloud (Voice & Audio)</div>
+                <div class="settings-row vertical">
+                    <div class="row-label" style="font-weight: 400; font-size: 0.95rem; line-height: 1.6;">
+                        <ul style="padding-left: 20px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 8px;">Go to <a href="https://cloud.livekit.io/" target="_blank" style="color: var(--accent-solid);">LiveKit Cloud</a> and sign up.</li>
+                            <li style="margin-bottom: 8px;">Create a new project.</li>
+                            <li style="margin-bottom: 8px;">Navigate to <strong>Settings &gt; Keys</strong> in your project dashboard.</li>
+                            <li style="margin-bottom: 8px;">Click <strong>Add New Key</strong>. You will receive a WebSocket URL, an API Key, and an API Secret.</li>
+                            <li style="margin-bottom: 8px;">Copy these three values into the corresponding LiveKit fields in the Configurations tab.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">3. Gmail App Passwords (Optional)</div>
+                <div class="settings-row vertical">
+                    <div class="row-label" style="font-weight: 400; font-size: 0.95rem; line-height: 1.6;">
+                        <ul style="padding-left: 20px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 8px;">Go to your <a href="https://myaccount.google.com/security" target="_blank" style="color: var(--accent-solid);">Google Account Security</a>.</li>
+                            <li style="margin-bottom: 8px;">Ensure <strong>2-Step Verification</strong> is enabled.</li>
+                            <li style="margin-bottom: 8px;">Search for <strong>App Passwords</strong> and create a new one (name it "JARVIS").</li>
+                            <li style="margin-bottom: 8px;">Copy the 16-character password into the <em>Google App Password</em> field.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">4. Mem0 Platform (Optional)</div>
+                <div class="settings-row vertical">
+                    <div class="row-label" style="font-weight: 400; font-size: 0.95rem; line-height: 1.6;">
+                        <ul style="padding-left: 20px; color: var(--text-secondary);">
+                            <li style="margin-bottom: 8px;">Go to <a href="https://app.mem0.ai/" target="_blank" style="color: var(--accent-solid);">Mem0 Platform</a> and sign in.</li>
+                            <li style="margin-bottom: 8px;">Generate a new API key from the dashboard.</li>
+                            <li style="margin-bottom: 8px;">Copy and paste it into the <em>Mem0 API Key</em> field.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 4rem;"></div>
         </div>
     </main>
 
