@@ -60,6 +60,9 @@ async def write_and_open_file(
     """
     try:
         ui_state.set_text(f"📝 Writing to file...")
+        filename = os.path.expanduser(filename)
+        filename = os.path.abspath(filename)
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         logging.info(f"Writing to file: {filename}")
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(content)
