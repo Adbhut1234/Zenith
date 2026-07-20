@@ -139,13 +139,28 @@ async def uia_loop(task: str, max_steps: int = 20) -> str:
             )
 
             try:
-                response = await client.aio.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=[prompt],  # text only — no image at all
-                    config=genai.types.GenerateContentConfig(
-                        response_mime_type="application/json"
+                api_task = asyncio.create_task(
+                    client.aio.models.generate_content(
+                        model="gemini-2.5-flash",
+                        contents=[prompt],  # text only — no image at all
+                        config=genai.types.GenerateContentConfig(
+                            response_mime_type="application/json"
+                        )
                     )
                 )
+                cancel_task = asyncio.create_task(_uia_cancel.wait())
+
+                done, pending = await asyncio.wait(
+                    [api_task, cancel_task],
+                    return_when=asyncio.FIRST_COMPLETED
+                )
+
+                if cancel_task in done:
+                    api_task.cancel()
+                    logging.info("UIA loop cancelled during API call.")
+                    return "Previous task cancelled."
+
+                response = api_task.result()
                 action = json.loads(response.text)
             except json.JSONDecodeError as e:
                 logging.error(f"UIA bad JSON at step {step}: {e}")
