@@ -9,7 +9,7 @@
 ## ⚡ What's New
 - **Gemini 3.1 Flash Live API:** Fully migrated to `gemini-3.1-flash-live-preview` for ultra-low latency, bidirectional native audio streams, utilizing the Charon voice.
 - **Native Windows UIA Control:** Completely replaced the legacy vision-based screen control with a high-speed, text-based Windows UI Automation (UIA) engine via `pywinauto`. It reads the actual UI element tree and uses `gemini-2.5-flash` to execute native interactions (focus, click, type), entirely eliminating screenshots and coordinate guessing.
-- **Apple-Style Liquid UI Pill:** Introduced a sleek, always-on-top, transparent overlay built with PyQtWebEngine. It seamlessly syncs with JARVIS's internal states (listening, waiting, speaking) to provide a premium, non-blocking visual experience.
+- **Apple-Style Liquid UI Pill:** Introduced a sleek, always-on-top, transparent overlay built with PyQtWebEngine. It seamlessly syncs with Zenith's internal states (listening, waiting, speaking) to provide a premium, non-blocking visual experience.
 - **Electron Dashboard Integration:** A robust, single-instance background daemon architecture built into a new Electron Dashboard. This setup launches the Python agent silently without console flicker, prevents process duplication, and enforces a strict lifecycle link ensuring the agent engine terminates reliably when the dashboard closes.
 - **Dynamic User Memory:** `Mem0` integration now dynamically isolates and persists memory based on the active user identity (`user_name`) rather than a hardcoded bucket.
 
@@ -20,11 +20,11 @@
 J.A.R.V.I.S. operates as an autonomous desktop agent with deep system access, offering the following capabilities:
 
 - **🧠 Smart Memory (Mem0):** Persistent context tracking across sessions. J.A.R.V.I.S. remembers you and retrieves prior context natively on boot.
-- **👁️ Native UI Automation (UIA):** Instead of guessing coordinates or using vision models, JARVIS reads the exact accessibility tree of your Windows applications to drive UI interactions precisely and reliably.
+- **👁️ Native UI Automation (UIA):** Instead of guessing coordinates or using vision models, Zenith reads the exact accessibility tree of your Windows applications to drive UI interactions precisely and reliably.
 - **💻 System Override:** Full command-line control over your Windows PC (execute commands, manage files, write code).
 - **🚀 Universal App Launching:** Launches installed applications dynamically via Windows Search, without relying on hardcoded shell paths.
 - **🖱️ & ⌨️ Motor Functions:** Precision mouse movement, clicking, and keyboard shortcuts via `PyAutoGUI`.
-- **🗣️ Vocal Interface:** High-speed, natural, and sarcastic speech interaction reflecting the classic JARVIS persona.
+- **🗣️ Vocal Interface:** High-speed, natural, and sarcastic speech interaction reflecting the classic Zenith persona.
 - **🌐 Global Network Access:** Real-time web search (DuckDuckGo), weather data (`wttr.in`), and direct URL navigation.
 - **📨 Communications Protocol:** Automated email dispatch via Gmail SMTP.
 - **🎧 Spotify Integration:** Native workflows for searching tracks and controlling Spotify playback.
@@ -80,7 +80,7 @@ To bring J.A.R.V.I.S. online, you will need to acquire API keys from a few servi
 - Go to your Google Account -> **Security**.
 - Ensure **2-Step Verification** is enabled.
 - Search for **App Passwords** in the search bar.
-- Create a new App Password (e.g., named "JARVIS").
+- Create a new App Password (e.g., named "Zenith").
 - Copy the 16-character code. This is your `GMAIL_APP_PASSWORD`. Use your regular Gmail address for `GMAIL_USER`.
 
 ---

@@ -9,7 +9,7 @@
     "dist": "electron-builder --win"
   },
   "build": {
-    "appId": "com.jarvis.dashboard",
+    "appId": "com.zenith.dashboard",
     "productName": "J.A.R.V.I.S.",
     "win": {
       "target": "nsis"

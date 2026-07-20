@@ -38,10 +38,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
-  if (jarvisProcess) {
+  if (zenithProcess) {
     // Kill the cmd process and all its children (the python engine) on Windows
     const { exec } = require('child_process');
-    exec(`taskkill /pid ${jarvisProcess.pid} /T /F`);
+    exec(`taskkill /pid ${zenithProcess.pid} /T /F`);
   }
 });
 
@@ -106,24 +106,24 @@ ipcMain.handle('save-env', (event, data) => {
 });
 
 const { spawn } = require('child_process');
-let jarvisProcess = null;
+let zenithProcess = null;
 
-ipcMain.handle('start-jarvis', () => {
+ipcMain.handle('start-zenith', () => {
   try {
-    if (jarvisProcess) {
+    if (zenithProcess) {
       return { status: 'error', message: 'J.A.R.V.I.S. is already online.' };
     }
 
-    const batScript = `.\\venv\\Scripts\\activate && python agent.py console > jarvis.log 2>&1`;
-    jarvisProcess = spawn('cmd.exe', ['/c', batScript], {
+    const batScript = `.\\venv\\Scripts\\activate && python agent.py console > zenith.log 2>&1`;
+    zenithProcess = spawn('cmd.exe', ['/c', batScript], {
       cwd: path.join(__dirname, '..'),
       stdio: 'ignore',
       windowsHide: true,
       env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' }
     });
     
-    jarvisProcess.on('exit', () => {
-      jarvisProcess = null;
+    zenithProcess.on('exit', () => {
+      zenithProcess = null;
     });
 
     return { status: 'success' };
@@ -132,12 +132,12 @@ ipcMain.handle('start-jarvis', () => {
   }
 });
 
-ipcMain.handle('stop-jarvis', () => {
+ipcMain.handle('stop-zenith', () => {
   try {
-    if (jarvisProcess) {
+    if (zenithProcess) {
       const { exec } = require('child_process');
-      exec(`taskkill /pid ${jarvisProcess.pid} /T /F`);
-      jarvisProcess = null;
+      exec(`taskkill /pid ${zenithProcess.pid} /T /F`);
+      zenithProcess = null;
       return { status: 'success', message: 'J.A.R.V.I.S. terminated.' };
     }
     return { status: 'error', message: 'J.A.R.V.I.S. is not running.' };
@@ -146,6 +146,6 @@ ipcMain.handle('stop-jarvis', () => {
   }
 });
 
-ipcMain.handle('check-jarvis-status', () => {
-  return jarvisProcess !== null;
+ipcMain.handle('check-zenith-status', () => {
+  return zenithProcess !== null;
 });

@@ -24,7 +24,7 @@ def listen_for_commands(updater):
             break
 
 
-class JarvisOverlay(QWidget):
+class ZenithOverlay(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -56,7 +56,7 @@ class JarvisOverlay(QWidget):
         self.view.page().setBackgroundColor(QColor(Qt.transparent))
 
         html_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'jarvis_ui.html'
+            os.path.dirname(os.path.abspath(__file__)), 'zenith_ui.html'
         )
         self.view.load(QUrl.fromLocalFile(html_path))
         self.view.loadFinished.connect(self._on_load)
@@ -89,7 +89,7 @@ class JarvisOverlay(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    overlay = JarvisOverlay()
+    overlay = ZenithOverlay()
     overlay.show()
     sys.exit(app.exec_())
 

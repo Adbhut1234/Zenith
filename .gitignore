@@ -23,7 +23,7 @@ __pycache__/
 
 # Temporary files
 out.txt
-jarvis.log
+zenith.log
 log*.txt
 node_modules/
 dist/

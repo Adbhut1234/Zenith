@@ -411,7 +411,7 @@
                     <h3>Memory Context</h3>
                     <div class="value">Mem0 Isolated</div>
                 </div>
-                <div class="card" id="launchCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; border-color: rgba(102, 252, 241, 0.4); background: rgba(102, 252, 241, 0.05); cursor: pointer;" onclick="validateAndLaunchJarvis()">
+                <div class="card" id="launchCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; border-color: rgba(102, 252, 241, 0.4); background: rgba(102, 252, 241, 0.05); cursor: pointer;" onclick="validateAndLaunchZenith()">
                     <div class="value" id="launchText" style="color: #66fcf1; display: flex; align-items: center; gap: 10px;">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                         Launch J.A.R.V.I.S.
@@ -435,17 +435,17 @@
                     <div class="settings-row">
                         <div class="row-label">
                             Alias / Name
-                            <span class="row-desc">How JARVIS addresses you</span>
+                            <span class="row-desc">How Zenith addresses you</span>
                         </div>
                         <div class="row-input">
-                            <input type="text" id="JARVIS_USER_ID" name="JARVIS_USER_ID" placeholder="e.g. Tony Stark">
+                            <input type="text" id="Zenith_USER_ID" name="Zenith_USER_ID" placeholder="e.g. Tony Stark">
                         </div>
                     </div>
                     
                     <div class="settings-row vertical">
                         <div class="row-label">
                             Personal Background & Context
-                            <span class="row-desc">Injected into the neural core upon initialization. Let JARVIS know your preferences, job, or operating parameters.</span>
+                            <span class="row-desc">Injected into the neural core upon initialization. Let Zenith know your preferences, job, or operating parameters.</span>
                         </div>
                         <div class="row-input">
                             <textarea id="USER_PERSONAL_INFO" name="USER_PERSONAL_INFO" placeholder="I am a software engineer building AI. I prefer concise, sarcastic responses..."></textarea>
@@ -572,7 +572,7 @@
                         <ul style="padding-left: 20px; color: var(--text-secondary);">
                             <li style="margin-bottom: 8px;">Go to your <a href="https://myaccount.google.com/security" target="_blank" style="color: var(--accent-solid);">Google Account Security</a>.</li>
                             <li style="margin-bottom: 8px;">Ensure <strong>2-Step Verification</strong> is enabled.</li>
-                            <li style="margin-bottom: 8px;">Search for <strong>App Passwords</strong> and create a new one (name it "JARVIS").</li>
+                            <li style="margin-bottom: 8px;">Search for <strong>App Passwords</strong> and create a new one (name it "Zenith").</li>
                             <li style="margin-bottom: 8px;">Copy the 16-character password into the <em>Google App Password</em> field.</li>
                         </ul>
                     </div>
@@ -618,10 +618,10 @@
             switchTab('settings', document.querySelectorAll('.nav-item')[1]);
         }
 
-        async function updateJarvisStatus() {
+        async function updateZenithStatus() {
             if (isBooting) return;
-            if (window.api && window.api.checkJarvisStatus) {
-                const isRunning = await window.api.checkJarvisStatus();
+            if (window.api && window.api.checkZenithStatus) {
+                const isRunning = await window.api.checkZenithStatus();
                 const btn = document.getElementById('engineStatusText');
                 const launchCard = document.getElementById('launchCard');
                 const launchText = document.getElementById('launchText');
@@ -631,7 +631,7 @@
                         btn.innerHTML = `<span class="status-indicator"></span> Online`;
                         launchCard.style.borderColor = 'rgba(255, 59, 48, 0.4)';
                         launchCard.style.background = 'rgba(255, 59, 48, 0.05)';
-                        launchCard.onclick = stopJarvisAction;
+                        launchCard.onclick = stopZenithAction;
                         launchText.style.color = '#ff3b30';
                         launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Stop J.A.R.V.I.S.`;
                     }
@@ -640,7 +640,7 @@
                         btn.innerHTML = `<span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Offline`;
                         launchCard.style.borderColor = 'rgba(102, 252, 241, 0.4)';
                         launchCard.style.background = 'rgba(102, 252, 241, 0.05)';
-                        launchCard.onclick = validateAndLaunchJarvis;
+                        launchCard.onclick = validateAndLaunchZenith;
                         launchText.style.color = '#66fcf1';
                         launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Launch J.A.R.V.I.S.`;
                     }
@@ -648,28 +648,28 @@
             }
         }
 
-        async function validateAndLaunchJarvis() {
+        async function validateAndLaunchZenith() {
             if (window.api && window.api.readEnv) {
                 const config = await window.api.readEnv();
                 
-                // Essential keys required for Jarvis to run
+                // Essential keys required for Zenith to run
                 if (!config.GOOGLE_API_KEY || !config.LIVEKIT_URL || !config.LIVEKIT_API_KEY || !config.LIVEKIT_API_SECRET) {
                     document.getElementById('errorModal').style.display = 'flex';
                     return;
                 }
 
-                // If valid, start Jarvis
+                // If valid, start Zenith
                 try {
                     isBooting = true;
                     const btn = document.getElementById('engineStatusText');
                     btn.innerHTML = `<span class="status-indicator" style="background:#ff9500;box-shadow:0 0 10px #ff9500;"></span> Booting Sequence...`;
                     
-                    const result = await window.api.startJarvis();
+                    const result = await window.api.startZenith();
                     if (result.status === 'success') {
                         showToast('J.A.R.V.I.S. Initialization Sequence Engaged.', 'success');
                         setTimeout(() => {
                             isBooting = false;
-                            updateJarvisStatus();
+                            updateZenithStatus();
                         }, 2500);
                     } else {
                         isBooting = false;
@@ -682,13 +682,13 @@
             }
         }
 
-        async function stopJarvisAction() {
-            if (window.api && window.api.stopJarvis) {
+        async function stopZenithAction() {
+            if (window.api && window.api.stopZenith) {
                 try {
-                    const result = await window.api.stopJarvis();
+                    const result = await window.api.stopZenith();
                     if (result.status === 'success') {
                         showToast('J.A.R.V.I.S. Terminated.', 'success');
-                        updateJarvisStatus();
+                        updateZenithStatus();
                     }
                 } catch (e) {
                     showToast('Error stopping J.A.R.V.I.S.', 'error');
@@ -704,14 +704,14 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
-            updateJarvisStatus();
-            setInterval(updateJarvisStatus, 2000);
+            updateZenithStatus();
+            setInterval(updateZenithStatus, 2000);
             
             if (window.api && window.api.readEnv) {
                 const config = await window.api.readEnv();
                 
-                if (config.JARVIS_USER_ID) {
-                    document.getElementById('greetingText').innerText = `Good evening, ${config.JARVIS_USER_ID}.`;
+                if (config.Zenith_USER_ID) {
+                    document.getElementById('greetingText').innerText = `Good evening, ${config.Zenith_USER_ID}.`;
                 }
 
                 for (const key in config) {
@@ -739,8 +739,8 @@
                     
                     if (result.status === 'success') {
                         showToast(result.message, 'success');
-                        if (data.JARVIS_USER_ID) {
-                            document.getElementById('greetingText').innerText = `Good evening, ${data.JARVIS_USER_ID}.`;
+                        if (data.Zenith_USER_ID) {
+                            document.getElementById('greetingText').innerText = `Good evening, ${data.Zenith_USER_ID}.`;
                         }
                     } else {
                         showToast(result.message, 'error');

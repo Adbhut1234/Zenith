@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JARVIS</title>
+  <title>Zenith</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -68,7 +68,7 @@
     }
 
     /* ── Pill ────────────────────────────────────── */
-    #jarvis-bar {
+    #zenith-bar {
       position: absolute;
       top: 5px;
       left: 50%;
@@ -225,7 +225,7 @@
 </head>
 <body oncontextmenu="return false;">
 
-  <div id="jarvis-bar">
+  <div id="zenith-bar">
     <div id="amb"></div>
 
     <div id="pill" class="off">
@@ -408,7 +408,7 @@
       $psb.textContent = text;
     }
 
-    // ── setState alias — jarvis_overlay.py calls setState() ─────────────────
+    // ── setState alias — zenith_overlay.py calls setState() ─────────────────
     function setState(state) {
       if (state.startsWith('custom:')) {
         setCustomText(state.substring(7));

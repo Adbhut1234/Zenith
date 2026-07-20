@@ -23,7 +23,7 @@ ui_process = None
 
 def start_ui():
     global ui_process
-    ui_process = subprocess.Popen([sys.executable, 'jarvis_overlay.py'], stdin=subprocess.PIPE, text=True)
+    ui_process = subprocess.Popen([sys.executable, 'zenith_overlay.py'], stdin=subprocess.PIPE, text=True)
 
 def update_ui(state):
     global ui_process
@@ -118,7 +118,7 @@ async def entrypoint(ctx: agents.JobContext):
     
 
     mem0 = AsyncMemoryClient()
-    user_name = ctx.room.metadata if ctx.room.metadata else os.getenv('JARVIS_USER_ID', 'Admin')
+    user_name = ctx.room.metadata if ctx.room.metadata else os.getenv('Zenith_USER_ID', 'Admin')
 
     raw_results = await mem0.get_all(filters={'user_id': user_name})
     results = raw_results.get('results', []) if isinstance(raw_results, dict) else raw_results

@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   readEnv: () => ipcRenderer.invoke('read-env'),
   saveEnv: (data) => ipcRenderer.invoke('save-env', data),
-  startJarvis: () => ipcRenderer.invoke('start-jarvis'),
-  stopJarvis: () => ipcRenderer.invoke('stop-jarvis'),
-  checkJarvisStatus: () => ipcRenderer.invoke('check-jarvis-status')
+  startZenith: () => ipcRenderer.invoke('start-zenith'),
+  stopZenith: () => ipcRenderer.invoke('stop-zenith'),
+  checkZenithStatus: () => ipcRenderer.invoke('check-zenith-status')
 });
