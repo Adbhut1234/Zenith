@@ -99,7 +99,7 @@ ipcMain.handle('save-env', (event, data) => {
     }
 
     fs.writeFileSync(ENV_PATH, newLines.join('\n'));
-    return { status: 'success', message: 'Settings saved to J.A.R.V.I.S. matrix!' };
+    return { status: 'success', message: 'Settings saved to Zenith matrix!' };
   } catch (error) {
     return { status: 'error', message: error.message };
   }
@@ -111,7 +111,7 @@ let zenithProcess = null;
 ipcMain.handle('start-zenith', () => {
   try {
     if (zenithProcess) {
-      return { status: 'error', message: 'J.A.R.V.I.S. is already online.' };
+      return { status: 'error', message: 'Zenith is already online.' };
     }
 
     const batScript = `.\\venv\\Scripts\\activate && python agent.py console > zenith.log 2>&1`;
@@ -138,9 +138,9 @@ ipcMain.handle('stop-zenith', () => {
       const { exec } = require('child_process');
       exec(`taskkill /pid ${zenithProcess.pid} /T /F`);
       zenithProcess = null;
-      return { status: 'success', message: 'J.A.R.V.I.S. terminated.' };
+      return { status: 'success', message: 'Zenith terminated.' };
     }
-    return { status: 'error', message: 'J.A.R.V.I.S. is not running.' };
+    return { status: 'error', message: 'Zenith is not running.' };
   } catch (error) {
     return { status: 'error', message: error.message };
   }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Studio</title>
+    <title>Zenith Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -368,7 +368,7 @@
     <nav class="sidebar">
         <div class="brand">
             <div class="brand-icon"></div>
-            <h1>J.A.R.V.I.S.</h1>
+            <h1>Zenith</h1>
         </div>
         
         <div class="nav-menu">
@@ -414,7 +414,7 @@
                 <div class="card" id="launchCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; border-color: rgba(102, 252, 241, 0.4); background: rgba(102, 252, 241, 0.05); cursor: pointer;" onclick="validateAndLaunchZenith()">
                     <div class="value" id="launchText" style="color: #66fcf1; display: flex; align-items: center; gap: 10px;">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                        Launch J.A.R.V.I.S.
+                        Launch Zenith
                     </div>
                 </div>
             </div>
@@ -534,7 +534,7 @@
         <div id="guide" class="page">
             <div class="page-header">
                 <h2>API Keys & Setup</h2>
-                <p>Complete guide to acquiring the necessary API keys for J.A.R.V.I.S.</p>
+                <p>Complete guide to acquiring the necessary API keys for Zenith</p>
             </div>
             
             <div class="settings-group">
@@ -605,7 +605,7 @@
         <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; max-width: 400px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.5);">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ff3b30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Incomplete Configuration</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem; line-height: 1.5;">J.A.R.V.I.S. requires active Neural Engine and Telemetry API keys to boot. Please fill out the core settings in the Configurations tab.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem; line-height: 1.5;">Zenith requires active Neural Engine and Telemetry API keys to boot. Please fill out the core settings in the Configurations tab.</p>
             <button class="btn-save" style="width: 100%; justify-content: center; background: #ff3b30; color: #fff;" onclick="closeErrorModal()">Fix Configurations</button>
         </div>
     </div>
@@ -633,7 +633,7 @@
                         launchCard.style.background = 'rgba(255, 59, 48, 0.05)';
                         launchCard.onclick = stopZenithAction;
                         launchText.style.color = '#ff3b30';
-                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Stop J.A.R.V.I.S.`;
+                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> Stop Zenith`;
                     }
                 } else {
                     if (!btn.innerHTML.includes('Offline')) {
@@ -642,7 +642,7 @@
                         launchCard.style.background = 'rgba(102, 252, 241, 0.05)';
                         launchCard.onclick = validateAndLaunchZenith;
                         launchText.style.color = '#66fcf1';
-                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Launch J.A.R.V.I.S.`;
+                        launchText.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Launch Zenith`;
                     }
                 }
             }
@@ -666,7 +666,7 @@
                     
                     const result = await window.api.startZenith();
                     if (result.status === 'success') {
-                        showToast('J.A.R.V.I.S. Initialization Sequence Engaged.', 'success');
+                        showToast('Zenith Initialization Sequence Engaged.', 'success');
                         setTimeout(() => {
                             isBooting = false;
                             updateZenithStatus();
@@ -687,11 +687,11 @@
                 try {
                     const result = await window.api.stopZenith();
                     if (result.status === 'success') {
-                        showToast('J.A.R.V.I.S. Terminated.', 'success');
+                        showToast('Zenith Terminated.', 'success');
                         updateZenithStatus();
                     }
                 } catch (e) {
-                    showToast('Error stopping J.A.R.V.I.S.', 'error');
+                    showToast('Error stopping Zenith', 'error');
                 }
             }
         }

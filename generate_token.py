@@ -35,7 +35,7 @@ async def main():
     print(f"3. Select 'Custom' as your LiveKit Server.")
     print(f"4. Enter URL: {os.getenv('LIVEKIT_URL')}")
     print("5. Paste your token and Connect!")
-    print("6. Click the 'Share Screen' button (monitor icon) to stream your screen to Friday.")
+    print("6. Click the 'Share Screen' button (monitor icon) to stream your screen to Zenith.")
 
 if __name__ == "__main__":
     import asyncio

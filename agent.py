@@ -156,7 +156,7 @@ async def entrypoint(ctx: agents.JobContext):
     )
     initial_ctx.add_message(
         role="user",
-        content="Hello J.A.R.V.I.S, please greet me."
+        content="Hello Zenith, please greet me."
     )
 
     agent = Assistant(chat_ctx=initial_ctx)

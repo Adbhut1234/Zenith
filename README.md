@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🤖 J.A.R.V.I.S.</h1>
+  <h1>🤖 Zenith</h1>
   <p><i>Just A Rather Very Intelligent System</i></p>
   <p>A highly capable, multimodal desktop assistant powered by LiveKit and Google's Gemini Multimodal Live API.</p>
 </div>
@@ -17,9 +17,9 @@
 
 ## ⚙️ Core Capabilities
 
-J.A.R.V.I.S. operates as an autonomous desktop agent with deep system access, offering the following capabilities:
+Zenith operates as an autonomous desktop agent with deep system access, offering the following capabilities:
 
-- **🧠 Smart Memory (Mem0):** Persistent context tracking across sessions. J.A.R.V.I.S. remembers you and retrieves prior context natively on boot.
+- **🧠 Smart Memory (Mem0):** Persistent context tracking across sessions. Zenith remembers you and retrieves prior context natively on boot.
 - **👁️ Native UI Automation (UIA):** Instead of guessing coordinates or using vision models, Zenith reads the exact accessibility tree of your Windows applications to drive UI interactions precisely and reliably.
 - **💻 System Override:** Full command-line control over your Windows PC (execute commands, manage files, write code).
 - **🚀 Universal App Launching:** Launches installed applications dynamically via Windows Search, without relying on hardcoded shell paths.
@@ -34,7 +34,7 @@ J.A.R.V.I.S. operates as an autonomous desktop agent with deep system access, of
 
 ## 🚀 System Initialization Sequence (Setup)
 
-To bring J.A.R.V.I.S. online, follow these exact initialization steps:
+To bring Zenith online, follow these exact initialization steps:
 
 1. **Construct Environment:** Create a new Python virtual environment (`python -m venv venv`).
 2. **Engage Environment:** Activate the virtual environment (`.\venv\Scripts\activate` on Windows).
@@ -55,7 +55,7 @@ To bring J.A.R.V.I.S. online, follow these exact initialization steps:
 
 ## 🔑 API Keys Guide
 
-To bring J.A.R.V.I.S. online, you will need to acquire API keys from a few services. You can enter these directly into the Settings menu in the Electron Dashboard or add them to your `.env` file.
+To bring Zenith online, you will need to acquire API keys from a few services. You can enter these directly into the Settings menu in the Electron Dashboard or add them to your `.env` file.
 
 ### 1. Google Gemini API (Required for the AI Brain)
 - Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
