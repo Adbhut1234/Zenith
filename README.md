@@ -84,8 +84,14 @@ To bring Zenith online, you will need to acquire API keys from a few services. Y
 - Create a new App Password (e.g., named "Zenith").
 - Copy the 16-character code. This is your `GMAIL_APP_PASSWORD`. Use your regular Gmail address for `GMAIL_USER`.
 
+## License
+
+Copyright (c) 2026 Enc0deX. **All Rights Reserved.** 
+
+You may not copy, modify, distribute, or use this software for commercial purposes without explicit written permission.
+
 ---
 
 ## 👨‍💻 Author
 
-Built and maintained by **Adbhut1234 (Enc0deX)**.
+Built and maintained by **Enc0deX**.
