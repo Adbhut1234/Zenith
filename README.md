@@ -11,6 +11,7 @@
 - **Native Windows UIA Control:** Completely replaced the legacy vision-based screen control with a high-speed, text-based Windows UI Automation (UIA) engine via `pywinauto`. It reads the actual UI element tree and uses `gemini-2.5-flash` to execute native interactions (focus, click, type), entirely eliminating screenshots and coordinate guessing.
 - **Apple-Style Liquid UI Pill:** Introduced a sleek, always-on-top, transparent overlay built with PyQtWebEngine. It seamlessly syncs with Zenith's internal states (listening, waiting, speaking) to provide a premium, non-blocking visual experience.
 - **Electron Dashboard Integration:** A robust, single-instance background daemon architecture built into a new Electron Dashboard. This setup launches the Python agent silently without console flicker, prevents process duplication, and enforces a strict lifecycle link ensuring the agent engine terminates reliably when the dashboard closes.
+- **Custom Web Installer:** A stunning glassmorphic custom installer built with Electron that handles downloading Zenith from GitHub, extracting it, and dynamically creating shortcuts across Windows.
 - **Dynamic User Memory:** `Mem0` integration now dynamically isolates and persists memory based on the active user identity (`user_name`) rather than a hardcoded bucket.
 
 ---
@@ -48,7 +49,7 @@ To bring Zenith online, follow these exact initialization steps:
 6. **Verify Services:** Ensure your LiveKit and Mem0 accounts are active and configured.
 7. **Deploy:** 
    - **Launch Dashboard (Recommended):** Navigate to `electron_dashboard` and run `npm start`. The dashboard will automatically manage the background Python agent.
-   - **Build Executable:** Run `npm run dist` inside `electron_dashboard` to create a standalone Windows installer.
+   - **Build Executables:** Run `npm run dist` inside `electron_dashboard` to create the main app, and inside `zenith_installer` to compile the custom distribution installer. Upload `win-unpacked` as `zenith.zip` to GitHub for the installer to pull.
    - **Standalone Console Mode:** Run `python agent.py console` in the root directory.
 
 ---
@@ -87,4 +88,4 @@ To bring Zenith online, you will need to acquire API keys from a few services. Y
 
 ## 👨‍💻 Author
 
-Built and maintained by **Adi Pandey**.
+Built and maintained by **Adbhut1234 (Enc0deX)**.
