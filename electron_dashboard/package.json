@@ -12,8 +12,44 @@
     "appId": "com.zenith.dashboard",
     "productName": "Zenith",
     "win": {
-      "target": "nsis"
-    }
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "Adbhut1234",
+      "repo": "Zenith"
+    },
+    "extraResources": [
+      {
+        "from": "..",
+        "to": ".",
+        "filter": [
+          "venv/**/*",
+          "tools/**/*",
+          "mcp_client/**/*",
+          "templates/**/*",
+          "agent.py",
+          ".env.example",
+          ".env",
+          "generate_token.py",
+          "prompts.py",
+          "zenith_overlay.py",
+          "computer_use.py",
+          "uia_control.py",
+          "ui_state.py",
+          "requirements.txt"
+        ]
+      }
+    ]
   },
   "keywords": [],
   "author": "",
@@ -22,5 +58,8 @@
   "devDependencies": {
     "electron": "^43.1.0",
     "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
   }
 }

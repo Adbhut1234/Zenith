@@ -1,9 +1,14 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { autoUpdater } = require('electron-updater');
 
-const ENV_PATH = path.join(__dirname, '..', '.env');
-const ENV_EXAMPLE_PATH = path.join(__dirname, '..', '.env.example');
+const ENV_PATH = app.isPackaged 
+  ? path.join(process.resourcesPath, '.env')
+  : path.join(__dirname, '..', '.env');
+const ENV_EXAMPLE_PATH = app.isPackaged 
+  ? path.join(process.resourcesPath, '.env.example')
+  : path.join(__dirname, '..', '.env.example');
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -14,7 +19,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true
-    }
+    },
+    icon: path.join(__dirname, 'icon.ico')
   });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -23,7 +29,61 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
+
+  // Auto Updater logic
+  autoUpdater.forceDevUpdateConfig = true;
+  
+  autoUpdater.on('checking-for-update', () => {
+    mainWindow.webContents.send('update-message', 'Checking for updates...');
+  });
+  
+  autoUpdater.on('update-available', (info) => {
+    mainWindow.webContents.send('update-message', `Version ${info.version} update available! Downloading...`);
+  });
+  
+  autoUpdater.on('update-not-available', (info) => {
+    mainWindow.webContents.send('update-message', 'Up to date.');
+  });
+  
+  autoUpdater.on('error', (err) => {
+    mainWindow.webContents.send('update-message', 'Update error. ' + err.message);
+  });
+  
+  autoUpdater.on('download-progress', (progressObj) => {
+    mainWindow.webContents.send('update-progress', progressObj.percent);
+  });
+  
+  autoUpdater.on('update-downloaded', (info) => {
+    mainWindow.webContents.send('update-message', 'Update downloaded! Restarting...');
+    setTimeout(() => {
+      autoUpdater.quitAndInstall();
+    }, 3000);
+  });
+
+  // Check for updates after the window is loaded
+  mainWindow.webContents.on('did-finish-load', async () => {
+    try {
+      await autoUpdater.checkForUpdatesAndNotify();
+    } catch (error) {
+      let msg = error.message;
+      if (msg.includes('404')) msg = 'Unable to fetch latest release from server.';
+      mainWindow.webContents.send('update-message', 'Update error: ' + msg);
+    }
+  });
 }
+
+ipcMain.handle('check-for-updates', async () => {
+  try {
+    await autoUpdater.checkForUpdatesAndNotify();
+    return { status: 'success' };
+  } catch (error) {
+    let msg = error.message;
+    if (msg.includes('404')) msg = 'Unable to fetch latest release from server.';
+    BrowserWindow.getAllWindows()[0].webContents.send('update-message', 'Update error: ' + msg);
+    return { status: 'error', message: msg };
+  }
+});
+
 
 app.whenReady().then(() => {
   createWindow();
@@ -36,6 +96,7 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
+
 
 app.on('before-quit', () => {
   if (zenithProcess) {
@@ -114,9 +175,14 @@ ipcMain.handle('start-zenith', () => {
       return { status: 'error', message: 'Zenith is already online.' };
     }
 
+    const backendDir = app.isPackaged
+      ? process.resourcesPath
+      : path.join(__dirname, '..');
+      
+    // Activate virtual environment and run the script
     const batScript = `.\\venv\\Scripts\\activate && python agent.py console > zenith.log 2>&1`;
     zenithProcess = spawn('cmd.exe', ['/c', batScript], {
-      cwd: path.join(__dirname, '..'),
+      cwd: backendDir,
       stdio: 'ignore',
       windowsHide: true,
       env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' }

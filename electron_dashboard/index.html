@@ -33,6 +33,8 @@
             display: flex;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* Custom Scrollbar */
@@ -54,17 +56,18 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* Ambient Aurora Background (Gemini Vibe) */
         .ambient-bg {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: -1;
+            pointer-events: none;
             background: 
-                radial-gradient(circle at 15% 50%, rgba(66, 133, 244, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 85% 30%, rgba(155, 114, 203, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(217, 101, 112, 0.1) 0%, transparent 50%);
-            filter: blur(60px);
+                radial-gradient(circle at 15% 50%, rgba(66, 133, 244, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 85% 30%, rgba(155, 114, 203, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 50% 80%, rgba(217, 101, 112, 0.2) 0%, transparent 60%);
             animation: breathe 10s ease-in-out infinite alternate;
+            will-change: transform, opacity;
+            transform: translateZ(0);
         }
 
         @keyframes breathe {
@@ -76,8 +79,8 @@
         .sidebar {
             width: var(--sidebar-width);
             background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
@@ -97,8 +100,9 @@
             width: 32px;
             height: 32px;
             border-radius: 10px;
-            background: var(--accent-gemini);
-            box-shadow: 0 4px 15px rgba(155, 114, 203, 0.4);
+            object-fit: contain;
+            mix-blend-mode: screen;
+            filter: drop-shadow(0 4px 15px rgba(155, 114, 203, 0.4));
         }
 
         .brand h1 {
@@ -144,7 +148,6 @@
             flex: 1;
             position: relative;
             overflow-y: auto;
-            scroll-behavior: smooth;
         }
 
         .page {
@@ -195,8 +198,8 @@
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 2.2rem;
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
@@ -237,7 +240,7 @@
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 2.5rem;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(15px);
         }
 
         .settings-group-title {
@@ -302,6 +305,8 @@
             font-size: 0.95rem;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            -webkit-user-select: auto;
+            user-select: auto;
         }
 
         input:focus,
@@ -377,7 +382,7 @@
 
     <nav class="sidebar">
         <div class="brand">
-            <div class="brand-icon"></div>
+            <img src="icon.png" class="brand-icon" alt="Logo">
             <h1>Zenith</h1>
         </div>
         
@@ -393,6 +398,10 @@
             <div class="nav-item" onclick="switchTab('guide', this)">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                 Setup Guide
+            </div>
+            <div class="nav-item" onclick="switchTab('about', this)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                About
             </div>
         </div>
     </nav>
@@ -425,6 +434,15 @@
                     <div class="value" id="launchText" style="color: #66fcf1; display: flex; align-items: center; gap: 10px;">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                         Launch Zenith
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Software Updates</h3>
+                    <div class="value" id="updateStatusText" style="font-size: 1.2rem; margin-top: 10px;">
+                        Checking for updates...
+                    </div>
+                    <div id="updateProgressContainer" style="display: none; width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 15px; overflow: hidden;">
+                        <div id="updateProgressBar" style="width: 0%; height: 100%; background: var(--accent-gemini); transition: width 0.3s;"></div>
                     </div>
                 </div>
             </div>
@@ -601,8 +619,46 @@
                     </div>
                 </div>
             </div>
-            <div style="height: 4rem;"></div>
         </div>
+        <!-- ABOUT PAGE -->
+        <div id="about" class="page">
+            <div class="page-header">
+                <h2>About Zenith</h2>
+                <p>Learn more about the creator and check for updates.</p>
+            </div>
+            
+            <div class="settings-group">
+                <div class="settings-group-title">Creator Info</div>
+                <div class="settings-row vertical" style="align-items: center; text-align: center; padding: 3rem 1.5rem;">
+                    <img src="https://github.com/Adbhut1234.png" alt="Creator Avatar" style="width: 100px; height: 100px; margin-bottom: 1rem; border-radius: 50%; border: 3px solid var(--accent-solid); object-fit: cover; box-shadow: 0 4px 20px rgba(155,114,203,0.4);">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary);">Zenith</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Built by Enc0deX</p>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <a href="https://github.com/Adbhut1234" target="_blank" class="btn-save" style="text-decoration: none; padding: 0.8rem 1.5rem; font-size: 0.9rem; background: rgba(255,255,255,0.1); color: #fff;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                            GitHub
+                        </a>
+                        <a href="https://instagram.com/encodex.official/" target="_blank" class="btn-save" style="text-decoration: none; padding: 0.8rem 1.5rem; font-size: 0.9rem; background: rgba(255,255,255,0.1); color: #fff;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                            Instagram
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">Software Updates</div>
+                <div class="settings-row" style="justify-content: center; padding: 2rem;">
+                    <button class="btn-save" onclick="manualCheckForUpdates()" id="manualUpdateBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                        Check for Updates
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div style="height: 4rem;"></div>
+    </div>
     </main>
 
     <div class="toast" id="toast">
@@ -626,6 +682,43 @@
         function closeErrorModal() {
             document.getElementById('errorModal').style.display = 'none';
             switchTab('settings', document.querySelectorAll('.nav-item')[1]);
+        }
+
+        async function manualCheckForUpdates() {
+            if (window.api && window.api.checkForUpdates) {
+                const btn = document.getElementById('manualUpdateBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Checking...';
+                await window.api.checkForUpdates();
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            }
+        }
+        
+        // Update handling
+        if (window.api && window.api.onUpdateMessage) {
+            window.api.onUpdateMessage((message) => {
+                const textEl = document.getElementById('updateStatusText');
+                textEl.innerText = message;
+                textEl.style.color = 'var(--text-primary)';
+                
+                let type = 'success';
+                if (message.includes('update available')) {
+                    textEl.style.color = '#ff9500';
+                }
+                if (message.includes('Up to date')) {
+                    textEl.style.color = '#34c759';
+                }
+                if (message.toLowerCase().includes('error')) {
+                    textEl.style.color = '#ff3b30';
+                    type = 'error';
+                }
+                showToast(message, type);
+            });
+
+            window.api.onUpdateProgress((percent) => {
+                document.getElementById('updateProgressContainer').style.display = 'block';
+                document.getElementById('updateProgressBar').style.width = percent + '%';
+            });
         }
 
         async function updateZenithStatus() {
