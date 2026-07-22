@@ -51,9 +51,8 @@ ipcMain.on('install-app', async (event, options) => {
   try {
     event.sender.send('install-status', 'Preparing installation...');
     
-    // This URL automatically resolves to the latest version uploaded to your GitHub Releases.
-    // Replace 'YourGitHubUsername' and 'ZenithApp' with your actual GitHub details.
-    const payloadUrl = 'https://github.com/Adbhut1234/Zenith/releases/latest/download/zenith.zip';
+    // Pointing to GitHub Releases for fast, trusted distribution
+    const payloadUrl = 'https://github.com/Adbhut1234/JARVIS/releases/download/v1.0.0/zenith.zip';
 
     // Use options or fallback to default
     const destDir = options && options.destDir 
@@ -64,8 +63,21 @@ ipcMain.on('install-app', async (event, options) => {
 
     // Make sure destination exists and is clean
     if (fs.existsSync(destDir)) {
+      event.sender.send('install-status', 'Closing running instances...');
+      // Force kill Zenith if it is currently running so we can delete the folder
+      await new Promise((resolve) => {
+        exec('taskkill /F /IM Zenith.exe', () => resolve());
+      });
+      
+      // Wait a moment for the process lock to release
+      await new Promise(r => setTimeout(r, 1000));
+
       event.sender.send('install-status', 'Removing old version...');
-      await fs.remove(destDir);
+      try {
+        await fs.remove(destDir);
+      } catch (rmErr) {
+        throw new Error('Could not remove the old folder. Please ensure Zenith is fully closed, close any File Explorer windows pointing to the Zenith folder, and try again.');
+      }
     }
     await fs.ensureDir(destDir);
 
@@ -95,19 +107,55 @@ ipcMain.on('install-app', async (event, options) => {
     });
 
     event.sender.send('install-progress', 75);
-    event.sender.send('install-status', 'Extracting files...');
+    event.sender.send('install-status', 'Extracting files (Hardware Accelerated)...');
 
-    // Extract logic
-    await extract(tempZipPath, { dir: destDir });
+    // Extract logic: Try native Windows 10+ tar for 10x faster extraction, fallback to JS
+    try {
+      await new Promise((resolve, reject) => {
+        exec(`tar -xf "${tempZipPath}" -C "${destDir}"`, { maxBuffer: 1024 * 1024 * 10 }, (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+    } catch (tarErr) {
+      console.log('Tar failed, falling back to JS extract-zip...');
+      await extract(tempZipPath, { dir: destDir });
+    }
 
     // Clean up temp zip
     await fs.remove(tempZipPath);
 
     event.sender.send('install-progress', 80);
+    event.sender.send('install-status', 'Registering application...');
+
+    // Create a simple Uninstaller script
+    const uninstallerPath = path.join(destDir, 'Uninstall.bat');
+    const uninstallScript = `@echo off\necho Uninstalling Zenith...\ntaskkill /F /IM Zenith.exe >nul 2>&1\nreg delete "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Zenith" /f >nul 2>&1\ntimeout /t 2 >nul\nrmdir /S /Q "${destDir}"\n`;
+    await fs.writeFile(uninstallerPath, uninstallScript);
+
+    const exePath = path.join(destDir, 'Zenith.exe');
+    
+    // Write Registry Keys to show up in "Add/Remove Programs"
+    const registryPsCommand = `
+      $regPath = "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Zenith"
+      New-Item -Path $regPath -Force | Out-Null
+      Set-ItemProperty -Path $regPath -Name "DisplayName" -Value "Zenith"
+      Set-ItemProperty -Path $regPath -Name "DisplayIcon" -Value "${exePath}"
+      Set-ItemProperty -Path $regPath -Name "Publisher" -Value "Enc0deX"
+      Set-ItemProperty -Path $regPath -Name "DisplayVersion" -Value "1.0.0"
+      Set-ItemProperty -Path $regPath -Name "UninstallString" -Value '"${uninstallerPath}"'
+    `;
+
+    const tempRegScript = path.join(app.getPath('temp'), 'zenith_reg.ps1');
+    await fs.writeFile(tempRegScript, registryPsCommand);
+    await new Promise((resolve) => {
+      exec(`powershell -ExecutionPolicy Bypass -File "${tempRegScript}"`, () => resolve());
+    });
+    fs.remove(tempRegScript).catch(()=>{});
+
     event.sender.send('install-status', 'Creating shortcuts...');
 
     // Create Desktop Shortcut using PowerShell
-    const exePath = path.join(destDir, 'Zenith.exe');
     const desktopPath = path.join(process.env.USERPROFILE, 'Desktop', 'Zenith.lnk');
     const startMenuPath = path.join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Zenith.lnk');
 
@@ -123,19 +171,19 @@ ipcMain.on('install-app', async (event, options) => {
 
     let psCommand = '';
     if (options && options.createDesktop) {
-      psCommand += createShortcutPS(desktopPath, exePath) + ' ; ';
+      psCommand += createShortcutPS(desktopPath, exePath) + '\n';
     }
     if (options && options.createStartMenu) {
-      psCommand += createShortcutPS(startMenuPath, exePath) + ' ; ';
+      psCommand += createShortcutPS(startMenuPath, exePath) + '\n';
     }
 
     if (psCommand) {
-      await new Promise((resolve, reject) => {
-        exec(`powershell -Command "${psCommand.replace(/\n/g, ' ')}"`, (err) => {
-          if (err) resolve(); // Ignore shortcut errors
-          else resolve();
-        });
+      const tempShortcutScript = path.join(app.getPath('temp'), 'zenith_shortcut.ps1');
+      await fs.writeFile(tempShortcutScript, psCommand);
+      await new Promise((resolve) => {
+        exec(`powershell -ExecutionPolicy Bypass -File "${tempShortcutScript}"`, () => resolve());
       });
+      fs.remove(tempShortcutScript).catch(()=>{});
     }
 
     event.sender.send('install-progress', 100);

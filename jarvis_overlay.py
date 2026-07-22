@@ -56,7 +56,7 @@ class ZenithOverlay(QWidget):
         self.view.page().setBackgroundColor(QColor(Qt.transparent))
 
         html_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'zenith_ui.html'
+            os.path.dirname(os.path.abspath(__file__)), 'jarvis_ui.html'
         )
         self.view.load(QUrl.fromLocalFile(html_path))
         self.view.loadFinished.connect(self._on_load)
