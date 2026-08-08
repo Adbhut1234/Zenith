@@ -1,6 +1,6 @@
 {
   "name": "electron_dashboard",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -30,11 +30,14 @@
     },
     "extraResources": [
       {
+        "from": "../dist/zenith_backend",
+        "to": "zenith_backend"
+      },
+      {
         "from": "..",
         "to": ".",
         "filter": [
-          "venv/**/*",
-          "tools/**/*",
+          "agent_tools/**/*",
           "mcp_client/**/*",
           "templates/**/*",
           "agent.py",

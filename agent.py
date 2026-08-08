@@ -1,4 +1,9 @@
 import asyncio
+import sys
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+
 from dotenv import load_dotenv
 
 from livekit import agents
@@ -6,7 +11,9 @@ from livekit.agents import AgentSession, Agent, RoomInputOptions, ChatContext
 from livekit.plugins import noise_cancellation
 from livekit.plugins import google
 from prompts import AGENT_INSTRUCTION, SESSION_INSTRUCTION
-from tools import get_weather, search_web, send_email, execute_pc_command, open_website, write_and_open_file, move_and_click_mouse, type_keyboard_text, press_keyboard_shortcut, control_computer, open_application
+from agent_tools.web import get_weather, search_web, send_email, open_website
+from agent_tools.system import execute_pc_command, write_and_open_file, open_application, get_now_playing
+from agent_tools.os_control import move_and_click_mouse, type_keyboard_text, press_keyboard_shortcut, control_computer
 from mem0 import AsyncMemoryClient
 
 import os
@@ -18,28 +25,22 @@ import sys
 
 load_dotenv()
 
-# --- UI Subprocess Management ---
-ui_process = None
+# --- UI UDP Management ---
+import socket
 
 def start_ui():
-    global ui_process
-    ui_process = subprocess.Popen([sys.executable, 'jarvis_overlay.py'], stdin=subprocess.PIPE, text=True)
+    pass
 
 def update_ui(state):
-    global ui_process
-    if ui_process and ui_process.poll() is None:
-        try:
-            ui_process.stdin.write(f"{state}\n")
-            ui_process.stdin.flush()
-        except:
-            pass
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.sendto(state.encode(), ("127.0.0.1", 49152))
+        sock.close()
+    except:
+        pass
 
 def stop_ui():
-    global ui_process
-    if ui_process:
-        ui_process.terminate()
-
-atexit.register(stop_ui)
+    pass
 # --------------------------------
 
 
@@ -225,6 +226,10 @@ async def entrypoint(ctx: agents.JobContext):
     )
 
     await ctx.connect()
+    
+    update_ui("startup")
+    interaction_state["state"] = "startup"
+    interaction_state["last_active"] = asyncio.get_event_loop().time()
 
     # generate_reply is incompatible with Gemini Realtime API and omitted here.
 

@@ -55,9 +55,12 @@ class ZenithOverlay(QWidget):
         self.view.setAttribute(Qt.WA_NoSystemBackground)
         self.view.page().setBackgroundColor(QColor(Qt.transparent))
 
-        html_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'jarvis_ui.html'
-        )
+        if getattr(sys, 'frozen', False):
+            base_dir = sys._MEIPASS
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            
+        html_path = os.path.join(base_dir, 'jarvis_ui.html')
         self.view.load(QUrl.fromLocalFile(html_path))
         self.view.loadFinished.connect(self._on_load)
 

@@ -10,3 +10,7 @@ contextBridge.exposeInMainWorld('api', {
   onUpdateMessage: (callback) => ipcRenderer.on('update-message', (event, msg) => callback(msg)),
   onUpdateProgress: (callback) => ipcRenderer.on('update-progress', (event, percent) => callback(percent))
 });
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state))
+});

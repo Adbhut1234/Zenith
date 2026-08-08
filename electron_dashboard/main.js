@@ -1,14 +1,84 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { autoUpdater } = require('electron-updater');
+const { spawn } = require('child_process');
+const dgram = require('dgram');
 
-const ENV_PATH = app.isPackaged 
-  ? path.join(process.resourcesPath, '.env')
+const ENV_PATH = path.join(app.getPath('userData'), '.env');
+const OLD_ENV_PATH = app.isPackaged 
+  ? path.join(process.resourcesPath, '.env') 
   : path.join(__dirname, '..', '.env');
+
+let overlayWindow = null;
+let udpServer = null;
+
+function createOverlay() {
+  if (overlayWindow) return;
+  
+  const { screen } = require('electron');
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
+  const WIN_W = 640;
+  const WIN_H = 160;
+
+  overlayWindow = new BrowserWindow({
+    width: WIN_W,
+    height: WIN_H,
+    x: Math.round((width - WIN_W) / 2),
+    y: 5,
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
+    focusable: false,
+    skipTaskbar: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true
+    }
+  });
+
+  overlayWindow.setIgnoreMouseEvents(true);
+  overlayWindow.loadFile(path.join(__dirname, 'jarvis_ui.html'));
+
+  if (!udpServer) {
+    udpServer = dgram.createSocket('udp4');
+    udpServer.on('message', (msg) => {
+      const state = msg.toString().trim();
+      if (overlayWindow) {
+        overlayWindow.webContents.send('ui-state', state);
+      }
+    });
+    udpServer.bind(49152);
+  }
+}
+
+function destroyOverlay() {
+  if (overlayWindow) {
+    overlayWindow.close();
+    overlayWindow = null;
+  }
+  if (udpServer) {
+    udpServer.close();
+    udpServer = null;
+  }
+}
+
 const ENV_EXAMPLE_PATH = app.isPackaged 
   ? path.join(process.resourcesPath, '.env.example')
   : path.join(__dirname, '..', '.env.example');
+
+// Migrate old .env from resources path to userData if it exists (for users updating to this version)
+if (app.isPackaged) {
+  if (fs.existsSync(OLD_ENV_PATH) && !fs.existsSync(ENV_PATH)) {
+    try {
+      fs.copyFileSync(OLD_ENV_PATH, ENV_PATH);
+    } catch (e) {
+      console.error('Failed to migrate .env', e);
+    }
+  }
+}
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -166,7 +236,6 @@ ipcMain.handle('save-env', (event, data) => {
   }
 });
 
-const { spawn } = require('child_process');
 let zenithProcess = null;
 
 ipcMain.handle('start-zenith', () => {
@@ -179,18 +248,53 @@ ipcMain.handle('start-zenith', () => {
       ? process.resourcesPath
       : path.join(__dirname, '..');
       
-    // Activate virtual environment and run the script
-    const batScript = `.\\venv\\Scripts\\activate && python agent.py console > zenith.log 2>&1`;
-    zenithProcess = spawn('cmd.exe', ['/c', batScript], {
-      cwd: backendDir,
+    // Try to launch the compiled executable first (for portable distribution)
+    const exePath = path.join(backendDir, 'zenith_backend', 'zenith_backend.exe');
+    
+    let command, args, cwdToUse;
+    
+    if (fs.existsSync(exePath)) {
+        command = 'cmd.exe';
+        args = ['/c', `zenith_backend.exe console > zenith.log 2>&1`];
+        cwdToUse = path.join(backendDir, 'zenith_backend');
+    } else {
+        // Fallback to virtual environment (development mode)
+        const batScript = `.\\venv\\Scripts\\activate && python agent.py console > zenith.log 2>&1`;
+        command = 'cmd.exe';
+        args = ['/c', batScript];
+        cwdToUse = backendDir;
+    }
+
+    // Read .env from userData and inject it so agent.py can access it
+    const envVars = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' };
+    try {
+      if (fs.existsSync(ENV_PATH)) {
+        const content = fs.readFileSync(ENV_PATH, 'utf-8');
+        const lines = content.split('\n');
+        lines.forEach(line => {
+          if (line.includes('=') && !line.trim().startsWith('#')) {
+            const [key, ...rest] = line.split('=');
+            envVars[key.trim()] = rest.join('=').trim();
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Failed to parse .env', e);
+    }
+
+    zenithProcess = spawn(command, args, {
+      cwd: cwdToUse,
       stdio: 'ignore',
       windowsHide: true,
-      env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' }
+      env: envVars
     });
     
     zenithProcess.on('exit', () => {
       zenithProcess = null;
+      destroyOverlay();
     });
+
+    createOverlay();
 
     return { status: 'success' };
   } catch (error) {
@@ -204,9 +308,9 @@ ipcMain.handle('stop-zenith', () => {
       const { exec } = require('child_process');
       exec(`taskkill /pid ${zenithProcess.pid} /T /F`);
       zenithProcess = null;
-      return { status: 'success', message: 'Zenith terminated.' };
     }
-    return { status: 'error', message: 'Zenith is not running.' };
+    destroyOverlay();
+    return { status: 'success', message: 'Zenith terminated.' };
   } catch (error) {
     return { status: 'error', message: error.message };
   }
