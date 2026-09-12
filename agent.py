@@ -46,9 +46,10 @@ def stop_ui():
 
 
 class Assistant(Agent):
-    def __init__(self, chat_ctx=None) -> None:
+    def __init__(self, chat_ctx=None, custom_instructions=None) -> None:
+        final_instructions = custom_instructions if custom_instructions else AGENT_INSTRUCTION
         super().__init__(
-            instructions=AGENT_INSTRUCTION,
+            instructions=final_instructions,
             llm=google.beta.realtime.RealtimeModel(
                  model="gemini-3.1-flash-live-preview",
                  voice="Charon",
@@ -74,58 +75,103 @@ class Assistant(Agent):
         
 
 
+def extract_role_and_content(item):
+    role = getattr(item, 'role', None)
+    if not role and isinstance(item, dict):
+        role = item.get('role')
+    if hasattr(role, 'value'):
+        role = role.value
+    role = str(role).lower() if role else ''
+
+    if role not in ['user', 'assistant']:
+        return None, None
+
+    content = getattr(item, 'content', None)
+    if content is None and isinstance(item, dict):
+        content = item.get('content')
+
+    text_parts = []
+    if isinstance(content, list):
+        for c in content:
+            if isinstance(c, str):
+                text_parts.append(c)
+            elif hasattr(c, 'text') and getattr(c, 'text'):
+                text_parts.append(str(getattr(c, 'text')))
+            elif isinstance(c, dict) and c.get('text'):
+                text_parts.append(str(c.get('text')))
+            elif c is not None:
+                text_parts.append(str(c))
+    elif content is not None:
+        text_parts.append(str(content))
+
+    full_text = ' '.join(text_parts).strip()
+    if not full_text or full_text == 'None':
+        return None, None
+
+    return role, full_text
+
+
 async def entrypoint(ctx: agents.JobContext):
 
-    async def shutdown_hook(chat_ctx: ChatContext, mem0: AsyncMemoryClient, memory_str: str, user_name: str):
+    async def shutdown_hook(chat_ctx: ChatContext, tracked: list, mem0: AsyncMemoryClient, memory_str: str, user_name: str):
         logging.info("Shutting down, saving chat context to memory...")
 
-        messages_formatted = [
-        ]
+        messages_formatted = []
+        seen_texts = set()
 
-        messages_attr = getattr(chat_ctx, 'messages', chat_ctx.items)
-        items = messages_attr() if callable(messages_attr) else messages_attr
-        logging.info(f"Chat context messages: {items}")
+        all_items = []
+        if chat_ctx:
+            try:
+                all_items.extend(chat_ctx.messages())
+            except Exception as e:
+                logging.error(f"Error fetching chat_ctx messages on shutdown: {e}")
+        all_items.extend(tracked)
 
-        for item in items:
-            if not hasattr(item, 'content') or not hasattr(item, 'role'):
+        for item in all_items:
+            role, text = extract_role_and_content(item)
+            if not role or not text:
                 continue
 
-            content_str = ''.join(item.content) if isinstance(item.content, list) else str(item.content)
-
-            if memory_str and memory_str in content_str:
+            if "Hello J.A.R.V.I.S., please greet me" in text:
                 continue
 
-            if item.role in ['user', 'assistant']:
-                messages_formatted.append({
-                    "role": item.role,
-                    "content": content_str.strip()
-                })
+            if text in seen_texts:
+                continue
 
-        logging.info(f"Formatted messages to add to memory: {messages_formatted}")
+            seen_texts.add(text)
+            messages_formatted.append({
+                "role": role,
+                "content": text
+            })
+
+        logging.info(f"Formatted messages to add to memory on shutdown: {messages_formatted}")
         if messages_formatted:
             try:
-                await mem0.add(messages_formatted, user_id=user_name)
-                logging.info("Chat context saved to memory.")
+                res = await mem0.add(messages_formatted, user_id=user_name)
+                logging.info(f"Chat context saved to memory: {res}")
             except Exception as e:
                 logging.error(f"Failed to save chat context to mem0: {e}")
         else:
             logging.info("No new chat context to save to memory.")
 
-
-    session = AgentSession(
-        
-    )
-
-    
+    session = AgentSession()
 
     mem0 = AsyncMemoryClient()
-    user_name = ctx.room.metadata if ctx.room.metadata else os.getenv('J.A.R.V.I.S._USER_ID', 'Admin')
+    raw_user_name = ctx.room.metadata if ctx.room.metadata else (os.getenv('Zenith_USER_ID') or os.getenv('J.A.R.V.I.S._USER_ID') or 'Admin')
+    user_name = raw_user_name.strip() if raw_user_name and raw_user_name.strip() else 'Admin'
 
     raw_results = await mem0.get_all(filters={'user_id': user_name})
     results = raw_results.get('results', []) if isinstance(raw_results, dict) else raw_results
 
     initial_ctx = ChatContext()
     memory_str = ''
+    dynamic_instructions = AGENT_INSTRUCTION
+
+    # Always inject user identity override
+    if user_name and user_name.lower() != 'admin':
+        dynamic_instructions += f"\n\nUser Identity Override: The user's name/alias is '{user_name}'. Address the user as '{user_name}' or 'Sir {user_name}' (or 'Sir')."
+    else:
+        dynamic_instructions += f"\n\nThe user's name is '{user_name}'."
 
     if results:
         memories = [
@@ -136,36 +182,34 @@ async def entrypoint(ctx: agents.JobContext):
             for result in results
         ]
         memory_str = json.dumps(memories)
-        logging.info(f"Memories: {memory_str}")
-        initial_ctx.add_message(
-            role="assistant",
-            content=f"The user's name is {user_name}, and this is relvant context about him: {memory_str}."
-        )
+        logging.info(f"Memories loaded for user {user_name}: {memory_str}")
+        dynamic_instructions += f"\n\nRelevant context & memories about {user_name}: {memory_str}."
 
     # Inject personal info defined in the dashboard if available
     personal_info = os.getenv('USER_PERSONAL_INFO')
     if personal_info:
-        initial_ctx.add_message(
-            role="system",
-            content=f"User's Personal Background & Preferences: {personal_info}"
-        )
+        dynamic_instructions += f"\n\nUser's Personal Background & Preferences: {personal_info}"
 
-    # Prompt the assistant to greet the user
-    initial_ctx.add_message(
-        role="system",
-        content=SESSION_INSTRUCTION
-    )
+    # Append session instructions
+    dynamic_instructions += f"\n\n{SESSION_INSTRUCTION}"
+
     initial_ctx.add_message(
         role="user",
         content="Hello J.A.R.V.I.S., please greet me."
     )
 
-    agent = Assistant(chat_ctx=initial_ctx)
+    agent = Assistant(chat_ctx=initial_ctx, custom_instructions=dynamic_instructions)
     
     # Start the overlay UI
     start_ui()
 
     interaction_state = {"last_active": asyncio.get_event_loop().time(), "state": "idle"}
+    tracked_messages = []
+
+    @session.on("conversation_item_added")
+    def on_conversation_item_added(event):
+        item = getattr(event, 'item', event)
+        tracked_messages.append(item)
 
     @session.on("user_state_changed")
     def on_user_state_changed(event):
@@ -188,10 +232,11 @@ async def entrypoint(ctx: agents.JobContext):
             interaction_state["last_active"] = asyncio.get_event_loop().time()
             interaction_state["state"] = "waiting"
 
-    # Watchdog: Monitors UI state timeouts to return to idle
+    # Watchdog: Monitors UI state timeouts to return to idle and save memories
     async def ui_watchdog():
         import ui_state
         await asyncio.sleep(4) # Let the 3-second startup animation play first!
+        last_memory_save_len = 0
         
         while True:
             await asyncio.sleep(0.5)
@@ -204,12 +249,39 @@ async def entrypoint(ctx: agents.JobContext):
                     interaction_state["state"] = "custom"
                 
                 now = asyncio.get_event_loop().time()
-                # If waiting and inactive for 15 seconds, go idle
-                if interaction_state["state"] in ["waiting", "custom"] and now - interaction_state["last_active"] > 15.0:
+                # If inactive for 15 seconds from any active state, go idle
+                if interaction_state["state"] in ["waiting", "custom", "speaking", "listening"] and now - interaction_state["last_active"] > 15.0:
                     update_ui("idle")
                     interaction_state["state"] = "idle"
+                    
+                # Dynamic Memory Save after inactivity or when idle
+                try:
+                    items = agent.chat_ctx.messages()
+                except Exception as e:
+                    items = []
+
+                if len(items) > last_memory_save_len:
+                    logging.info(f"Watchdog debug: len(items)={len(items)} last={last_memory_save_len} state={interaction_state['state']} inactive_time={now - interaction_state['last_active']}")
+                
+                if interaction_state["state"] == "idle" or (now - interaction_state["last_active"] > 10.0):
+                    if len(items) > last_memory_save_len:
+                        new_items = items[last_memory_save_len:]
+                        messages_formatted = []
+                        for item in new_items:
+                            role, text = extract_role_and_content(item)
+                            if role and text and "Hello J.A.R.V.I.S., please greet me" not in text:
+                                messages_formatted.append({"role": role, "content": text})
+                        
+                        if messages_formatted:
+                            try:
+                                logging.info(f"Saving {len(messages_formatted)} new messages to mem0: {messages_formatted}")
+                                asyncio.create_task(mem0.add(messages_formatted, user_id=user_name))
+                            except Exception as e:
+                                logging.error(f"Background mem save failed: {e}")
+                        last_memory_save_len = len(items)
+
             except Exception as e:
-                pass
+                logging.error(f"Watchdog exception: {e}")
 
     asyncio.create_task(ui_watchdog())
 
@@ -217,9 +289,6 @@ async def entrypoint(ctx: agents.JobContext):
         room=ctx.room,
         agent=agent,
         room_input_options=RoomInputOptions(
-            # LiveKit Cloud enhanced noise cancellation
-            # - If self-hosting, omit this parameter
-            # - For telephony applications, use `BVCTelephony` for best results
             video_enabled=True,
             noise_cancellation=noise_cancellation.BVC(),
         ),
@@ -231,9 +300,9 @@ async def entrypoint(ctx: agents.JobContext):
     interaction_state["state"] = "startup"
     interaction_state["last_active"] = asyncio.get_event_loop().time()
 
-    # generate_reply is incompatible with Gemini Realtime API and omitted here.
-
-    ctx.add_shutdown_callback(lambda: shutdown_hook(session._agent.chat_ctx, mem0, memory_str, user_name))
+    async def on_shutdown():
+        await shutdown_hook(agent.chat_ctx, tracked_messages, mem0, memory_str, user_name)
+    ctx.add_shutdown_callback(on_shutdown)
 
 if __name__ == "__main__":
-    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))
+    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))

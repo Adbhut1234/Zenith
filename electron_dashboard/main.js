@@ -248,20 +248,27 @@ ipcMain.handle('start-zenith', () => {
       ? process.resourcesPath
       : path.join(__dirname, '..');
       
+    const stopFile = path.join(backendDir, '.stop_zenith');
+    if (fs.existsSync(stopFile)) {
+      fs.unlinkSync(stopFile);
+    }
+      
     // Try to launch the compiled executable first (for portable distribution)
-    const exePath = path.join(backendDir, 'zenith_backend', 'zenith_backend.exe');
+    let exePath = path.join(backendDir, 'zenith_backend', 'zenith_backend.exe');
+    if (!app.isPackaged && !fs.existsSync(exePath)) {
+        exePath = path.join(backendDir, 'dist', 'zenith_backend', 'zenith_backend.exe');
+    }
     
     let command, args, cwdToUse;
     
     if (fs.existsSync(exePath)) {
-        command = 'cmd.exe';
-        args = ['/c', `zenith_backend.exe console > zenith.log 2>&1`];
-        cwdToUse = path.join(backendDir, 'zenith_backend');
+        command = exePath;
+        args = ['console'];
+        cwdToUse = path.dirname(exePath);
     } else {
         // Fallback to virtual environment (development mode)
-        const batScript = `.\\venv\\Scripts\\activate && python agent.py console > zenith.log 2>&1`;
         command = 'cmd.exe';
-        args = ['/c', batScript];
+        args = ['/c', `.\\venv\\Scripts\\activate && python agent.py console`];
         cwdToUse = backendDir;
     }
 
@@ -284,10 +291,14 @@ ipcMain.handle('start-zenith', () => {
 
     zenithProcess = spawn(command, args, {
       cwd: cwdToUse,
-      stdio: 'ignore',
       windowsHide: true,
       env: envVars
     });
+    
+    // Pipe logs manually so we don't need cmd.exe redirect
+    const logStream = fs.createWriteStream(path.join(cwdToUse, 'zenith.log'), { flags: 'w' });
+    zenithProcess.stdout.pipe(logStream);
+    zenithProcess.stderr.pipe(logStream);
     
     zenithProcess.on('exit', () => {
       zenithProcess = null;
@@ -305,9 +316,22 @@ ipcMain.handle('start-zenith', () => {
 ipcMain.handle('stop-zenith', () => {
   try {
     if (zenithProcess) {
-      const { exec } = require('child_process');
-      exec(`taskkill /pid ${zenithProcess.pid} /T /F`);
+      const backendDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
+      const stopFile = path.join(backendDir, '.stop_zenith');
+      fs.writeFileSync(stopFile, 'stop');
+      
+      const pidToKill = zenithProcess.pid;
       zenithProcess = null;
+      
+      const { exec } = require('child_process');
+      // Send graceful close signal to let Python run shutdown hooks (memory save)
+      exec(`taskkill /pid ${pidToKill} /T`, () => {});
+      
+      setTimeout(() => {
+        // Force kill if it didn't exit gracefully
+        exec(`taskkill /pid ${pidToKill} /T /F`, () => {});
+        if (fs.existsSync(stopFile)) fs.unlinkSync(stopFile);
+      }, 3500);
     }
     destroyOverlay();
     return { status: 'success', message: 'Zenith terminated.' };

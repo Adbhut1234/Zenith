@@ -52,7 +52,7 @@ ipcMain.on('install-app', async (event, options) => {
     event.sender.send('install-status', 'Preparing installation...');
     
     // Pointing to GitHub Releases for fast, trusted distribution
-    const payloadUrl = 'https://github.com/Adbhut1234/JARVIS/releases/download/v1.0.2/zenith.zip';
+    const payloadUrl = 'https://github.com/Adbhut1234/JARVIS/releases/download/v1.0.3/zenith.zip';
 
     // Use options or fallback to default
     const destDir = options && options.destDir 

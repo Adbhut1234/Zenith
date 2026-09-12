@@ -1,6 +1,6 @@
 {
   "name": "electron_dashboard",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "publish": {
       "provider": "github",
       "owner": "Adbhut1234",
-      "repo": "Zenith"
+      "repo": "JARVIS"
     },
     "extraResources": [
       {
