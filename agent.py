@@ -11,8 +11,16 @@ from livekit.agents import AgentSession, Agent, RoomInputOptions, ChatContext
 from livekit.plugins import noise_cancellation
 from livekit.plugins import google
 from prompts import AGENT_INSTRUCTION, SESSION_INSTRUCTION
-from agent_tools.web import get_weather, search_web, send_email, open_website
-from agent_tools.system import execute_pc_command, write_and_open_file, open_application, get_now_playing
+from agent_tools.web import get_weather, search_web, send_email, open_website, control_browser
+from agent_tools.system import (
+    execute_pc_command, write_and_open_file, open_application, open_file, get_now_playing,
+    change_volume, control_media, change_brightness, system_power_control,
+    take_screenshot, get_system_stats, empty_recycle_bin,
+    get_clipboard, set_clipboard, manage_windows, open_user_folder, manage_notes,
+    search_files_on_pc, kill_process, read_file_content,
+    zip_manage_archive, get_top_running_apps, find_large_files, manage_file_system,
+    clean_disk_temp_junk, generate_qr_code, set_timer_or_alarm, manage_bluetooth, register_voice_macro
+)
 from agent_tools.os_control import move_and_click_mouse, type_keyboard_text, press_keyboard_shortcut, control_computer
 from mem0 import AsyncMemoryClient
 
@@ -45,15 +53,18 @@ def stop_ui():
 
 
 
+from agent_tools.music import play_music, control_music
+
 class Assistant(Agent):
     def __init__(self, chat_ctx=None, custom_instructions=None) -> None:
-        final_instructions = custom_instructions if custom_instructions else AGENT_INSTRUCTION
+        voice_choice = os.getenv("ZENITH_VOICE", os.getenv("JARVIS_VOICE", "Fenrir")).strip()
+        model_choice = os.getenv("GEMINI_LIVE_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025").strip()
         super().__init__(
-            instructions=final_instructions,
+            instructions=custom_instructions or AGENT_INSTRUCTION,
             llm=google.beta.realtime.RealtimeModel(
-                 model="gemini-3.1-flash-live-preview",
-                 voice="Charon",
-                 temperature=0.8,
+                 model=model_choice,
+                 voice=voice_choice,
+                 temperature=0.85,
                  modalities=["AUDIO"],
             ),
             tools=[
@@ -62,15 +73,42 @@ class Assistant(Agent):
                 send_email,
                 execute_pc_command,
                 open_website,
+                control_browser,
+                open_file,
                 write_and_open_file,
                 move_and_click_mouse,
                 type_keyboard_text,
                 press_keyboard_shortcut,
                 control_computer,
-                open_application
+                open_application,
+                change_volume,
+                control_media,
+                change_brightness,
+                system_power_control,
+                take_screenshot,
+                get_system_stats,
+                empty_recycle_bin,
+                get_clipboard,
+                set_clipboard,
+                manage_windows,
+                open_user_folder,
+                manage_notes,
+                search_files_on_pc,
+                kill_process,
+                read_file_content,
+                zip_manage_archive,
+                get_top_running_apps,
+                find_large_files,
+                manage_file_system,
+                clean_disk_temp_junk,
+                generate_qr_code,
+                set_timer_or_alarm,
+                manage_bluetooth,
+                register_voice_macro,
+                play_music,
+                control_music
             ],
             chat_ctx=chat_ctx
-
         )
         
 
@@ -113,7 +151,7 @@ def extract_role_and_content(item):
 
 async def entrypoint(ctx: agents.JobContext):
 
-    async def shutdown_hook(chat_ctx: ChatContext, tracked: list, mem0: AsyncMemoryClient, memory_str: str, user_name: str):
+    async def shutdown_hook(chat_ctx: ChatContext, tracked: list, mem0, memory_str: str, user_name: str):
         logging.info("Shutting down, saving chat context to memory...")
 
         messages_formatted = []
@@ -132,7 +170,7 @@ async def entrypoint(ctx: agents.JobContext):
             if not role or not text:
                 continue
 
-            if "Hello J.A.R.V.I.S., please greet me" in text:
+            if "please greet me" in text or "Hello Zenith" in text or "Hello J.A.R.V.I.S." in text:
                 continue
 
             if text in seen_texts:
@@ -145,23 +183,47 @@ async def entrypoint(ctx: agents.JobContext):
             })
 
         logging.info(f"Formatted messages to add to memory on shutdown: {messages_formatted}")
-        if messages_formatted:
+        if messages_formatted and mem0 is not None:
             try:
                 res = await mem0.add(messages_formatted, user_id=user_name)
                 logging.info(f"Chat context saved to memory: {res}")
             except Exception as e:
                 logging.error(f"Failed to save chat context to mem0: {e}")
         else:
-            logging.info("No new chat context to save to memory.")
+            if not mem0:
+                logging.info("Mem0 client not configured; skipped saving chat context.")
+            else:
+                logging.info("No new chat context to save to memory.")
 
     session = AgentSession()
 
-    mem0 = AsyncMemoryClient()
+    mem0 = None
+    mem0_key = (os.getenv('MEM0_API_KEY') or '').strip()
+    if '=' in mem0_key:
+        mem0_key = mem0_key.split('=', 1)[1].strip()
+        os.environ['MEM0_API_KEY'] = mem0_key
+
+    if mem0_key and not mem0_key.startswith('your_'):
+        try:
+            mem0 = AsyncMemoryClient()
+            logging.info("Mem0 memory client initialized successfully.")
+        except Exception as e:
+            logging.error(f"Failed to initialize Mem0 client: {e}. Running without persistent memory.")
+            mem0 = None
+    else:
+        logging.info("MEM0_API_KEY not configured. Running without persistent memory.")
+
     raw_user_name = ctx.room.metadata if ctx.room.metadata else (os.getenv('Zenith_USER_ID') or os.getenv('J.A.R.V.I.S._USER_ID') or 'Admin')
     user_name = raw_user_name.strip() if raw_user_name and raw_user_name.strip() else 'Admin'
 
-    raw_results = await mem0.get_all(filters={'user_id': user_name})
-    results = raw_results.get('results', []) if isinstance(raw_results, dict) else raw_results
+    results = []
+    if mem0 is not None:
+        try:
+            raw_results = await mem0.get_all(filters={'user_id': user_name})
+            results = raw_results.get('results', []) if isinstance(raw_results, dict) else raw_results
+        except Exception as e:
+            logging.error(f"Failed to retrieve memories from Mem0: {e}")
+            results = []
 
     initial_ctx = ChatContext()
     memory_str = ''
@@ -195,8 +257,9 @@ async def entrypoint(ctx: agents.JobContext):
 
     initial_ctx.add_message(
         role="user",
-        content="Hello J.A.R.V.I.S., please greet me."
+        content="Hello Zenith, please greet me."
     )
+
 
     agent = Assistant(chat_ctx=initial_ctx, custom_instructions=dynamic_instructions)
     
@@ -232,6 +295,23 @@ async def entrypoint(ctx: agents.JobContext):
             interaction_state["last_active"] = asyncio.get_event_loop().time()
             interaction_state["state"] = "waiting"
 
+    @session.on("error")
+    def on_session_error(err):
+        logging.error(f"LiveKit session error: {err}")
+        err_msg = str(err).lower()
+        if "quota" in err_msg or "1011" in err_msg:
+            ui_state.set_text("⚠️ Gemini Rate Limited")
+        else:
+            ui_state.set_text("⚠️ Session Disconnected")
+        if ctx:
+            ctx.shutdown()
+
+    @session.on("close")
+    def on_session_close(reason):
+        logging.warning(f"LiveKit session closed: {reason}")
+        if ctx:
+            ctx.shutdown()
+
     # Watchdog: Monitors UI state timeouts to return to idle and save memories
     async def ui_watchdog():
         import ui_state
@@ -249,8 +329,8 @@ async def entrypoint(ctx: agents.JobContext):
                     interaction_state["state"] = "custom"
                 
                 now = asyncio.get_event_loop().time()
-                # If inactive for 15 seconds from any active state, go idle
-                if interaction_state["state"] in ["waiting", "custom", "speaking", "listening"] and now - interaction_state["last_active"] > 15.0:
+                # If inactive for 15 seconds from any active state (including startup), go idle
+                if interaction_state["state"] in ["startup", "waiting", "custom", "speaking", "listening"] and now - interaction_state["last_active"] > 15.0:
                     update_ui("idle")
                     interaction_state["state"] = "idle"
                     
@@ -269,10 +349,11 @@ async def entrypoint(ctx: agents.JobContext):
                         messages_formatted = []
                         for item in new_items:
                             role, text = extract_role_and_content(item)
-                            if role and text and "Hello J.A.R.V.I.S., please greet me" not in text:
+                            if role and text and "please greet me" not in text:
+
                                 messages_formatted.append({"role": role, "content": text})
                         
-                        if messages_formatted:
+                        if messages_formatted and mem0 is not None:
                             try:
                                 logging.info(f"Saving {len(messages_formatted)} new messages to mem0: {messages_formatted}")
                                 asyncio.create_task(mem0.add(messages_formatted, user_id=user_name))

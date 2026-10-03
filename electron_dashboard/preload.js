@@ -12,5 +12,8 @@ contextBridge.exposeInMainWorld('api', {
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state))
+  onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state)),
+  onMusicEvent: (callback) => ipcRenderer.on('music-event', (event, data) => callback(data)),
+  onWeatherEvent: (callback) => ipcRenderer.on('weather-event', (event, data) => callback(data)),
+  setIgnoreMouseEvents: (ignore, options) => ipcRenderer.send('set-ignore-mouse-events', ignore, options)
 });

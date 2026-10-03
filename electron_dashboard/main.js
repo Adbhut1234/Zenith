@@ -5,7 +5,11 @@ const { autoUpdater } = require('electron-updater');
 const { spawn } = require('child_process');
 const dgram = require('dgram');
 
-const ENV_PATH = path.join(app.getPath('userData'), '.env');
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
+const ENV_PATH = app.isPackaged 
+  ? path.join(app.getPath('userData'), '.env') 
+  : path.join(__dirname, '..', '.env');
 const OLD_ENV_PATH = app.isPackaged 
   ? path.join(process.resourcesPath, '.env') 
   : path.join(__dirname, '..', '.env');
@@ -19,8 +23,8 @@ function createOverlay() {
   const { screen } = require('electron');
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
-  const WIN_W = 640;
-  const WIN_H = 160;
+  const WIN_W = 680;
+  const WIN_H = 380;
 
   overlayWindow = new BrowserWindow({
     width: WIN_W,
@@ -35,19 +39,34 @@ function createOverlay() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+      webSecurity: false
     }
   });
 
-  overlayWindow.setIgnoreMouseEvents(true);
+  overlayWindow.setIgnoreMouseEvents(true, { forward: true });
   overlayWindow.loadFile(path.join(__dirname, 'jarvis_ui.html'));
 
   if (!udpServer) {
     udpServer = dgram.createSocket('udp4');
     udpServer.on('message', (msg) => {
-      const state = msg.toString().trim();
-      if (overlayWindow) {
-        overlayWindow.webContents.send('ui-state', state);
+      const raw = msg.toString().trim();
+      try {
+        if (raw.startsWith('{') && raw.endsWith('}')) {
+          const data = JSON.parse(raw);
+          if (overlayWindow && !overlayWindow.isDestroyed()) {
+            overlayWindow.webContents.send('music-event', data);
+            if (data.type === 'weather') {
+              overlayWindow.webContents.send('weather-event', data);
+            }
+          }
+          return;
+        }
+      } catch (e) {
+        // Fallback for string state
+      }
+      if (overlayWindow && !overlayWindow.isDestroyed()) {
+        overlayWindow.webContents.send('ui-state', raw);
       }
     });
     udpServer.bind(49152);
@@ -55,7 +74,7 @@ function createOverlay() {
 }
 
 function destroyOverlay() {
-  if (overlayWindow) {
+  if (overlayWindow && !overlayWindow.isDestroyed()) {
     overlayWindow.close();
     overlayWindow = null;
   }
@@ -64,6 +83,13 @@ function destroyOverlay() {
     udpServer = null;
   }
 }
+
+ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win && !win.isDestroyed()) {
+    win.setIgnoreMouseEvents(ignore, options);
+  }
+});
 
 const ENV_EXAMPLE_PATH = app.isPackaged 
   ? path.join(process.resourcesPath, '.env.example')
@@ -98,7 +124,15 @@ function createWindow() {
     return { action: 'deny' };
   });
 
-  mainWindow.loadFile('index.html');
+  mainWindow.webContents.on('render-process-gone', (event, details) => {
+    console.error('Renderer process gone:', details);
+  });
+
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('Failed to load:', errorCode, errorDescription);
+  });
+
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Auto Updater logic
   autoUpdater.forceDevUpdateConfig = true;
@@ -206,6 +240,23 @@ ipcMain.handle('save-env', (event, data) => {
 
     const lines = content.split('\n');
     const envDict = { ...data };
+
+    // Sanitize any accidentally pasted "KEY=" prefixes
+    for (const key of Object.keys(envDict)) {
+      if (typeof envDict[key] === 'string') {
+        let val = envDict[key].trim();
+        if (val.startsWith(`${key}=`)) {
+          val = val.substring(`${key}=`.length).trim();
+        } else if (val.includes('=')) {
+          const parts = val.split('=');
+          if (parts[0].trim().toUpperCase() === key.toUpperCase()) {
+            val = parts.slice(1).join('=').trim();
+          }
+        }
+        envDict[key] = val;
+      }
+    }
+
     const newLines = [];
     const updatedKeys = new Set();
 
@@ -229,7 +280,19 @@ ipcMain.handle('save-env', (event, data) => {
       }
     }
 
-    fs.writeFileSync(ENV_PATH, newLines.join('\n'));
+    const updatedContent = newLines.join('\n');
+    fs.writeFileSync(ENV_PATH, updatedContent);
+
+    // Keep userData synced as well if different from ENV_PATH
+    const userDataEnv = path.join(app.getPath('userData'), '.env');
+    if (ENV_PATH !== userDataEnv && fs.existsSync(userDataEnv)) {
+      try {
+        fs.writeFileSync(userDataEnv, updatedContent);
+      } catch (e) {
+        // ignore
+      }
+    }
+
     return { status: 'success', message: 'Settings saved to Zenith matrix!' };
   } catch (error) {
     return { status: 'error', message: error.message };
@@ -267,21 +330,35 @@ ipcMain.handle('start-zenith', () => {
         cwdToUse = path.dirname(exePath);
     } else {
         // Fallback to virtual environment (development mode)
-        command = 'cmd.exe';
-        args = ['/c', `.\\venv\\Scripts\\activate && python agent.py console`];
+        const venvPython = path.join(backendDir, 'venv', 'Scripts', 'python.exe');
+        if (fs.existsSync(venvPython)) {
+            command = venvPython;
+            args = ['agent.py', 'console'];
+        } else {
+            command = 'cmd.exe';
+            args = ['/c', `.\\venv\\Scripts\\activate && python agent.py console`];
+        }
         cwdToUse = backendDir;
     }
 
-    // Read .env from userData and inject it so agent.py can access it
-    const envVars = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' };
+    // Read .env and inject it so agent.py can access it
+    const envVars = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8', PYTHONUNBUFFERED: '1' };
     try {
       if (fs.existsSync(ENV_PATH)) {
         const content = fs.readFileSync(ENV_PATH, 'utf-8');
         const lines = content.split('\n');
         lines.forEach(line => {
           if (line.includes('=') && !line.trim().startsWith('#')) {
-            const [key, ...rest] = line.split('=');
-            envVars[key.trim()] = rest.join('=').trim();
+            const [rawKey, ...rest] = line.split('=');
+            const key = rawKey.trim();
+            let val = rest.join('=').trim();
+            if (val.startsWith(`${key}=`)) {
+              val = val.substring(`${key}=`.length).trim();
+            }
+            if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+              val = val.slice(1, -1);
+            }
+            envVars[key] = val;
           }
         });
       }

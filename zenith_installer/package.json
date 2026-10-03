@@ -1,6 +1,6 @@
 {
   "name": "zenith-installer",
-  "version": "1.0.3",
+  "version": "1.0.1",
   "description": "Custom Installer for Zenith",
   "main": "main.js",
   "scripts": {

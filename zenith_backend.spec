@@ -3,13 +3,15 @@
 from PyInstaller.utils.hooks import collect_submodules
 
 mem0_hidden = collect_submodules('mem0')
+ytmusic_hidden = collect_submodules('ytmusicapi')
+ytdlp_hidden = collect_submodules('yt_dlp')
 
 a = Analysis(
     ['agent.py'],
-    pathex=[],
+    pathex=['.'],
     binaries=[],
     datas=[('venv/Lib/site-packages/livekit', 'livekit'), ('venv/Lib/site-packages/onnxruntime', 'onnxruntime')],
-    hiddenimports=['livekit.rtc.resources'] + mem0_hidden,
+    hiddenimports=['livekit.rtc.resources', 'agent_tools.music', 'agent_tools.system', 'agent_tools.web', 'agent_tools.os_control'] + mem0_hidden + ytmusic_hidden + ytdlp_hidden,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

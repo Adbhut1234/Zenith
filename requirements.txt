@@ -13,3 +13,6 @@ google-genai
 pywinauto
 PyQt5
 PyQtWebEngine
+pyautogui
+ytmusicapi
+yt-dlp

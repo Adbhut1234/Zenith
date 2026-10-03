@@ -294,6 +294,7 @@
 
         input[type="text"],
         input[type="password"],
+        select,
         textarea {
             width: 100%;
             background: rgba(0, 0, 0, 0.3);
@@ -309,7 +310,13 @@
             user-select: auto;
         }
 
+        select option {
+            background: #1c1c1e;
+            color: white;
+        }
+
         input:focus,
+        select:focus,
         textarea:focus {
             outline: none;
             border-color: var(--accent-solid);
@@ -477,6 +484,24 @@
                         </div>
                         <div class="row-input">
                             <textarea id="USER_PERSONAL_INFO" name="USER_PERSONAL_INFO" placeholder="I am a software engineer building AI. I prefer concise, sarcastic responses..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Audio & Media Preferences</div>
+                    
+                    <div class="settings-row">
+                        <div class="row-label">
+                            Preferred Music Engine
+                            <span class="row-desc">Choose playback system for music requests</span>
+                        </div>
+                        <div class="row-input">
+                            <select id="PREFERRED_MUSIC_APP" name="PREFERRED_MUSIC_APP">
+                                <option value="youtube_music">YouTube Music (Zenith Ad-Free Mini Player)</option>
+                                <option value="spotify">Spotify (Desktop Application)</option>
+                                <option value="browser">Web Browser (YouTube Music Web)</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -820,7 +845,11 @@
                 for (const key in config) {
                     const el = document.getElementById(key);
                     if (el) {
-                        el.value = config[key];
+                        let val = config[key];
+                        if (typeof val === 'string' && val.startsWith(`${key}=`)) {
+                            val = val.substring(`${key}=`.length).trim();
+                        }
+                        el.value = val;
                     }
                 }
             }
@@ -835,6 +864,18 @@
             
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
+
+            for (const key in data) {
+                if (typeof data[key] === 'string') {
+                    let val = data[key].trim();
+                    if (val.startsWith(`${key}=`)) {
+                        val = val.substring(`${key}=`.length).trim();
+                    }
+                    data[key] = val;
+                    const inputEl = document.getElementById(key);
+                    if (inputEl) inputEl.value = val;
+                }
+            }
 
             try {
                 if (window.api && window.api.saveEnv) {
