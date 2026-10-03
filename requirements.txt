@@ -9,7 +9,9 @@ langchain_community
 requests
 python-dotenv
 pydantic-ai-slim[openai,mcp]
-google-genai
+google-genai>=2.13
+openai>=2.50.0,<3.0.0
+google-auth>=2.56.0,<3.0.0
 pywinauto
 PyQt5
 PyQtWebEngine
