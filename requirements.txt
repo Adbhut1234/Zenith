@@ -16,3 +16,5 @@ PyQtWebEngine
 pyautogui
 ytmusicapi
 yt-dlp
+browser-use
+playwright

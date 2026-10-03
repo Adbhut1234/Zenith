@@ -28,3 +28,6 @@ dist/
 build/
 web/
 *.zip
+*.db
+zenith_mem_db/
+

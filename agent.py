@@ -11,7 +11,11 @@ from livekit.agents import AgentSession, Agent, RoomInputOptions, ChatContext
 from livekit.plugins import noise_cancellation
 from livekit.plugins import google
 from prompts import AGENT_INSTRUCTION, SESSION_INSTRUCTION
-from agent_tools.web import get_weather, search_web, send_email, open_website, control_browser
+from agent_tools.web import get_weather, search_web, send_email, open_website, control_browser, autonomous_web_task
+from zenith_memory import (
+    remember_user_fact, recall_user_memory, forget_user_fact,
+    get_memory_prompt_injection, record_chat_turn, extract_and_learn_facts
+)
 from agent_tools.system import (
     execute_pc_command, write_and_open_file, open_application, open_file, get_now_playing,
     change_volume, control_media, change_brightness, system_power_control,
@@ -22,7 +26,6 @@ from agent_tools.system import (
     clean_disk_temp_junk, generate_qr_code, set_timer_or_alarm, manage_bluetooth, register_voice_macro
 )
 from agent_tools.os_control import move_and_click_mouse, type_keyboard_text, press_keyboard_shortcut, control_computer
-from mem0 import AsyncMemoryClient
 
 import os
 import json
@@ -106,7 +109,11 @@ class Assistant(Agent):
                 manage_bluetooth,
                 register_voice_macro,
                 play_music,
-                control_music
+                control_music,
+                autonomous_web_task,
+                remember_user_fact,
+                recall_user_memory,
+                forget_user_fact
             ],
             chat_ctx=chat_ctx
         )
@@ -151,8 +158,8 @@ def extract_role_and_content(item):
 
 async def entrypoint(ctx: agents.JobContext):
 
-    async def shutdown_hook(chat_ctx: ChatContext, tracked: list, mem0, memory_str: str, user_name: str):
-        logging.info("Shutting down, saving chat context to memory...")
+    async def shutdown_hook(chat_ctx: ChatContext, tracked: list, user_name: str):
+        logging.info("Shutting down, recording session history and extracting memories...")
 
         messages_formatted = []
         seen_texts = set()
@@ -177,56 +184,25 @@ async def entrypoint(ctx: agents.JobContext):
                 continue
 
             seen_texts.add(text)
+            record_chat_turn(role=role, content=text, user_id=user_name)
             messages_formatted.append({
                 "role": role,
                 "content": text
             })
 
-        logging.info(f"Formatted messages to add to memory on shutdown: {messages_formatted}")
-        if messages_formatted and mem0 is not None:
+        if messages_formatted:
             try:
-                res = await mem0.add(messages_formatted, user_id=user_name)
-                logging.info(f"Chat context saved to memory: {res}")
+                learned = await extract_and_learn_facts(user_id=user_name, messages=messages_formatted)
+                logging.info(f"Learned {len(learned)} new persistent facts on shutdown.")
             except Exception as e:
-                logging.error(f"Failed to save chat context to mem0: {e}")
-        else:
-            if not mem0:
-                logging.info("Mem0 client not configured; skipped saving chat context.")
-            else:
-                logging.info("No new chat context to save to memory.")
+                logging.error(f"Failed to extract facts on shutdown: {e}")
 
     session = AgentSession()
-
-    mem0 = None
-    mem0_key = (os.getenv('MEM0_API_KEY') or '').strip()
-    if '=' in mem0_key:
-        mem0_key = mem0_key.split('=', 1)[1].strip()
-        os.environ['MEM0_API_KEY'] = mem0_key
-
-    if mem0_key and not mem0_key.startswith('your_'):
-        try:
-            mem0 = AsyncMemoryClient()
-            logging.info("Mem0 memory client initialized successfully.")
-        except Exception as e:
-            logging.error(f"Failed to initialize Mem0 client: {e}. Running without persistent memory.")
-            mem0 = None
-    else:
-        logging.info("MEM0_API_KEY not configured. Running without persistent memory.")
 
     raw_user_name = ctx.room.metadata if ctx.room.metadata else (os.getenv('Zenith_USER_ID') or os.getenv('J.A.R.V.I.S._USER_ID') or 'Admin')
     user_name = raw_user_name.strip() if raw_user_name and raw_user_name.strip() else 'Admin'
 
-    results = []
-    if mem0 is not None:
-        try:
-            raw_results = await mem0.get_all(filters={'user_id': user_name})
-            results = raw_results.get('results', []) if isinstance(raw_results, dict) else raw_results
-        except Exception as e:
-            logging.error(f"Failed to retrieve memories from Mem0: {e}")
-            results = []
-
     initial_ctx = ChatContext()
-    memory_str = ''
     dynamic_instructions = AGENT_INSTRUCTION
 
     # Always inject user identity override
@@ -235,17 +211,11 @@ async def entrypoint(ctx: agents.JobContext):
     else:
         dynamic_instructions += f"\n\nThe user's name is '{user_name}'."
 
-    if results:
-        memories = [
-            {
-                "memory": result["memory"],
-                "updated_at": result["updated_at"]
-            }
-            for result in results
-        ]
-        memory_str = json.dumps(memories)
-        logging.info(f"Memories loaded for user {user_name}: {memory_str}")
-        dynamic_instructions += f"\n\nRelevant context & memories about {user_name}: {memory_str}."
+    # Load persistent long-term memories from SQLite
+    memory_prompt = get_memory_prompt_injection(user_name)
+    if memory_prompt:
+        logging.info(f"Persistent memories loaded for user {user_name}.")
+        dynamic_instructions += f"\n\n{memory_prompt}"
 
     # Inject personal info defined in the dashboard if available
     personal_info = os.getenv('USER_PERSONAL_INFO')
@@ -350,15 +320,15 @@ async def entrypoint(ctx: agents.JobContext):
                         for item in new_items:
                             role, text = extract_role_and_content(item)
                             if role and text and "please greet me" not in text:
-
+                                record_chat_turn(role=role, content=text, user_id=user_name)
                                 messages_formatted.append({"role": role, "content": text})
                         
-                        if messages_formatted and mem0 is not None:
+                        if messages_formatted:
                             try:
-                                logging.info(f"Saving {len(messages_formatted)} new messages to mem0: {messages_formatted}")
-                                asyncio.create_task(mem0.add(messages_formatted, user_id=user_name))
+                                logging.info(f"Extracting persistent facts from {len(messages_formatted)} new messages...")
+                                asyncio.create_task(extract_and_learn_facts(user_name, messages_formatted))
                             except Exception as e:
-                                logging.error(f"Background mem save failed: {e}")
+                                logging.error(f"Background memory learning failed: {e}")
                         last_memory_save_len = len(items)
 
             except Exception as e:
@@ -382,7 +352,7 @@ async def entrypoint(ctx: agents.JobContext):
     interaction_state["last_active"] = asyncio.get_event_loop().time()
 
     async def on_shutdown():
-        await shutdown_hook(agent.chat_ctx, tracked_messages, mem0, memory_str, user_name)
+        await shutdown_hook(agent.chat_ctx, tracked_messages, user_name)
     ctx.add_shutdown_callback(on_shutdown)
 
 if __name__ == "__main__":

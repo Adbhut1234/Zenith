@@ -382,3 +382,85 @@ async def control_browser(
             return f"Unknown browser action: '{action}'. Available: search_youtube, search_google, new_tab, close_tab, reopen_tab, next_tab, prev_tab, refresh, go_back, go_forward, scroll_down, scroll_up, play_pause, fullscreen."
     except Exception as e:
         return f"Browser control failed: {str(e)}"
+
+
+# ==============================================================================
+# AUTONOMOUS AGENTIC WEB BROWSING (Powered by browser-use & Gemini 2.5 Flash)
+# ==============================================================================
+
+_web_agent_lock = asyncio.Lock()
+
+def _get_chrome_path() -> Optional[str]:
+    candidates = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe"),
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
+
+@function_tool()
+async def autonomous_web_task(
+    context: RunContext,  # type: ignore
+    task: str,
+    max_steps: int = 8
+) -> str:
+    """
+    Execute an autonomous multi-step web agent task using browser-use and Gemini.
+    Use this for tasks that require navigating websites, clicking elements, searching multiple pages,
+    comparing products/prices, filling out web forms, interacting with dynamic web apps, or extracting structured data.
+    
+    Examples:
+    - "Find the cheapest RTX 4080 Super on Amazon and report the top 3 options with price"
+    - "Go to Wikipedia, find recent news about space exploration, and summarize the key facts"
+    - "Look up flight schedules from Delhi to Mumbai on Google Flights"
+    - "Fill out the contact inquiry form on example.com"
+    
+    Args:
+        task: Clear natural language description of what the web agent should do or extract.
+        max_steps: Maximum number of browsing interaction steps allowed (default 8).
+    """
+    if _web_agent_lock.locked():
+        return "Another autonomous web browsing task is currently active. Please wait a moment for it to complete."
+
+    async with _web_agent_lock:
+        ui_state.set_text(f"🌐 Web Agent | {task[:22]}...")
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            return "Google API key is not configured for autonomous web browsing."
+
+        chrome_path = _get_chrome_path()
+        if not chrome_path:
+            return "Could not locate a compatible Chrome or Edge browser executable on the system."
+
+        try:
+            from browser_use import ChatGoogle, BrowserProfile, Agent
+            
+            # Visible browser so user can see Zenith navigating in real-time
+            profile = BrowserProfile(
+                executable_path=chrome_path,
+                headless=False
+            )
+            llm = ChatGoogle(model="gemini-2.5-flash", api_key=api_key)
+            agent = Agent(
+                task=task,
+                llm=llm,
+                browser_profile=profile,
+                use_thinking=False,
+                use_judge=False,
+                max_actions_per_step=4
+            )
+            history = await agent.run(max_steps=max(2, min(max_steps, 15)))
+            res = history.final_result()
+            if res:
+                return f"Autonomous web task completed:\n{res}"
+            else:
+                return "Autonomous web task completed successfully."
+        except Exception as e:
+            logging.error(f"Error executing autonomous_web_task: {e}", exc_info=True)
+            return f"Autonomous web browsing encountered an error: {str(e)}"
+
