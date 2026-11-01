@@ -200,10 +200,10 @@ if (app.isPackaged) {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 820,
-    height: 580,
-    minWidth: 700,
-    minHeight: 480,
+    width: 840,
+    height: 640,
+    minWidth: 720,
+    minHeight: 520,
     backgroundColor: '#0c0d12',
     autoHideMenuBar: true,
     frame: false,
@@ -630,4 +630,13 @@ ipcMain.handle('window-maximize', () => {
 ipcMain.handle('window-close', () => {
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
 });
+
+ipcMain.handle('open-external', (event, url) => {
+  if (url && (url.startsWith('https://') || url.startsWith('http://'))) {
+    shell.openExternal(url);
+    return { status: 'success' };
+  }
+  return { status: 'error', message: 'Invalid URL' };
+});
+
 
