@@ -3,59 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zenith Studio — Autonomous Vision & Cognitive OS</title>
-  
-  <!-- Premium Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <title>Zenith</title>
+
+  <!-- Clean Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     /* ==========================================================================
-       DESIGN SYSTEM & VARIABLES (Dark Obsidian / Apple Sonoma / Linear Aesthetic)
+       OLLAMA-STYLE MINIMALIST DESIGN SYSTEM
        ========================================================================== */
     :root {
-      --bg-canvas: #090a0f;
-      --bg-sidebar: rgba(14, 16, 24, 0.85);
-      --bg-header: rgba(12, 14, 21, 0.8);
-      --bg-surface: rgba(20, 23, 34, 0.7);
-      --bg-surface-elevated: rgba(28, 32, 48, 0.75);
-      --bg-surface-hover: rgba(35, 40, 60, 0.8);
-      --bg-input: rgba(11, 13, 19, 0.9);
-      --bg-input-focus: rgba(16, 19, 28, 0.98);
+      --bg: #0c0c0c;
+      --card-bg: #141414;
+      --card-border: #222222;
+      --card-hover-border: #333333;
+      
+      --text: #ffffff;
+      --text-muted: #888888;
+      --text-dim: #555555;
+      
+      --accent: #ffffff;
+      --accent-hover: #e5e5e5;
+      
+      --status-green: #10b981;
+      --status-green-bg: rgba(16, 185, 129, 0.12);
+      
+      --status-gray: #737373;
+      --status-gray-bg: rgba(115, 115, 115, 0.12);
 
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --border-default: rgba(255, 255, 255, 0.12);
-      --border-hover: rgba(255, 255, 255, 0.2);
-      --border-focus: #38bdf8;
-
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --text-dim: #475569;
-
-      /* Premium Accents */
-      --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.35);
-      --cyan: #06b6d4;
-      --cyan-glow: rgba(6, 182, 212, 0.35);
-      --electric-blue: #0284c7;
-      --indigo: #6366f1;
-      --indigo-glow: rgba(99, 102, 241, 0.35);
-      --violet: #8b5cf6;
-      --amber: #f59e0b;
-      --crimson: #ef4444;
-      --crimson-glow: rgba(239, 68, 68, 0.4);
-
-      /* Micro-Spring Physics */
-      --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-      --spring-tactile: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --spring-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
-      --radius-xl: 24px;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.1);
+      
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
       --radius-full: 9999px;
     }
 
@@ -65,78 +48,41 @@
       padding: 0;
       user-select: none;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-canvas);
-      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Ambient Background Glow Mesh Canvas */
-    #ambientCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.65;
-      transition: opacity 1s var(--spring-smooth);
-    }
-
-    /* Micro-Dot Substrate Pattern */
-    .substrate-grid {
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 28px 28px;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.8;
-    }
-
-    /* App Shell Container */
-    .app-shell {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     /* ==========================================================================
-       TOP WINDOW CHROME (Frameless macOS Native Bar)
+       TOP BAR (Frameless Window Chrome)
        ========================================================================== */
-    .titlebar {
+    .header {
       height: 48px;
       min-height: 48px;
-      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      background: var(--bg-header);
-      backdrop-filter: blur(24px) saturate(160%);
-      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg);
+      border-bottom: 1px solid var(--card-border);
       -webkit-app-region: drag;
       z-index: 50;
     }
 
-    /* Traffic Lights */
     .traffic-lights {
       display: flex;
       align-items: center;
       gap: 8px;
       -webkit-app-region: no-drag;
-      width: 72px;
+      width: 80px;
     }
 
     .traffic-dot {
@@ -147,2477 +93,883 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s var(--spring-tactile), filter 0.2s ease;
-      position: relative;
+      transition: opacity 0.15s ease, transform 0.1s ease;
     }
-
-    .traffic-dot:hover {
-      transform: scale(1.15);
-      filter: brightness(1.15);
-    }
-
-    .traffic-dot:active {
-      transform: scale(0.92);
-    }
-
-    .dot-close { background: #ff5f56; border: 1px solid rgba(224, 68, 62, 0.4); }
-    .dot-min   { background: #ffbd2e; border: 1px solid rgba(222, 161, 35, 0.4); }
-    .dot-max   { background: #27c93f; border: 1px solid rgba(40, 179, 63, 0.4); }
-
+    .traffic-dot:active { transform: scale(0.9); }
+    .dot-close { background: #ff5f56; }
+    .dot-min   { background: #ffbd2e; }
+    .dot-max   { background: #27c93f; }
+    
     .traffic-dot svg {
       opacity: 0;
-      width: 7px;
-      height: 7px;
-      fill: #4b0000;
-      transition: opacity 0.15s ease;
-    }
-    .traffic-lights:hover .traffic-dot svg { opacity: 0.85; }
-
-    /* Titlebar Center Badge */
-    .titlebar-center {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      -webkit-app-region: drag;
-    }
-
-    .brand-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 12px;
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    }
-
-    .brand-logo-gem {
-      width: 14px;
-      height: 14px;
-      background: linear-gradient(135deg, var(--emerald), var(--cyan));
-      border-radius: 4px;
-      transform: rotate(45deg);
-      box-shadow: 0 0 8px var(--emerald-glow);
-      transition: transform 0.5s var(--spring-bounce);
-    }
-    .brand-pill:hover .brand-logo-gem {
-      transform: rotate(225deg) scale(1.1);
-    }
-
-    .live-status-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 10px;
-      border-radius: var(--radius-full);
-      font-size: 11px;
-      font-weight: 600;
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--emerald);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      transition: all 0.3s var(--spring-smooth);
-    }
-
-    .live-pulse-dot {
       width: 6px;
       height: 6px;
-      border-radius: var(--radius-full);
-      background: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald);
-      animation: pulseGlow 2s infinite ease-in-out;
+      fill: rgba(0, 0, 0, 0.6);
+      transition: opacity 0.15s ease;
     }
+    .traffic-lights:hover .traffic-dot svg { opacity: 1; }
 
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.6; }
-    }
-
-    /* Titlebar Right Tools */
-    .titlebar-actions {
+    /* Brand Logo / Title */
+    .brand {
       display: flex;
       align-items: center;
       gap: 10px;
-      -webkit-app-region: no-drag;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: -0.01em;
     }
 
-    .cmd-k-trigger {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s var(--spring-smooth);
-    }
-
-    .cmd-k-trigger:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-primary);
-      border-color: var(--border-hover);
-    }
-
-    .kbd-shortcut {
-      display: inline-block;
-      padding: 1px 5px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--text-secondary);
-    }
-
-    .win-controls {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .win-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--radius-sm);
+    .brand-icon {
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #000000;
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    /* Segmented Tab Controls */
+    .segmented-tabs {
+      display: flex;
+      align-items: center;
+      background: #181818;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      -webkit-app-region: no-drag;
+    }
+
+    .tab-btn {
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
       background: transparent;
       border: none;
-      color: var(--text-muted);
+      border-radius: 4px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
-    .win-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-primary);
+    .tab-btn:hover {
+      color: var(--text);
     }
 
-    .win-btn.close-btn:hover {
-      background: var(--crimson);
-      color: #fff;
+    .tab-btn.active {
+      background: #262626;
+      color: var(--text);
+      font-weight: 600;
     }
 
     /* ==========================================================================
-       MAIN WORKSPACE (Sidebar + Content Canvas)
+       MAIN CONTENT CONTAINER
        ========================================================================== */
-    .workspace {
+    .main-container {
       flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
-
-    /* --------------------------------------------------------------------------
-       Sidebar Navigation
-       -------------------------------------------------------------------------- */
-    .sidebar {
-      width: 250px;
-      min-width: 250px;
-      height: 100%;
-      background: var(--bg-sidebar);
-      backdrop-filter: blur(30px) saturate(180%);
-      border-right: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 16px 12px;
-      z-index: 20;
-    }
-
-    .nav-section {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .nav-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      padding: 8px 12px 4px 12px;
-    }
-
-    /* The Gliding Active Indicator Pill */
-    .nav-indicator {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      height: 42px;
-      background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.08));
-      border: 1px solid rgba(16, 185, 129, 0.28);
-      border-radius: var(--radius-md);
-      box-shadow: 0 2px 16px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      pointer-events: none;
-      transition: top 0.35s var(--spring-smooth), opacity 0.2s ease;
-      z-index: 1;
-    }
-
-    .nav-indicator::before {
-      content: '';
-      position: absolute;
-      left: -1px;
-      top: 25%;
-      height: 50%;
-      width: 3px;
-      border-radius: 0 4px 4px 0;
-      background: var(--emerald);
-      box-shadow: 0 0 10px var(--emerald);
-    }
-
-    .nav-item {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      border-radius: var(--radius-md);
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      width: 100%;
-      text-align: left;
-      transition: color 0.2s ease, transform 0.15s var(--spring-tactile);
-    }
-
-    .nav-item:hover {
-      color: var(--text-primary);
-    }
-
-    .nav-item:active {
-      transform: scale(0.97);
-    }
-
-    .nav-item.active {
-      color: #ffffff;
-      font-weight: 700;
-    }
-
-    .nav-icon {
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      transition: color 0.2s ease, transform 0.2s ease;
-    }
-
-    .nav-item:hover .nav-icon {
-      color: var(--cyan);
-      transform: scale(1.08);
-    }
-
-    .nav-item.active .nav-icon {
-      color: var(--emerald);
-      filter: drop-shadow(0 0 6px var(--emerald-glow));
-    }
-
-    .nav-badge {
-      margin-left: auto;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-muted);
-      transition: all 0.2s ease;
-    }
-
-    .nav-item.active .nav-badge {
-      background: rgba(16, 185, 129, 0.2);
-      color: var(--emerald);
-    }
-
-    /* Presence Dock Card */
-    .sidebar-footer {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .presence-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      transition: all 0.2s var(--spring-smooth);
-    }
-
-    .presence-avatar {
-      position: relative;
-      width: 34px;
-      height: 34px;
-      border-radius: var(--radius-full);
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--emerald);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .presence-status-dot {
-      position: absolute;
-      bottom: -1px;
-      right: -1px;
-      width: 10px;
-      height: 10px;
-      border-radius: var(--radius-full);
-      background: var(--emerald);
-      border: 2px solid var(--bg-canvas);
-      box-shadow: 0 0 6px var(--emerald);
-    }
-
-    .presence-meta {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .presence-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .presence-sub {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* Emergency Stop Button */
-    .btn-emergency {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 8px 12px;
-      border-radius: var(--radius-md);
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: #f87171;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      transition: all 0.25s var(--spring-tactile);
-    }
-
-    .btn-emergency:hover {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: rgba(239, 68, 68, 0.5);
-      color: #ffffff;
-      box-shadow: 0 0 16px var(--crimson-glow);
-      transform: translateY(-1px);
-    }
-
-    .btn-emergency:active {
-      transform: scale(0.96);
-    }
-
-    /* --------------------------------------------------------------------------
-       Main Content Views Area
-       -------------------------------------------------------------------------- */
-    .content-area {
-      flex: 1;
-      height: 100%;
       overflow-y: auto;
-      overflow-x: hidden;
-      padding: 24px 32px 36px 32px;
-      position: relative;
+      padding: 28px 32px 32px 32px;
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
     }
 
-    /* Custom Scrollbar */
-    .content-area::-webkit-scrollbar,
-    .scrollable-feed::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .content-area::-webkit-scrollbar-track,
-    .scrollable-feed::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .content-area::-webkit-scrollbar-thumb,
-    .scrollable-feed::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-full);
-    }
-    .content-area::-webkit-scrollbar-thumb:hover,
-    .scrollable-feed::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.22);
-    }
-
-    /* Staggered View Transitions */
-    .view-pane {
+    .tab-content {
       display: none;
-      animation: viewEnter 0.4s var(--spring-smooth) forwards;
+      animation: fadeIn 0.15s ease-out;
     }
 
-    .view-pane.active {
+    .tab-content.active {
       display: block;
     }
 
-    @keyframes viewEnter {
-      from {
-        opacity: 0;
-        transform: translateY(14px) scale(0.995);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* View Header */
-    .view-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
+    /* ==========================================================================
+       TAB 1: STATUS (Ollama Minimalist Hero)
+       ========================================================================== */
+    .hero-status-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      text-align: center;
       margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-subtle);
+      transition: border-color 0.2s ease;
     }
 
-    .view-title-group h1 {
-      font-size: 26px;
-      font-weight: 800;
+    .hero-status-card:hover {
+      border-color: var(--card-hover-border);
+    }
+
+    .status-badge-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-full);
+      background: var(--status-gray-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px auto;
+      transition: all 0.3s ease;
+    }
+
+    .status-badge-circle.running {
+      background: var(--status-green-bg);
+    }
+
+    .status-dot-core {
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-full);
+      background: var(--status-gray);
+      transition: all 0.3s ease;
+    }
+
+    .status-badge-circle.running .status-dot-core {
+      background: var(--status-green);
+      box-shadow: 0 0 12px var(--status-green);
+    }
+
+    .hero-title {
+      font-size: 20px;
+      font-weight: 700;
       letter-spacing: -0.02em;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      margin-bottom: 6px;
     }
 
-    .view-title-group p {
-      font-size: 13.5px;
-      color: var(--text-secondary);
-      max-width: 620px;
+    .hero-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* Tactile Buttons */
-    .btn {
+    /* Ollama Solid Action Button */
+    .btn-action {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 8px 16px;
-      border-radius: var(--radius-md);
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s var(--spring-tactile);
-      border: 1px solid transparent;
-      outline: none;
-    }
-
-    .btn:active {
-      transform: scale(0.96);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--emerald), #059669);
-      color: #042f1a;
-      font-weight: 700;
-      box-shadow: 0 4px 16px var(--emerald-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.12);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px var(--emerald-glow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-default);
-      color: var(--text-primary);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.09);
-      border-color: var(--border-hover);
-      transform: translateY(-1px);
-    }
-
-    /* --------------------------------------------------------------------------
-       Interactive Spotlight Cards (Linear / Vercel Aesthetic)
-       -------------------------------------------------------------------------- */
-    .spotlight-card {
-      position: relative;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      transition: transform 0.3s var(--spring-smooth), border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .spotlight-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.08), transparent 75%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .spotlight-card:hover {
-      border-color: var(--border-hover);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .spotlight-card:hover::before {
-      opacity: 1;
-    }
-
-    /* Grid Layouts */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    /* ==========================================================================
-       VIEW 1: COCKPIT (Hero Assistant State, Waveform, Quick Vitals)
-       ========================================================================== */
-    .hero-cockpit {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-
-    /* Central Assistant Power Orb */
-    .orb-stage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 32px 20px;
-      position: relative;
-    }
-
-    .power-orb-wrapper {
-      position: relative;
-      width: 140px;
-      height: 140px;
-      margin-bottom: 20px;
-      cursor: pointer;
-    }
-
-    .orb-glow-halo {
-      position: absolute;
-      inset: -15px;
-      border-radius: var(--radius-full);
-      background: radial-gradient(circle, var(--emerald-glow), transparent 70%);
-      opacity: 0.5;
-      filter: blur(14px);
-      transition: all 0.5s var(--spring-smooth);
-      animation: breatheHalo 4s ease-in-out infinite;
-    }
-
-    @keyframes breatheHalo {
-      0%, 100% { transform: scale(1); opacity: 0.4; }
-      50% { transform: scale(1.15); opacity: 0.75; }
-    }
-
-    .orb-spin-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: var(--radius-full);
-      padding: 2px;
-      background: conic-gradient(from 0deg, var(--emerald), var(--cyan), var(--indigo), var(--emerald));
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      animation: ringRotate 8s linear infinite;
-      transition: all 0.4s ease;
-    }
-
-    @keyframes ringRotate {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-
-    .orb-core-glass {
-      position: absolute;
-      inset: 6px;
-      border-radius: var(--radius-full);
-      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.15), rgba(15, 23, 42, 0.95) 75%);
-      box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.25), 0 8px 24px rgba(0, 0, 0, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s var(--spring-tactile);
-    }
-
-    .power-orb-wrapper:hover .orb-core-glass {
-      transform: scale(1.05);
-      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.22), rgba(16, 185, 129, 0.2) 75%);
-    }
-
-    .power-orb-wrapper:active .orb-core-glass {
-      transform: scale(0.94);
-    }
-
-    .orb-icon {
-      width: 44px;
-      height: 44px;
-      fill: none;
-      stroke: var(--emerald);
-      stroke-width: 2.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      filter: drop-shadow(0 0 10px var(--emerald-glow));
-      transition: all 0.3s ease;
-    }
-
-    /* Waveform Audio Visualizer Stage */
-    .visualizer-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 280px;
-    }
-
-    .visualizer-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .visualizer-canvas-container {
-      flex: 1;
-      width: 100%;
-      height: 160px;
-      border-radius: var(--radius-md);
-      background: rgba(11, 13, 20, 0.6);
-      border: 1px solid var(--border-subtle);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #waveCanvas {
-      width: 100%;
-      height: 100%;
-    }
-
-    .visualizer-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 14px;
-      border-top: 1px solid var(--border-subtle);
-      margin-top: 14px;
-    }
-
-    /* Metric Vitals Gauges */
-    .vital-metric {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .radial-gauge-box {
-      position: relative;
-      width: 56px;
-      height: 56px;
-    }
-
-    .radial-gauge-box svg {
-      transform: rotate(-90deg);
-      width: 56px;
-      height: 56px;
-    }
-
-    .gauge-bg {
-      stroke: rgba(255, 255, 255, 0.08);
-      stroke-width: 5;
-      fill: none;
-    }
-
-    .gauge-fill {
-      stroke-width: 5;
-      stroke-linecap: round;
-      fill: none;
-      stroke-dasharray: 157;
-      stroke-dashoffset: 157;
-      transition: stroke-dashoffset 0.8s var(--spring-smooth);
-    }
-
-    .gauge-fill-emerald { stroke: var(--emerald); filter: drop-shadow(0 0 6px var(--emerald-glow)); }
-    .gauge-fill-cyan    { stroke: var(--cyan); filter: drop-shadow(0 0 6px var(--cyan-glow)); }
-    .gauge-fill-indigo  { stroke: var(--indigo); filter: drop-shadow(0 0 6px var(--indigo-glow)); }
-
-    .gauge-text {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-primary);
-    }
-
-    .vital-info h4 {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 2px;
-    }
-
-    .vital-info p {
-      font-size: 11.5px;
-      color: var(--text-muted);
-    }
-
-    /* Tactile iOS Switch */
-    .switch-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      transition: all 0.2s var(--spring-smooth);
-    }
-
-    .switch-row:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--border-default);
-    }
-
-    .switch-label-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .switch-title {
+      padding: 10px 28px;
+      border-radius: var(--radius-sm);
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-primary);
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      background: var(--accent);
+      color: #000000;
+      min-width: 160px;
     }
 
-    .switch-desc {
-      font-size: 11.5px;
+    .btn-action:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-action.running {
+      background: #222222;
+      color: #ffffff;
+      border: 1px solid #333333;
+    }
+
+    .btn-action.running:hover {
+      background: #2a2a2a;
+    }
+
+    /* Minimal Specs List */
+    .specs-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .spec-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 13px;
+    }
+
+    .spec-row:last-child {
+      border-bottom: none;
+    }
+
+    .spec-label {
       color: var(--text-muted);
+      font-weight: 500;
     }
 
-    .ios-switch {
+    .spec-value {
+      color: var(--text);
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Minimal Switch */
+    .mini-switch {
       position: relative;
       display: inline-block;
-      width: 44px;
-      height: 24px;
+      width: 34px;
+      height: 18px;
     }
 
-    .ios-switch input {
+    .mini-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
 
-    .ios-slider {
+    .mini-slider {
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background: rgba(255, 255, 255, 0.12);
+      background: #2a2a2a;
       border-radius: var(--radius-full);
-      transition: all 0.3s var(--spring-tactile);
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+      transition: 0.2s ease;
     }
 
-    .ios-slider::before {
+    .mini-slider:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #888888;
+      border-radius: var(--radius-full);
+      transition: 0.2s ease;
+    }
+
+    .mini-switch input:checked + .mini-slider {
+      background: var(--status-green);
+    }
+
+    .mini-switch input:checked + .mini-slider:before {
       background-color: #ffffff;
-      border-radius: var(--radius-full);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      transition: all 0.35s var(--spring-bounce);
+      transform: translateX(16px);
     }
 
-    .ios-switch input:checked + .ios-slider {
-      background: var(--emerald);
-      box-shadow: 0 0 12px var(--emerald-glow);
-    }
-
-    .ios-switch input:checked + .ios-slider::before {
-      transform: translateX(20px);
-    }
-
-    /* ==========================================================================
-       VIEW 2: COGNITIVE CORE (System 2, Memory Evolution, Playbooks)
-       ========================================================================== */
-    .playbook-card {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .playbook-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 8px;
-      border-radius: var(--radius-full);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      width: fit-content;
-    }
-
-    .badge-cyan { background: rgba(6, 182, 212, 0.12); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
-    .badge-emerald { background: rgba(16, 185, 129, 0.12); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-violet { background: rgba(139, 92, 246, 0.12); color: var(--violet); border: 1px solid rgba(139, 92, 246, 0.3); }
-
-    .playbook-code {
+    /* Quick Tip Box */
+    .tip-box {
+      background: #111111;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
-      color: var(--text-primary);
-      padding: 8px 10px;
-      border-radius: var(--radius-sm);
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--border-subtle);
-    }
-
-    /* ==========================================================================
-       VIEW 3: ACTIVITY STREAM (Discord / Terminal Hybrid Stream)
-       ========================================================================== */
-    .activity-container {
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 190px);
-      border-radius: var(--radius-lg);
-      background: rgba(11, 13, 20, 0.7);
-      border: 1px solid var(--border-subtle);
-      overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    }
-
-    .activity-toolbar {
+      color: var(--text-dim);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(16, 19, 29, 0.8);
-      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
     }
 
-    .filter-chips {
+    .tip-box span {
+      color: var(--text-muted);
+    }
+
+    /* Emergency Halt Link */
+    .emergency-link-wrapper {
+      text-align: center;
+      margin-top: 14px;
+    }
+
+    .emergency-link {
+      background: transparent;
+      border: none;
+      color: #666666;
+      font-size: 11.5px;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.15s ease;
+    }
+
+    .emergency-link:hover {
+      color: var(--danger);
+    }
+
+    /* ==========================================================================
+       TAB 2: LOGS (Ollama Clean Terminal)
+       ========================================================================== */
+    .terminal-container {
+      background: #000000;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 150px);
+      overflow: hidden;
+    }
+
+    .terminal-header {
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: #111111;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
-    .chip-btn {
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      font-size: 11px;
-      font-weight: 600;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
+    .terminal-btn {
+      background: transparent;
+      border: none;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.2s var(--spring-smooth);
+      font-size: 11.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .terminal-btn:hover {
+      color: var(--text);
+      background: #222222;
     }
 
-    .chip-btn:hover {
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .chip-btn.active {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: rgba(16, 185, 129, 0.4);
-      color: var(--emerald);
-      font-weight: 700;
-    }
-
-    .scrollable-feed {
+    .terminal-body {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      padding: 14px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
+      line-height: 1.6;
+      color: #cccccc;
     }
 
-    .feed-row {
+    .terminal-line {
       display: flex;
-      align-items: baseline;
       gap: 10px;
-      padding: 6px 10px;
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.015);
-      border: 1px solid transparent;
-      animation: enterRow 0.25s var(--spring-smooth) forwards;
-      transition: background 0.15s ease;
     }
 
-    .feed-row:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: var(--border-subtle);
+    .log-time {
+      color: #555555;
+      user-select: none;
     }
 
-    @keyframes enterRow {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .log-tag {
+      color: #888888;
+      font-weight: 600;
     }
 
-    .feed-time {
-      color: var(--text-dim);
-      font-size: 11px;
-      white-space: nowrap;
-    }
-
-    .feed-tag {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .tag-system { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-    .tag-cog    { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-    .tag-vision { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
-    .tag-ipc    { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .tag-warn   { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-    .tag-error  { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-
-    .feed-body {
-      color: var(--text-secondary);
-      flex: 1;
-      word-break: break-word;
-      line-height: 1.4;
+    .log-msg {
+      color: #d4d4d4;
+      word-break: break-all;
     }
 
     /* ==========================================================================
-       VIEW 4: SETTINGS (macOS System Settings Style Forms)
+       TAB 3: SETTINGS (Simple Vertical Forms)
        ========================================================================== */
-    .settings-group {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .settings-group-title {
-      font-size: 14px;
+    .settings-title {
+      font-size: 16px;
       font-weight: 700;
-      letter-spacing: -0.01em;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 16px;
     }
 
-    .field-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+    .setting-group {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: var(--radius-md);
       padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: all 0.2s ease;
+      margin-bottom: 16px;
     }
 
-    .field-card:focus-within {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
-    }
-
-    .field-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .field-label {
+    .setting-label {
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-primary);
+      margin-bottom: 4px;
     }
 
-    .field-sub {
-      font-size: 11.5px;
+    .setting-desc {
+      font-size: 12px;
       color: var(--text-muted);
+      margin-bottom: 10px;
     }
 
-    .input-wrapper {
+    .input-row {
       position: relative;
       display: flex;
       align-items: center;
     }
 
-    .input-text {
+    .input-field {
       width: 100%;
-      padding: 10px 14px;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      background: #000000;
+      border: 1px solid var(--card-border);
       border-radius: var(--radius-sm);
-      color: var(--text-primary);
+      color: #ffffff;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
+      font-size: 12px;
       outline: none;
-      transition: all 0.2s ease;
+      transition: border-color 0.15s ease;
     }
 
-    .input-text:focus {
-      background: var(--bg-input-focus);
-      border-color: var(--border-focus);
+    .input-field:focus {
+      border-color: #555555;
     }
 
-    .input-toggle-eye {
+    .toggle-visibility-btn {
       position: absolute;
-      right: 10px;
+      right: 8px;
       background: transparent;
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4px;
-      border-radius: 4px;
-      transition: color 0.2s ease;
-    }
-
-    .input-toggle-eye:hover {
-      color: var(--text-primary);
-    }
-
-    /* ==========================================================================
-       COMMAND PALETTE (Raycast Style Ctrl+K Modal)
-       ========================================================================== */
-    .cmd-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(16px);
-      z-index: 1000;
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 15vh;
-      animation: fadeIn 0.2s ease forwards;
-    }
-
-    .cmd-overlay.active {
-      display: flex;
-    }
-
-    .cmd-dialog {
-      width: 580px;
-      max-width: 90vw;
-      background: rgba(18, 21, 31, 0.94);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-xl);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      overflow: hidden;
-      animation: scaleIn 0.25s var(--spring-bounce) forwards;
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-    .cmd-search-bar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .cmd-search-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 15px;
-      color: var(--text-primary);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    .cmd-list {
-      max-height: 320px;
-      overflow-y: auto;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .cmd-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      color: var(--text-secondary);
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.15s ease;
-    }
-
-    .cmd-item:hover, .cmd-item.selected {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-primary);
-    }
-
-    .cmd-item.selected {
-      background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.08));
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #fff;
-    }
-
-    /* ==========================================================================
-       TOAST NOTIFICATION ENGINE
-       ========================================================================== */
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
-    }
-
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 18px;
-      border-radius: var(--radius-md);
-      background: rgba(18, 22, 33, 0.95);
-      border: 1px solid var(--border-default);
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      color: var(--text-primary);
-      font-size: 12.5px;
-      font-weight: 600;
-      animation: toastIn 0.35s var(--spring-bounce) forwards;
-      transition: all 0.3s ease;
-    }
-
-    @keyframes toastIn {
-      from { transform: translateX(40px) scale(0.9); opacity: 0; }
-      to   { transform: translateX(0) scale(1); opacity: 1; }
-    }
-
-    .toast.hide {
-      opacity: 0;
-      transform: translateY(10px) scale(0.95);
-    }
-
-    .toast-icon {
-      width: 18px;
-      height: 18px;
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 11px;
+      padding: 2px 4px;
+    }
+    .toggle-visibility-btn:hover { color: #fff; }
+
+    .btn-save {
+      background: var(--accent);
+      color: #000000;
+      font-weight: 600;
+      border: none;
+      padding: 9px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn-save:hover {
+      background: var(--accent-hover);
     }
 
-    .toast-success .toast-icon { background: var(--emerald); color: #000; }
-    .toast-error   .toast-icon { background: var(--crimson); color: #fff; }
-    .toast-info    .toast-icon { background: var(--cyan); color: #000; }
+    /* ==========================================================================
+       CLEAN TOAST
+       ========================================================================== */
+    .toast-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #181818;
+      border: 1px solid #333333;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .toast-box.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Moving Aurora Background -->
-  <canvas id="ambientCanvas"></canvas>
-  <div class="substrate-grid"></div>
-
-  <!-- App Shell -->
-  <div class="app-shell">
-    
-    <!-- Top Window Titlebar -->
-    <header class="titlebar">
-      <!-- macOS Traffic Lights -->
-      <div class="traffic-lights">
-        <div class="traffic-dot dot-close" id="btnTrafficClose" title="Close">
-          <svg viewBox="0 0 10 10"><path d="M1 1L9 9M9 1L1 9" stroke="#4b0000" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </div>
-        <div class="traffic-dot dot-min" id="btnTrafficMin" title="Minimize">
-          <svg viewBox="0 0 10 10"><path d="M1 5H9" stroke="#5c3b00" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
-        <div class="traffic-dot dot-max" id="btnTrafficMax" title="Maximize">
-          <svg viewBox="0 0 10 10"><path d="M1 5H9M5 1V9" stroke="#004d1a" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
+  <!-- Frameless Header Bar -->
+  <header class="header">
+    <div class="traffic-lights">
+      <div class="traffic-dot dot-close" id="btnTrafficClose" title="Close">
+        <svg viewBox="0 0 10 10"><path d="M1 1L9 9M9 1L1 9" stroke="#000" stroke-width="1.8"/></svg>
       </div>
-
-      <!-- Titlebar Center Brand Pill -->
-      <div class="titlebar-center">
-        <div class="brand-pill">
-          <div class="brand-logo-gem"></div>
-          <span>Zenith Studio</span>
-        </div>
-        <div class="live-status-pill" id="liveStatusBadge">
-          <span class="live-pulse-dot" id="livePulseDot"></span>
-          <span id="liveStatusText">STANDBY</span>
-        </div>
+      <div class="traffic-dot dot-min" id="btnTrafficMin" title="Minimize">
+        <svg viewBox="0 0 10 10"><path d="M1 5H9" stroke="#000" stroke-width="2"/></svg>
       </div>
-
-      <!-- Titlebar Right Controls -->
-      <div class="titlebar-actions">
-        <div class="cmd-k-trigger" id="cmdPaletteTrigger" title="Quick Command Palette (Ctrl+K)">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <span>Commands</span>
-          <span class="kbd-shortcut">Ctrl K</span>
-        </div>
-        <div class="win-controls">
-          <button class="win-btn" id="btnWinMin" title="Minimize">
-            <svg width="10" height="1" viewBox="0 0 10 1"><path d="M0 0h10v1H0z" fill="currentColor"/></svg>
-          </button>
-          <button class="win-btn" id="btnWinMax" title="Maximize">
-            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 0v10h10V0H0zm9 9H1V1h8v8z" fill="currentColor"/></svg>
-          </button>
-          <button class="win-btn close-btn" id="btnWinClose" title="Close">
-            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 0L0 1l4 4-4 4 1 1 4-4 4 4 1-1-4-4 4-4-1-1-4 4-4-4z" fill="currentColor"/></svg>
-          </button>
-        </div>
+      <div class="traffic-dot dot-max" id="btnTrafficMax" title="Maximize">
+        <svg viewBox="0 0 10 10"><path d="M1 5H9M5 1V9" stroke="#000" stroke-width="2"/></svg>
       </div>
-    </header>
+    </div>
 
-    <!-- Workspace -->
-    <div class="workspace">
+    <div class="brand">
+      <div class="brand-icon">Z</div>
+      <span>Zenith</span>
+    </div>
+
+    <!-- Segmented Tab Controls (Ollama Style) -->
+    <div class="segmented-tabs">
+      <button class="tab-btn active" data-tab="tab-status">Status</button>
+      <button class="tab-btn" data-tab="tab-logs">Logs</button>
+      <button class="tab-btn" data-tab="tab-settings">Settings</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-container">
+
+    <!-- ====================================================================
+         TAB 1: STATUS
+         ==================================================================== -->
+    <div class="tab-content active" id="tab-status">
       
-      <!-- Sidebar Navigation -->
-      <aside class="sidebar">
-        <div class="nav-section" id="navSection">
-          <div class="nav-indicator" id="navIndicator"></div>
-          
-          <div class="nav-label">Core Architecture</div>
-          
-          <button class="nav-item active" data-view="view-cockpit">
-            <span class="nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </span>
-            <span>Cockpit</span>
-            <span class="nav-badge" id="badgeCockpit">Live</span>
-          </button>
-
-          <button class="nav-item" data-view="view-cognitive">
-            <span class="nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 0-9 9c0 3.6 2.1 6.7 5.2 8.1.4.2.8.5.8 1v1.9h6V20.1c0-.5.4-.8.8-1 3.1-1.4 5.2-4.5 5.2-8.1a9 9 0 0 0-9-9z"/><path d="M9 14h6"/><path d="M10 17h4"/></svg>
-            </span>
-            <span>Cognitive Core</span>
-            <span class="nav-badge">WAL</span>
-          </button>
-
-          <button class="nav-item" data-view="view-vision">
-            <span class="nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-            </span>
-            <span>Vision & Screen</span>
-            <span class="nav-badge" id="badgeVision">Smart</span>
-          </button>
-
-          <div class="nav-label" style="margin-top: 14px;">Diagnostics & Stream</div>
-
-          <button class="nav-item" data-view="view-stream">
-            <span class="nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
-            </span>
-            <span>Activity Stream</span>
-            <span class="nav-badge" id="streamCountBadge">0</span>
-          </button>
-
-          <button class="nav-item" data-view="view-settings">
-            <span class="nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </span>
-            <span>Settings & Keys</span>
-          </button>
+      <!-- Big Minimalist Status Hero -->
+      <div class="hero-status-card">
+        <div class="status-badge-circle" id="statusBadgeCircle">
+          <div class="status-dot-core"></div>
         </div>
-
-        <!-- Sidebar Presence & Emergency Kill -->
-        <div class="sidebar-footer">
-          <div class="presence-card">
-            <div class="presence-avatar">
-              <span>Z</span>
-              <div class="presence-status-dot" id="presenceDot"></div>
-            </div>
-            <div class="presence-meta">
-              <div class="presence-name">Zenith Daemon</div>
-              <div class="presence-sub" id="presencePid">PID: Offline</div>
-            </div>
-          </div>
-          
-          <button class="btn-emergency" id="btnEmergencyHalt">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-            <span>Emergency Kill</span>
-          </button>
-        </div>
-      </aside>
-
-      <!-- Main Content Area -->
-      <main class="content-area">
+        <h2 class="hero-title" id="heroStatusTitle">Zenith is stopped</h2>
+        <p class="hero-sub" id="heroStatusSub">Click Start to initialize voice loop and cognitive engine</p>
         
-        <!-- ====================================================================
-             VIEW 1: COCKPIT
-             ==================================================================== -->
-        <section class="view-pane active" id="view-cockpit">
-          <div class="view-header">
-            <div class="view-title-group">
-              <h1>
-                <span>Executive Cockpit</span>
-              </h1>
-              <p>Autonomous multimodal orchestration, live acoustic spectrum synthesis, and instant motor telemetry.</p>
-            </div>
-            <div class="header-actions">
-              <button class="btn btn-secondary" id="btnRefreshTelemetry">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
-                <span>Poll Vitals</span>
-              </button>
-              <button class="btn btn-primary" id="btnStartAssistant">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                <span id="btnStartAssistantText">Engage Zenith</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Hero Cockpit Row -->
-          <div class="hero-cockpit">
-            
-            <!-- Tactile Glass Assistant Power Orb -->
-            <div class="spotlight-card orb-stage">
-              <div class="power-orb-wrapper" id="powerOrbBtn" title="Click to Engage / Disengage Assistant">
-                <div class="orb-glow-halo" id="orbHalo"></div>
-                <div class="orb-spin-ring" id="orbRing"></div>
-                <div class="orb-core-glass">
-                  <svg class="orb-icon" id="orbIcon" viewBox="0 0 24 24">
-                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/>
-                  </svg>
-                </div>
-              </div>
-              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;" id="orbHeroTitle">Assistant Standby</h3>
-              <p style="font-size: 12px; color: var(--text-muted); max-width: 220px;" id="orbHeroSub">Click orb to initialize local neural reasoning loops.</p>
-            </div>
-
-            <!-- Waveform Visualizer & Acoustic Synthesizer -->
-            <div class="spotlight-card visualizer-card">
-              <div class="visualizer-header">
-                <div>
-                  <h3 style="font-size: 15px; font-weight: 700;">Acoustic Neural Waveform</h3>
-                  <p style="font-size: 11.5px; color: var(--text-muted);">Real-time frequency modulation & voice synthesis activity</p>
-                </div>
-                <div class="playbook-badge badge-emerald" id="audioModeBadge">
-                  <span>Adaptive VAD</span>
-                </div>
-              </div>
-
-              <div class="visualizer-canvas-container">
-                <canvas id="waveCanvas"></canvas>
-              </div>
-
-              <div class="visualizer-footer">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="font-size: 11.5px; color: var(--text-muted);">Acoustic State:</span>
-                  <span style="font-size: 12px; font-weight: 700; color: var(--emerald);" id="acousticStateLabel">Silent (Standby)</span>
-                </div>
-                <div style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;" id="sampleRateLabel">
-                  48,000 Hz • PCM-16
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Quick Vitals Grid (4 Cards with SVG Radial Gauges) -->
-          <div class="grid-4">
-            
-            <div class="spotlight-card vital-metric">
-              <div class="radial-gauge-box">
-                <svg>
-                  <circle class="gauge-bg" cx="28" cy="28" r="25"/>
-                  <circle class="gauge-fill gauge-fill-emerald" id="gaugeCpu" cx="28" cy="28" r="25"/>
-                </svg>
-                <div class="gauge-text" id="gaugeCpuVal">0%</div>
-              </div>
-              <div class="vital-info">
-                <h4>Neural Load</h4>
-                <p id="cpuDetail">System Host CPU</p>
-              </div>
-            </div>
-
-            <div class="spotlight-card vital-metric">
-              <div class="radial-gauge-box">
-                <svg>
-                  <circle class="gauge-bg" cx="28" cy="28" r="25"/>
-                  <circle class="gauge-fill gauge-fill-cyan" id="gaugeRam" cx="28" cy="28" r="25"/>
-                </svg>
-                <div class="gauge-text" id="gaugeRamVal">0%</div>
-              </div>
-              <div class="vital-info">
-                <h4>RAM Pool</h4>
-                <p id="ramDetail">Allocation MB</p>
-              </div>
-            </div>
-
-            <div class="spotlight-card vital-metric">
-              <div class="radial-gauge-box">
-                <svg>
-                  <circle class="gauge-bg" cx="28" cy="28" r="25"/>
-                  <circle class="gauge-fill gauge-fill-indigo" id="gaugeDb" cx="28" cy="28" r="25" style="stroke-dashoffset: 40;"/>
-                </svg>
-                <div class="gauge-text" id="gaugeDbVal">WAL</div>
-              </div>
-              <div class="vital-info">
-                <h4>Memory DB</h4>
-                <p id="dbDetail">SQLite Sovereign</p>
-              </div>
-            </div>
-
-            <div class="spotlight-card vital-metric">
-              <div class="radial-gauge-box">
-                <svg>
-                  <circle class="gauge-bg" cx="28" cy="28" r="25"/>
-                  <circle class="gauge-fill gauge-fill-emerald" id="gaugeVision" cx="28" cy="28" r="25" style="stroke-dashoffset: 20;"/>
-                </svg>
-                <div class="gauge-text">ON</div>
-              </div>
-              <div class="vital-info">
-                <h4>Screen Vision</h4>
-                <p id="visionModeDetail">Smart On-Demand</p>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Tactile Control Toggles -->
-          <div class="grid-2">
-            
-            <div class="spotlight-card switch-row">
-              <div class="switch-label-group">
-                <span class="switch-title">Smart Vision Stream</span>
-                <span class="switch-desc">High-framerate continuous screen capture (30fps) for fast visual tasks</span>
-              </div>
-              <label class="ios-switch">
-                <input type="checkbox" id="toggleScreenStreaming">
-                <span class="ios-slider"></span>
-              </label>
-            </div>
-
-            <div class="spotlight-card switch-row">
-              <div class="switch-label-group">
-                <span class="switch-title">System 2 Deliberative Matrix</span>
-                <span class="switch-desc">Subconscious chain-of-thought verification for safety critical code</span>
-              </div>
-              <label class="ios-switch">
-                <input type="checkbox" id="toggleSystem2" checked>
-                <span class="ios-slider"></span>
-              </label>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             VIEW 2: COGNITIVE CORE
-             ==================================================================== -->
-        <section class="view-pane" id="view-cognitive">
-          <div class="view-header">
-            <div class="view-title-group">
-              <h1>
-                <span>Cognitive Architecture & Memory</span>
-              </h1>
-              <p>Deliberative matrix reasoning, procedural neuroplasticity playbooks, and temporal episodic evolution.</p>
-            </div>
-            <div class="header-actions">
-              <button class="btn btn-secondary" id="btnPruneWal">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                <span>Checkpoint WAL</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="grid-3">
-            
-            <div class="spotlight-card playbook-card">
-              <div class="playbook-badge badge-emerald">Engine 1</div>
-              <h3 style="font-size: 15px; font-weight: 700;">System 2 Deliberative Matrix</h3>
-              <p style="font-size: 12px; color: var(--text-muted);">Self-reflecting multi-candidate decision planner with safety confidence thresholding.</p>
-              <div class="playbook-code">Confidence: 0.98 • VACUUM INTO</div>
-            </div>
-
-            <div class="spotlight-card playbook-card">
-              <div class="playbook-badge badge-cyan">Engine 2</div>
-              <h3 style="font-size: 15px; font-weight: 700;">Procedural Neuroplasticity</h3>
-              <p style="font-size: 12px; color: var(--text-muted);">Self-authored playbooks indexed with cosine distance for deterministic repeat tasks.</p>
-              <div class="playbook-code">Playbook: git_detached_head</div>
-            </div>
-
-            <div class="spotlight-card playbook-card">
-              <div class="playbook-badge badge-violet">Engine 3</div>
-              <h3 style="font-size: 15px; font-weight: 700;">Ship of Theseus Evolution</h3>
-              <p style="font-size: 12px; color: var(--text-muted);">Continuous fact verification and historical memory archiving without bloat.</p>
-              <div class="playbook-code">Schema: zenith_facts (WAL Active)</div>
-            </div>
-
-          </div>
-
-          <!-- Playbooks Table Card -->
-          <div class="spotlight-card" style="margin-top: 10px;">
-            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;">Active Procedural Playbooks</h3>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              
-              <div class="switch-row" style="padding: 10px 14px;">
-                <div>
-                  <span style="font-size: 12.5px; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">git_detached_head_commit</span>
-                  <div style="font-size: 11px; color: var(--text-muted);">Safely checks out and creates emergency branch for uncommitted detached commits</div>
-                </div>
-                <div class="playbook-badge badge-emerald">100% Success</div>
-              </div>
-
-              <div class="switch-row" style="padding: 10px 14px;">
-                <div>
-                  <span style="font-size: 12.5px; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">sqlite_vacuum_atomic_backup</span>
-                  <div style="font-size: 11px; color: var(--text-muted);">Executes live transactional backup without locking active WAL threads</div>
-                </div>
-                <div class="playbook-badge badge-cyan">Operational</div>
-              </div>
-
-              <div class="switch-row" style="padding: 10px 14px;">
-                <div>
-                  <span style="font-size: 12.5px; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">killswitch_atomic_disengage</span>
-                  <div style="font-size: 11px; color: var(--text-muted);">Terminates all asynchronous persistent shell child subtrees immediately</div>
-                </div>
-                <div class="playbook-badge badge-violet">Armed</div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             VIEW 3: VISION & SCREEN
-             ==================================================================== -->
-        <section class="view-pane" id="view-vision">
-          <div class="view-header">
-            <div class="view-title-group">
-              <h1>
-                <span>Multimodal Vision & Screen Grounding</span>
-              </h1>
-              <p>Set-of-Mark (SoM) bounding box localization, screen streaming, and UI element grounding.</p>
-            </div>
-          </div>
-
-          <div class="grid-2">
-            
-            <div class="spotlight-card">
-              <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">Visual Grounding Modes</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Zenith dynamically adapts screen capture strategy to minimize battery & token bandwidth.</p>
-              
-              <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div class="switch-row">
-                  <div>
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">Smart On-Demand Mode</div>
-                    <div style="font-size: 11.5px; color: var(--text-muted);">Takes high-resolution snapshot only when Gemini requests vision inspection.</div>
-                  </div>
-                  <div class="playbook-badge badge-emerald">Recommended</div>
-                </div>
-
-                <div class="switch-row">
-                  <div>
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">Continuous Stream Mode</div>
-                    <div style="font-size: 11.5px; color: var(--text-muted);">Streams 30fps screen frames to 127.0.0.1:49153 for live interactive coaching.</div>
-                  </div>
-                  <label class="ios-switch">
-                    <input type="checkbox" id="toggleScreenStreaming2">
-                    <span class="ios-slider"></span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div class="spotlight-card">
-              <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">Set-of-Mark (SoM) Coordinate Grounding</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Computer vision detector overlaying numerical badges over clickable DOM / UI components.</p>
-              
-              <div class="playbook-code" style="line-height: 1.6; font-size: 11.5px;">
-                Detector: Windows UIAutomation + OmniParser<br>
-                Confidence: 0.94<br>
-                Status: Calibrated & Ready for Motor Control
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             VIEW 4: ACTIVITY STREAM (Live Diagnostics)
-             ==================================================================== -->
-        <section class="view-pane" id="view-stream">
-          <div class="view-header">
-            <div class="view-title-group">
-              <h1>
-                <span>Live Activity Stream</span>
-              </h1>
-              <p>Real-time UDP telemetry feed, decision matrices, and asynchronous tool invocations.</p>
-            </div>
-            <div class="header-actions">
-              <button class="btn btn-secondary" id="btnClearStream">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                <span>Clear</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="activity-container">
-            <div class="activity-toolbar">
-              <div class="filter-chips" id="filterChips">
-                <button class="chip-btn active" data-filter="all">ALL</button>
-                <button class="chip-btn" data-filter="SYSTEM">SYSTEM</button>
-                <button class="chip-btn" data-filter="COG">COG</button>
-                <button class="chip-btn" data-filter="VISION">VISION</button>
-                <button class="chip-btn" data-filter="IPC">IPC</button>
-                <button class="chip-btn" data-filter="WARN">WARN</button>
-              </div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="live-pulse-dot" style="background: var(--cyan); box-shadow: 0 0 6px var(--cyan);"></span>
-                <span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">UDP 49152 LISTEN</span>
-              </div>
-            </div>
-
-            <div class="scrollable-feed" id="activityFeed">
-              <!-- Dynamically populated rows -->
-            </div>
-          </div>
-        </section>
-
-        <!-- ====================================================================
-             VIEW 5: SETTINGS & MODEL CONFIGURATION
-             ==================================================================== -->
-        <section class="view-pane" id="view-settings">
-          <div class="view-header">
-            <div class="view-title-group">
-              <h1>
-                <span>Settings & Neural Configurations</span>
-              </h1>
-              <p>Manage model credentials, research engine tokens, and audio input peripherals.</p>
-            </div>
-            <div class="header-actions">
-              <button class="btn btn-primary" id="btnSaveConfig">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                <span>Save Changes</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="settings-group">
-            <div class="settings-group-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <span>API Credentials</span>
-            </div>
-
-            <div class="grid-2">
-              <div class="field-card">
-                <div class="field-header">
-                  <span class="field-label">Gemini API Key</span>
-                  <span class="field-sub">Required for Multimodal Reasoning</span>
-                </div>
-                <div class="input-wrapper">
-                  <input type="password" class="input-text" id="cfgGeminiKey" placeholder="AIzaSy...">
-                  <button class="input-toggle-eye" data-target="cfgGeminiKey" type="button">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </button>
-                </div>
-              </div>
-
-              <div class="field-card">
-                <div class="field-header">
-                  <span class="field-label">Tavily Web Search Key</span>
-                  <span class="field-sub">Required for Deep Live Web RAG</span>
-                </div>
-                <div class="input-wrapper">
-                  <input type="password" class="input-text" id="cfgTavilyKey" placeholder="tvly-...">
-                  <button class="input-toggle-eye" data-target="cfgTavilyKey" type="button">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </button>
-                </div>
-              </div>
-
-              <div class="field-card">
-                <div class="field-header">
-                  <span class="field-label">Spotify Client ID</span>
-                  <span class="field-sub">Optional for Music Playback Control</span>
-                </div>
-                <div class="input-wrapper">
-                  <input type="password" class="input-text" id="cfgSpotifyId" placeholder="Spotify Client ID">
-                  <button class="input-toggle-eye" data-target="cfgSpotifyId" type="button">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </button>
-                </div>
-              </div>
-
-              <div class="field-card">
-                <div class="field-header">
-                  <span class="field-label">Spotify Client Secret</span>
-                  <span class="field-sub">Optional for Music Playback Control</span>
-                </div>
-                <div class="input-wrapper">
-                  <input type="password" class="input-text" id="cfgSpotifySecret" placeholder="Spotify Client Secret">
-                  <button class="input-toggle-eye" data-target="cfgSpotifySecret" type="button">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="settings-group">
-            <div class="settings-group-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-              <span>Hardware & Audio Input</span>
-            </div>
-
-            <div class="grid-2">
-              <div class="field-card">
-                <div class="field-header">
-                  <span class="field-label">Microphone Input Device Name</span>
-                  <span class="field-sub">Match exact Windows audio device string or leave blank</span>
-                </div>
-                <input type="text" class="input-text" id="cfgInputDevice" placeholder="Default Windows Input Device">
-              </div>
-
-              <div class="field-card">
-                <div class="field-header">
-                  <span class="field-label">Voice Activity Model</span>
-                  <span class="field-sub">Multimodal Speech Pipeline</span>
-                </div>
-                <input type="text" class="input-text" value="Gemini 2.5 Flash Native Audio Live" disabled style="opacity: 0.7;">
-              </div>
-            </div>
-          </div>
-
-        </section>
-
-      </main>
-    </div>
-  </div>
-
-  <!-- Command Palette Modal (Ctrl+K) -->
-  <div class="cmd-overlay" id="cmdOverlay">
-    <div class="cmd-dialog">
-      <div class="cmd-search-bar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input type="text" class="cmd-search-input" id="cmdSearchInput" placeholder="Type a command or search actions..." autocomplete="off">
-        <span class="kbd-shortcut">ESC</span>
+        <button class="btn-action" id="btnToggleZenith">
+          <span id="btnToggleText">Start Zenith</span>
+        </button>
       </div>
-      <div class="cmd-list" id="cmdList">
-        <div class="cmd-item selected" data-action="toggle-assistant">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <span>Toggle Assistant (Engage / Disengage)</span>
-          </div>
-          <span class="kbd-shortcut">Space</span>
+
+      <!-- Specs / System Card -->
+      <div class="specs-card">
+        <div class="spec-row">
+          <span class="spec-label">Model</span>
+          <span class="spec-value">gemini-2.5-flash-preview (Live Audio)</span>
         </div>
-        <div class="cmd-item" data-action="toggle-vision">
+        <div class="spec-row">
+          <span class="spec-label">Screen Vision</span>
           <div style="display: flex; align-items: center; gap: 10px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-            <span>Toggle Screen Vision Continuous Stream</span>
+            <span class="spec-value" id="visionModeLabel">Smart On-Demand</span>
+            <label class="mini-switch">
+              <input type="checkbox" id="toggleScreenVision">
+              <span class="mini-slider"></span>
+            </label>
           </div>
         </div>
-        <div class="cmd-item" data-action="emergency-kill">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-            <span>Trigger Emergency Motor Disengagement</span>
-          </div>
-          <span class="kbd-shortcut">Ctrl+Shift+K</span>
+        <div class="spec-row">
+          <span class="spec-label">Memory Database</span>
+          <span class="spec-value" id="dbSpecVal">zenith_memory.db (WAL Active)</span>
         </div>
-        <div class="cmd-item" data-action="clear-stream">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
-            <span>Clear Activity Diagnostics Stream</span>
-          </div>
+        <div class="spec-row">
+          <span class="spec-label">System Host</span>
+          <span class="spec-value" id="hostSpecVal">CPU: 0% • RAM: 0%</span>
+        </div>
+      </div>
+
+      <!-- Quick Command / Usage Hint -->
+      <div class="tip-box">
+        <code># Voice: speak naturally or say "Hey Zenith"</code>
+        <span style="font-size: 11px;">UDP 49152</span>
+      </div>
+
+      <!-- Subtle Emergency Link -->
+      <div class="emergency-link-wrapper">
+        <button class="emergency-link" id="btnEmergencyStop">Emergency Killswitch Disengage</button>
+      </div>
+
+    </div>
+
+    <!-- ====================================================================
+         TAB 2: LOGS
+         ==================================================================== -->
+    <div class="tab-content" id="tab-logs">
+      <div class="terminal-container">
+        <div class="terminal-header">
+          <span>Activity Log Stream</span>
+          <button class="terminal-btn" id="btnClearTerminal">Clear</button>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <!-- Dynamically populated -->
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Toast Notification Container -->
-  <div class="toast-container" id="toastContainer"></div>
+    <!-- ====================================================================
+         TAB 3: SETTINGS
+         ==================================================================== -->
+    <div class="tab-content" id="tab-settings">
+      <div class="settings-title">Configuration</div>
 
-  <!-- ==========================================================================
-       CLIENT APPLICATION ARCHITECTURE & ANIMATION DRIVER
-       ========================================================================== -->
+      <div class="setting-group">
+        <div class="setting-label">Gemini API Key</div>
+        <div class="setting-desc">Required for multimodal speech & live reasoning loops.</div>
+        <div class="input-row">
+          <input type="password" class="input-field" id="inputGeminiKey" placeholder="AIzaSy...">
+          <button class="toggle-visibility-btn" data-target="inputGeminiKey">Show</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">Tavily Web Search Key</div>
+        <div class="setting-desc">Enables autonomous web research and real-time search.</div>
+        <div class="input-row">
+          <input type="password" class="input-field" id="inputTavilyKey" placeholder="tvly-...">
+          <button class="toggle-visibility-btn" data-target="inputTavilyKey">Show</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">Spotify Credentials</div>
+        <div class="setting-desc">Optional client ID and secret for music automation.</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <input type="password" class="input-field" id="inputSpotifyId" placeholder="Client ID">
+          <input type="password" class="input-field" id="inputSpotifySecret" placeholder="Client Secret">
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">Microphone Audio Device</div>
+        <div class="setting-desc">Leave blank to use system default microphone.</div>
+        <input type="text" class="input-field" id="inputAudioDevice" placeholder="Default Windows Audio Device">
+      </div>
+
+      <button class="btn-save" id="btnSaveSettings">Save Settings</button>
+    </div>
+
+  </main>
+
+  <!-- Minimal Toast -->
+  <div class="toast-box" id="toastBox"></div>
+
+  <!-- Client Script -->
   <script>
     (function () {
       'use strict';
 
-      // ------------------------------------------------------------------------
-      // 1. STATE & IPC BINDINGS
-      // ------------------------------------------------------------------------
-      let isAssistantRunning = false;
-      let isScreenStreaming = false;
-      let currentActiveView = 'view-cockpit';
-      let acousticEnergy = 0.15; // Smooth audio visualizer amplitude
-      let targetAcousticEnergy = 0.15;
-      let logsList = [];
-      let activeFilter = 'all';
+      let isRunning = false;
+      let logs = [];
 
-      // Safe IPC Fallback Mock for Browser Preview
+      // Safe IPC
       const api = window.api || {
         readEnv: async () => ({}),
         saveEnv: async () => ({ status: 'success' }),
         startZenith: async () => ({ status: 'success' }),
         stopZenith: async () => ({ status: 'success' }),
-        checkZenithStatus: async () => isAssistantRunning,
+        checkZenithStatus: async () => isRunning,
         toggleScreenVision: async (val) => ({ status: 'success', active: val }),
-        getScreenVisionStatus: async () => ({ active: isScreenStreaming }),
-        getSystemTelemetry: async () => ({ cpuPercent: 12, memPercent: 44, totalMemMB: 16384, usedMemMB: 7200 }),
-        getCognitiveStats: async () => ({ dbSizeKB: 148, system2: 'Armed' }),
+        getScreenVisionStatus: async () => ({ active: false }),
+        getSystemTelemetry: async () => ({ cpuPercent: 12, memPercent: 44 }),
+        getCognitiveStats: async () => ({ dbSizeKB: 148 }),
         emergencyKill: async () => ({ status: 'success' }),
         minimizeWindow: async () => {},
         maximizeWindow: async () => {},
         closeWindow: async () => {},
-        onUIState: () => {},
-        onUpdateMessage: () => {},
-        onUpdateProgress: () => {}
+        onUIState: () => {}
       };
 
-      // ------------------------------------------------------------------------
-      // 2. WINDOW CONTROLS
-      // ------------------------------------------------------------------------
+      // Toast
+      const toastBox = document.getElementById('toastBox');
+      function showToast(msg) {
+        if (!toastBox) return;
+        toastBox.textContent = msg;
+        toastBox.classList.add('show');
+        setTimeout(() => toastBox.classList.remove('show'), 2600);
+      }
+
+      // Window controls
       const btnTrafficClose = document.getElementById('btnTrafficClose');
       const btnTrafficMin = document.getElementById('btnTrafficMin');
       const btnTrafficMax = document.getElementById('btnTrafficMax');
-      const btnWinMin = document.getElementById('btnWinMin');
-      const btnWinMax = document.getElementById('btnWinMax');
-      const btnWinClose = document.getElementById('btnWinClose');
-
       if (btnTrafficClose) btnTrafficClose.onclick = () => api.closeWindow();
       if (btnTrafficMin) btnTrafficMin.onclick = () => api.minimizeWindow();
       if (btnTrafficMax) btnTrafficMax.onclick = () => api.maximizeWindow();
-      if (btnWinClose) btnWinClose.onclick = () => api.closeWindow();
-      if (btnWinMin) btnWinMin.onclick = () => api.minimizeWindow();
-      if (btnWinMax) btnWinMax.onclick = () => api.maximizeWindow();
 
-      // ------------------------------------------------------------------------
-      // 3. TOAST NOTIFICATION ENGINE
-      // ------------------------------------------------------------------------
-      const toastContainer = document.getElementById('toastContainer');
-      function showToast(message, type = 'info') {
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        
-        let iconSymbol = 'ℹ';
-        if (type === 'success') iconSymbol = '✓';
-        if (type === 'error') iconSymbol = '✕';
+      // Tab switcher
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      tabBtns.forEach(btn => {
+        btn.onclick = () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
 
-        toast.innerHTML = `
-          <div class="toast-icon">${iconSymbol}</div>
-          <span>${message}</span>
-        `;
-        toastContainer.appendChild(toast);
-
-        setTimeout(() => {
-          toast.classList.add('hide');
-          setTimeout(() => toast.remove(), 300);
-        }, 3200);
-      }
-
-      // ------------------------------------------------------------------------
-      // 4. AMBIENT MOVING AURORA CANVAS (30FPS Background Mesh)
-      // ------------------------------------------------------------------------
-      const ambientCanvas = document.getElementById('ambientCanvas');
-      const aCtx = ambientCanvas.getContext('2d');
-      let aw = 0, ah = 0;
-
-      function resizeAmbient() {
-        aw = ambientCanvas.width = window.innerWidth;
-        ah = ambientCanvas.height = window.innerHeight;
-      }
-      window.addEventListener('resize', resizeAmbient);
-      resizeAmbient();
-
-      const orbs = [
-        { x: aw * 0.2, y: ah * 0.3, r: 350, vx: 0.4, vy: 0.3, color: 'rgba(16, 185, 129, 0.12)' },
-        { x: aw * 0.8, y: ah * 0.4, r: 400, vx: -0.3, vy: 0.35, color: 'rgba(6, 182, 212, 0.10)' },
-        { x: aw * 0.5, y: ah * 0.7, r: 420, vx: 0.25, vy: -0.4, color: 'rgba(99, 102, 241, 0.10)' }
-      ];
-
-      function renderAmbient() {
-        aCtx.clearRect(0, 0, aw, ah);
-        orbs.forEach(orb => {
-          orb.x += orb.vx;
-          orb.y += orb.vy;
-          if (orb.x < -100 || orb.x > aw + 100) orb.vx *= -1;
-          if (orb.y < -100 || orb.y > ah + 100) orb.vy *= -1;
-
-          const grad = aCtx.createRadialGradient(orb.x, orb.y, 10, orb.x, orb.y, orb.r);
-          grad.addColorStop(0, orb.color);
-          grad.addColorStop(1, 'rgba(9, 10, 15, 0)');
-          aCtx.fillStyle = grad;
-          aCtx.beginPath();
-          aCtx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
-          aCtx.fill();
-        });
-        requestAnimationFrame(renderAmbient);
-      }
-      requestAnimationFrame(renderAmbient);
-
-      // ------------------------------------------------------------------------
-      // 5. ACOUSTIC SINE-WAVE SYNTHESIZER CANVAS (60FPS Real-Time Wave)
-      // ------------------------------------------------------------------------
-      const waveCanvas = document.getElementById('waveCanvas');
-      const wCtx = waveCanvas.getContext('2d');
-      let ww = 0, wh = 0;
-
-      function resizeWave() {
-        ww = waveCanvas.width = waveCanvas.parentElement.clientWidth;
-        wh = waveCanvas.height = waveCanvas.parentElement.clientHeight;
-      }
-      window.addEventListener('resize', resizeWave);
-      setTimeout(resizeWave, 100);
-
-      let wavePhase = 0;
-      function renderWave() {
-        if (!ww || !wh) {
-          requestAnimationFrame(renderWave);
-          return;
-        }
-        wCtx.clearRect(0, 0, ww, wh);
-
-        // Smooth energy lerp
-        acousticEnergy += (targetAcousticEnergy - acousticEnergy) * 0.08;
-        wavePhase += 0.04 + acousticEnergy * 0.06;
-
-        const cy = wh / 2;
-        const wavesCount = 3;
-
-        for (let w = 0; w < wavesCount; w++) {
-          wCtx.beginPath();
-          const alpha = 0.25 + (w / wavesCount) * 0.55;
-          const strokeGrad = wCtx.createLinearGradient(0, 0, ww, 0);
-          strokeGrad.addColorStop(0, `rgba(16, 185, 129, ${alpha * 0.4})`);
-          strokeGrad.addColorStop(0.5, `rgba(6, 182, 212, ${alpha})`);
-          strokeGrad.addColorStop(1, `rgba(99, 102, 241, ${alpha * 0.4})`);
-
-          wCtx.strokeStyle = strokeGrad;
-          wCtx.lineWidth = 2.2;
-          wCtx.lineCap = 'round';
-
-          for (let x = 0; x < ww; x += 4) {
-            const normX = (x / ww) * Math.PI * 2;
-            const envelope = Math.sin((x / ww) * Math.PI); // Windowing curve
-            const yOffset = Math.sin(normX * 2.5 + wavePhase + w * 1.2) * (wh * 0.35 * acousticEnergy * envelope)
-                          + Math.cos(normX * 4 - wavePhase) * (wh * 0.15 * acousticEnergy * envelope);
-            const y = cy + yOffset;
-            if (x === 0) wCtx.moveTo(x, y);
-            else wCtx.lineTo(x, y);
-          }
-          wCtx.stroke();
-        }
-
-        requestAnimationFrame(renderWave);
-      }
-      requestAnimationFrame(renderWave);
-
-      // ------------------------------------------------------------------------
-      // 6. SPOTLIGHT CARDS CURSOR TRACKING
-      // ------------------------------------------------------------------------
-      document.querySelectorAll('.spotlight-card').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-          const rect = card.getBoundingClientRect();
-          card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-          card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-        });
-      });
-
-      // ------------------------------------------------------------------------
-      // 7. NAVIGATION INDICATOR & VIEW ROUTER
-      // ------------------------------------------------------------------------
-      const navItems = document.querySelectorAll('.nav-item');
-      const navIndicator = document.getElementById('navIndicator');
-
-      function updateNavIndicator(activeButton) {
-        if (!activeButton || !navIndicator) return;
-        navIndicator.style.top = `${activeButton.offsetTop}px`;
-        navIndicator.style.height = `${activeButton.offsetHeight}px`;
-      }
-
-      navItems.forEach(item => {
-        item.addEventListener('click', () => {
-          navItems.forEach(n => n.classList.remove('active'));
-          item.classList.add('active');
-          updateNavIndicator(item);
-
-          const targetViewId = item.getAttribute('data-view');
-          document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
-          const targetPane = document.getElementById(targetViewId);
-          if (targetPane) {
-            targetPane.classList.add('active');
-            currentActiveView = targetViewId;
-          }
-        });
-      });
-
-      // Initialize nav indicator position
-      setTimeout(() => {
-        const initialActive = document.querySelector('.nav-item.active');
-        if (initialActive) updateNavIndicator(initialActive);
-      }, 100);
-
-      // ------------------------------------------------------------------------
-      // 8. TELEMETRY & GAUGES
-      // ------------------------------------------------------------------------
-      const gaugeCpu = document.getElementById('gaugeCpu');
-      const gaugeCpuVal = document.getElementById('gaugeCpuVal');
-      const gaugeRam = document.getElementById('gaugeRam');
-      const gaugeRamVal = document.getElementById('gaugeRamVal');
-      const cpuDetail = document.getElementById('cpuDetail');
-      const ramDetail = document.getElementById('ramDetail');
-      const dbDetail = document.getElementById('dbDetail');
-
-      function setGauge(circle, percent) {
-        if (!circle) return;
-        const circumference = 157; // 2 * PI * 25
-        const offset = circumference - (percent / 100) * circumference;
-        circle.style.strokeDashoffset = offset;
-      }
-
-      async function refreshTelemetry() {
-        try {
-          const telem = await api.getSystemTelemetry();
-          if (telem) {
-            const cpu = telem.cpuPercent || 0;
-            const ram = telem.memPercent || 0;
-            if (gaugeCpu) setGauge(gaugeCpu, cpu);
-            if (gaugeCpuVal) gaugeCpuVal.textContent = `${cpu}%`;
-            if (gaugeRam) setGauge(gaugeRam, ram);
-            if (gaugeRamVal) gaugeRamVal.textContent = `${ram}%`;
-            if (cpuDetail && telem.cpuModel) cpuDetail.textContent = telem.cpuModel;
-            if (ramDetail && telem.usedMemMB) ramDetail.textContent = `${telem.usedMemMB} MB allocated`;
-          }
-
-          const cog = await api.getCognitiveStats();
-          if (cog && cog.dbSizeKB && dbDetail) {
-            dbDetail.textContent = `${cog.dbSizeKB} KB • WAL Healthy`;
-          }
-        } catch (e) {
-          console.error('Failed to poll telemetry', e);
-        }
-      }
-
-      setInterval(refreshTelemetry, 2800);
-      refreshTelemetry();
-
-      const btnRefreshTelemetry = document.getElementById('btnRefreshTelemetry');
-      if (btnRefreshTelemetry) {
-        btnRefreshTelemetry.onclick = () => {
-          refreshTelemetry();
-          showToast('Hardware vitals refreshed', 'info');
+          const targetTabId = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          const targetEl = document.getElementById(targetTabId);
+          if (targetEl) targetEl.classList.add('active');
         };
-      }
+      });
 
-      // ------------------------------------------------------------------------
-      // 9. ASSISTANT DAEMON LIFECYCLE (Engage / Disengage)
-      // ------------------------------------------------------------------------
-      const btnStartAssistant = document.getElementById('btnStartAssistant');
-      const btnStartAssistantText = document.getElementById('btnStartAssistantText');
-      const powerOrbBtn = document.getElementById('powerOrbBtn');
-      const orbHalo = document.getElementById('orbHalo');
-      const orbRing = document.getElementById('orbRing');
-      const orbHeroTitle = document.getElementById('orbHeroTitle');
-      const orbHeroSub = document.getElementById('orbHeroSub');
-      const liveStatusBadge = document.getElementById('liveStatusBadge');
-      const liveStatusText = document.getElementById('liveStatusText');
-      const presenceDot = document.getElementById('presenceDot');
-      const presencePid = document.getElementById('presencePid');
-      const acousticStateLabel = document.getElementById('acousticStateLabel');
+      // Status UI
+      const statusBadgeCircle = document.getElementById('statusBadgeCircle');
+      const heroStatusTitle = document.getElementById('heroStatusTitle');
+      const heroStatusSub = document.getElementById('heroStatusSub');
+      const btnToggleZenith = document.getElementById('btnToggleZenith');
+      const btnToggleText = document.getElementById('btnToggleText');
 
-      function setAssistantVisualState(running, stateText = 'STANDBY') {
-        isAssistantRunning = running;
+      function updateStatusUI(running, stateText = '') {
+        isRunning = running;
         if (running) {
-          targetAcousticEnergy = 0.55;
-          if (btnStartAssistantText) btnStartAssistantText.textContent = 'Disengage';
-          if (btnStartAssistant) btnStartAssistant.className = 'btn btn-secondary';
-          if (orbHeroTitle) orbHeroTitle.textContent = 'Zenith Active';
-          if (orbHeroSub) orbHeroSub.textContent = 'Multimodal neural stream engaged & processing.';
-          if (liveStatusText) liveStatusText.textContent = stateText;
-          if (liveStatusBadge) {
-            liveStatusBadge.style.background = 'rgba(16, 185, 129, 0.15)';
-            liveStatusBadge.style.color = 'var(--emerald)';
-          }
-          if (presenceDot) {
-            presenceDot.style.background = 'var(--emerald)';
-            presenceDot.style.boxShadow = '0 0 8px var(--emerald)';
-          }
-          if (presencePid) presencePid.textContent = 'PID: Active Host';
-          if (acousticStateLabel) acousticStateLabel.textContent = 'Listening / Responsive';
-          if (orbRing) orbRing.style.animationDuration = '2.5s';
+          if (statusBadgeCircle) statusBadgeCircle.classList.add('running');
+          if (heroStatusTitle) heroStatusTitle.textContent = stateText ? `Zenith is ${stateText}` : 'Zenith is running';
+          if (heroStatusSub) heroStatusSub.textContent = 'Listening on microphone • Multi-modal Gemini Live Engine';
+          if (btnToggleZenith) btnToggleZenith.className = 'btn-action running';
+          if (btnToggleText) btnToggleText.textContent = 'Stop Zenith';
         } else {
-          targetAcousticEnergy = 0.15;
-          if (btnStartAssistantText) btnStartAssistantText.textContent = 'Engage Zenith';
-          if (btnStartAssistant) btnStartAssistant.className = 'btn btn-primary';
-          if (orbHeroTitle) orbHeroTitle.textContent = 'Assistant Standby';
-          if (orbHeroSub) orbHeroSub.textContent = 'Click orb to initialize local neural reasoning loops.';
-          if (liveStatusText) liveStatusText.textContent = 'STANDBY';
-          if (liveStatusBadge) {
-            liveStatusBadge.style.background = 'rgba(255, 255, 255, 0.05)';
-            liveStatusBadge.style.color = 'var(--text-muted)';
-          }
-          if (presenceDot) {
-            presenceDot.style.background = 'var(--text-dim)';
-            presenceDot.style.boxShadow = 'none';
-          }
-          if (presencePid) presencePid.textContent = 'PID: Offline';
-          if (acousticStateLabel) acousticStateLabel.textContent = 'Silent (Standby)';
-          if (orbRing) orbRing.style.animationDuration = '8s';
+          if (statusBadgeCircle) statusBadgeCircle.classList.remove('running');
+          if (heroStatusTitle) heroStatusTitle.textContent = 'Zenith is stopped';
+          if (heroStatusSub) heroStatusSub.textContent = 'Click Start to initialize voice loop and cognitive engine';
+          if (btnToggleZenith) btnToggleZenith.className = 'btn-action';
+          if (btnToggleText) btnToggleText.textContent = 'Start Zenith';
         }
       }
 
-      async function toggleAssistant() {
-        if (!isAssistantRunning) {
-          showToast('Initializing Zenith daemon...', 'info');
-          const res = await api.startZenith();
-          if (res && res.status === 'success') {
-            setAssistantVisualState(true, 'ONLINE');
-            appendLog('SYSTEM', 'Autonomous assistant daemon spawned and bound to local workspace.');
-            showToast('Zenith engaged successfully', 'success');
+      // Toggle action
+      if (btnToggleZenith) {
+        btnToggleZenith.onclick = async () => {
+          if (!isRunning) {
+            btnToggleText.textContent = 'Starting...';
+            const res = await api.startZenith();
+            if (res && res.status === 'success') {
+              updateStatusUI(true);
+              appendLog('SYSTEM', 'Zenith daemon started.');
+              showToast('Zenith started');
+            } else {
+              updateStatusUI(false);
+              showToast(res && res.message ? res.message : 'Failed to start');
+            }
           } else {
-            showToast(res && res.message ? res.message : 'Failed to launch Zenith', 'error');
+            btnToggleText.textContent = 'Stopping...';
+            await api.stopZenith();
+            updateStatusUI(false);
+            appendLog('SYSTEM', 'Zenith daemon stopped.');
+            showToast('Zenith stopped');
           }
-        } else {
-          showToast('Gracefully disengaging Zenith...', 'info');
-          const res = await api.stopZenith();
-          setAssistantVisualState(false);
-          appendLog('SYSTEM', 'Assistant loop shut down gracefully. Episodic memory saved.');
-          showToast('Zenith disengaged', 'info');
-        }
-      }
-
-      if (btnStartAssistant) btnStartAssistant.onclick = toggleAssistant;
-      if (powerOrbBtn) powerOrbBtn.onclick = toggleAssistant;
-
-      // Emergency Killswitch
-      const btnEmergencyHalt = document.getElementById('btnEmergencyHalt');
-      if (btnEmergencyHalt) {
-        btnEmergencyHalt.onclick = async () => {
-          showToast('EMERGENCY MOTOR DISENGAGEMENT TRIGGERED!', 'error');
-          await api.emergencyKill();
-          setAssistantVisualState(false);
-          appendLog('WARN', 'Emergency kill disengaged all persistent processes.');
         };
       }
 
-      // Check Status on Launch
-      api.checkZenithStatus().then(status => {
-        setAssistantVisualState(!!status);
-      });
-
-      // ------------------------------------------------------------------------
-      // 10. SCREEN VISION TOGGLES
-      // ------------------------------------------------------------------------
-      const toggleScreenStreaming = document.getElementById('toggleScreenStreaming');
-      const toggleScreenStreaming2 = document.getElementById('toggleScreenStreaming2');
-      const badgeVision = document.getElementById('badgeVision');
-
-      async function handleVisionToggle(e) {
-        const enable = e.target.checked;
-        if (toggleScreenStreaming) toggleScreenStreaming.checked = enable;
-        if (toggleScreenStreaming2) toggleScreenStreaming2.checked = enable;
-        isScreenStreaming = enable;
-
-        const res = await api.toggleScreenVision(enable);
-        if (badgeVision) badgeVision.textContent = enable ? '30 FPS' : 'Smart';
-        appendLog('VISION', `Screen streaming set to: ${enable ? 'Continuous (30 FPS)' : 'Smart On-Demand'}`);
-        showToast(`Vision mode: ${enable ? 'Continuous 30 FPS Stream' : 'Smart On-Demand'}`, 'info');
+      // Emergency stop
+      const btnEmergencyStop = document.getElementById('btnEmergencyStop');
+      if (btnEmergencyStop) {
+        btnEmergencyStop.onclick = async () => {
+          await api.emergencyKill();
+          updateStatusUI(false);
+          appendLog('WARN', 'Emergency kill disengaged all processes.');
+          showToast('Emergency kill triggered');
+        };
       }
 
-      if (toggleScreenStreaming) toggleScreenStreaming.onchange = handleVisionToggle;
-      if (toggleScreenStreaming2) toggleScreenStreaming2.onchange = handleVisionToggle;
+      // Screen Vision Toggle
+      const toggleScreenVision = document.getElementById('toggleScreenVision');
+      const visionModeLabel = document.getElementById('visionModeLabel');
+      if (toggleScreenVision) {
+        toggleScreenVision.onchange = async (e) => {
+          const enable = e.target.checked;
+          await api.toggleScreenVision(enable);
+          if (visionModeLabel) visionModeLabel.textContent = enable ? 'Continuous 30 FPS' : 'Smart On-Demand';
+          appendLog('VISION', `Screen streaming: ${enable ? 'Continuous (30 FPS)' : 'Smart On-Demand'}`);
+          showToast(`Vision: ${enable ? '30 FPS Stream' : 'Smart On-Demand'}`);
+        };
+      }
 
       api.getScreenVisionStatus().then(status => {
         if (status && status.active) {
-          if (toggleScreenStreaming) toggleScreenStreaming.checked = true;
-          if (toggleScreenStreaming2) toggleScreenStreaming2.checked = true;
-          if (badgeVision) badgeVision.textContent = '30 FPS';
+          if (toggleScreenVision) toggleScreenVision.checked = true;
+          if (visionModeLabel) visionModeLabel.textContent = 'Continuous 30 FPS';
         }
       });
 
-      // ------------------------------------------------------------------------
-      // 11. ACTIVITY FEED & REAL-TIME UDP TELEMETRY
-      // ------------------------------------------------------------------------
-      const activityFeed = document.getElementById('activityFeed');
-      const streamCountBadge = document.getElementById('streamCountBadge');
-      const btnClearStream = document.getElementById('btnClearStream');
-
-      function appendLog(tag, message) {
-        const timestamp = new Date().toTimeString().split(' ')[0];
-        const logObj = { tag, message, timestamp };
-        logsList.push(logObj);
-
-        if (streamCountBadge) streamCountBadge.textContent = logsList.length;
-
-        if (activeFilter === 'all' || activeFilter === tag) {
-          renderLogRow(logObj);
-        }
+      // Telemetry
+      const hostSpecVal = document.getElementById('hostSpecVal');
+      const dbSpecVal = document.getElementById('dbSpecVal');
+      async function pollStats() {
+        try {
+          const telem = await api.getSystemTelemetry();
+          if (telem && hostSpecVal) {
+            hostSpecVal.textContent = `CPU: ${telem.cpuPercent}% • RAM: ${telem.memPercent}%`;
+          }
+          const cog = await api.getCognitiveStats();
+          if (cog && cog.dbSizeKB && dbSpecVal) {
+            dbSpecVal.textContent = `zenith_memory.db (${cog.dbSizeKB} KB)`;
+          }
+        } catch (e) {}
       }
+      setInterval(pollStats, 3000);
+      pollStats();
 
-      function renderLogRow(logObj) {
-        if (!activityFeed) return;
-        const row = document.createElement('div');
-        row.className = 'feed-row';
+      // Check status on start
+      api.checkZenithStatus().then(status => updateStatusUI(!!status));
 
-        let tagClass = 'tag-system';
-        if (logObj.tag === 'COG') tagClass = 'tag-cog';
-        if (logObj.tag === 'VISION') tagClass = 'tag-vision';
-        if (logObj.tag === 'IPC') tagClass = 'tag-ipc';
-        if (logObj.tag === 'WARN') tagClass = 'tag-warn';
-        if (logObj.tag === 'ERROR') tagClass = 'tag-error';
+      // Terminal logs
+      const terminalBody = document.getElementById('terminalBody');
+      const btnClearTerminal = document.getElementById('btnClearTerminal');
 
-        row.innerHTML = `
-          <span class="feed-time">${logObj.timestamp}</span>
-          <span class="feed-tag ${tagClass}">${logObj.tag}</span>
-          <span class="feed-body">${logObj.message}</span>
+      function appendLog(tag, msg) {
+        const time = new Date().toTimeString().split(' ')[0];
+        logs.push({ time, tag, msg });
+        if (!terminalBody) return;
+
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.innerHTML = `
+          <span class="log-time">${time}</span>
+          <span class="log-tag">[${tag}]</span>
+          <span class="log-msg">${msg}</span>
         `;
-        activityFeed.appendChild(row);
-        activityFeed.scrollTop = activityFeed.scrollHeight;
+        terminalBody.appendChild(line);
+        terminalBody.scrollTop = terminalBody.scrollHeight;
       }
 
-      if (btnClearStream) {
-        btnClearStream.onclick = () => {
-          logsList = [];
-          if (activityFeed) activityFeed.innerHTML = '';
-          if (streamCountBadge) streamCountBadge.textContent = '0';
-          showToast('Activity stream cleared', 'info');
+      if (btnClearTerminal) {
+        btnClearTerminal.onclick = () => {
+          logs = [];
+          if (terminalBody) terminalBody.innerHTML = '';
+          showToast('Logs cleared');
         };
       }
 
-      // Filter chips
-      document.querySelectorAll('#filterChips .chip-btn').forEach(chip => {
-        chip.addEventListener('click', () => {
-          document.querySelectorAll('#filterChips .chip-btn').forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          activeFilter = chip.getAttribute('data-filter');
-
-          if (activityFeed) {
-            activityFeed.innerHTML = '';
-            logsList.forEach(log => {
-              if (activeFilter === 'all' || activeFilter === log.tag) {
-                renderLogRow(log);
-              }
-            });
-          }
-        });
-      });
-
-      // Hook up live UI state UDP messages from Python daemon
       api.onUIState((state) => {
-        targetAcousticEnergy = 0.75;
-        setTimeout(() => { if (isAssistantRunning) targetAcousticEnergy = 0.4; }, 1200);
-
-        if (liveStatusText) liveStatusText.textContent = state.toUpperCase();
-        appendLog('IPC', `Assistant state transit -> [${state}]`);
+        updateStatusUI(true, state.toUpperCase());
+        appendLog('IPC', `State transit -> [${state}]`);
       });
 
-      // Initial system bootstrap logs
-      appendLog('SYSTEM', 'Zenith Studio UI Engine v1.6.0 initialized.');
-      appendLog('COG', 'Procedural playbooks indexed: git_detached_head, sqlite_vacuum, killswitch.');
-      appendLog('VISION', 'Set-of-Mark (SoM) locator armed in Smart On-Demand mode.');
+      appendLog('SYSTEM', 'Zenith initialized.');
+      appendLog('SYSTEM', 'Ready for voice interaction.');
 
-      // ------------------------------------------------------------------------
-      // 12. SETTINGS & CREDENTIALS STORAGE
-      // ------------------------------------------------------------------------
-      const cfgGeminiKey = document.getElementById('cfgGeminiKey');
-      const cfgTavilyKey = document.getElementById('cfgTavilyKey');
-      const cfgSpotifyId = document.getElementById('cfgSpotifyId');
-      const cfgSpotifySecret = document.getElementById('cfgSpotifySecret');
-      const cfgInputDevice = document.getElementById('cfgInputDevice');
-      const btnSaveConfig = document.getElementById('btnSaveConfig');
+      // Settings
+      const inputGeminiKey = document.getElementById('inputGeminiKey');
+      const inputTavilyKey = document.getElementById('inputTavilyKey');
+      const inputSpotifyId = document.getElementById('inputSpotifyId');
+      const inputSpotifySecret = document.getElementById('inputSpotifySecret');
+      const inputAudioDevice = document.getElementById('inputAudioDevice');
+      const btnSaveSettings = document.getElementById('btnSaveSettings');
 
-      // Password eye visibility toggles
-      document.querySelectorAll('.input-toggle-eye').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const targetId = btn.getAttribute('data-target');
-          const input = document.getElementById(targetId);
-          if (input) {
-            input.type = input.type === 'password' ? 'text' : 'password';
+      document.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
+        btn.onclick = () => {
+          const target = document.getElementById(btn.getAttribute('data-target'));
+          if (target) {
+            const isPass = target.type === 'password';
+            target.type = isPass ? 'text' : 'password';
+            btn.textContent = isPass ? 'Hide' : 'Show';
           }
-        });
+        };
       });
 
-      // Load environment variables
       api.readEnv().then(env => {
-        if (env) {
-          if (cfgGeminiKey && env.GEMINI_API_KEY) cfgGeminiKey.value = env.GEMINI_API_KEY;
-          if (cfgTavilyKey && env.TAVILY_API_KEY) cfgTavilyKey.value = env.TAVILY_API_KEY;
-          if (cfgSpotifyId && env.SPOTIFY_CLIENT_ID) cfgSpotifyId.value = env.SPOTIFY_CLIENT_ID;
-          if (cfgSpotifySecret && env.SPOTIFY_CLIENT_SECRET) cfgSpotifySecret.value = env.SPOTIFY_CLIENT_SECRET;
-          if (cfgInputDevice && env.ZENITH_INPUT_DEVICE) cfgInputDevice.value = env.ZENITH_INPUT_DEVICE;
-        }
+        if (!env) return;
+        if (inputGeminiKey && env.GEMINI_API_KEY) inputGeminiKey.value = env.GEMINI_API_KEY;
+        if (inputTavilyKey && env.TAVILY_API_KEY) inputTavilyKey.value = env.TAVILY_API_KEY;
+        if (inputSpotifyId && env.SPOTIFY_CLIENT_ID) inputSpotifyId.value = env.SPOTIFY_CLIENT_ID;
+        if (inputSpotifySecret && env.SPOTIFY_CLIENT_SECRET) inputSpotifySecret.value = env.SPOTIFY_CLIENT_SECRET;
+        if (inputAudioDevice && env.ZENITH_INPUT_DEVICE) inputAudioDevice.value = env.ZENITH_INPUT_DEVICE;
       });
 
-      if (btnSaveConfig) {
-        btnSaveConfig.onclick = async () => {
+      if (btnSaveSettings) {
+        btnSaveSettings.onclick = async () => {
           const payload = {
-            GEMINI_API_KEY: cfgGeminiKey ? cfgGeminiKey.value.trim() : '',
-            TAVILY_API_KEY: cfgTavilyKey ? cfgTavilyKey.value.trim() : '',
-            SPOTIFY_CLIENT_ID: cfgSpotifyId ? cfgSpotifyId.value.trim() : '',
-            SPOTIFY_CLIENT_SECRET: cfgSpotifySecret ? cfgSpotifySecret.value.trim() : '',
-            ZENITH_INPUT_DEVICE: cfgInputDevice ? cfgInputDevice.value.trim() : ''
+            GEMINI_API_KEY: inputGeminiKey ? inputGeminiKey.value.trim() : '',
+            TAVILY_API_KEY: inputTavilyKey ? inputTavilyKey.value.trim() : '',
+            SPOTIFY_CLIENT_ID: inputSpotifyId ? inputSpotifyId.value.trim() : '',
+            SPOTIFY_CLIENT_SECRET: inputSpotifySecret ? inputSpotifySecret.value.trim() : '',
+            ZENITH_INPUT_DEVICE: inputAudioDevice ? inputAudioDevice.value.trim() : ''
           };
-
           const res = await api.saveEnv(payload);
           if (res && res.status === 'success') {
-            showToast('Settings saved to local .env securely', 'success');
-            appendLog('SYSTEM', 'Updated system environment variables.');
+            showToast('Settings saved');
+            appendLog('SYSTEM', 'Settings updated.');
           } else {
-            showToast('Failed to save settings', 'error');
+            showToast('Failed to save settings');
           }
         };
       }
-
-      // Checkpoint WAL Button
-      const btnPruneWal = document.getElementById('btnPruneWal');
-      if (btnPruneWal) {
-        btnPruneWal.onclick = () => {
-          showToast('WAL checkpoint scheduled via SQLite pragma', 'success');
-          appendLog('COG', 'PRAGMA wal_checkpoint(TRUNCATE) successfully queued.');
-        };
-      }
-
-      // ------------------------------------------------------------------------
-      // 13. COMMAND PALETTE (Ctrl+K / Cmd+K)
-      // ------------------------------------------------------------------------
-      const cmdOverlay = document.getElementById('cmdOverlay');
-      const cmdSearchInput = document.getElementById('cmdSearchInput');
-      const cmdPaletteTrigger = document.getElementById('cmdPaletteTrigger');
-
-      function openCommandPalette() {
-        if (!cmdOverlay) return;
-        cmdOverlay.classList.add('active');
-        if (cmdSearchInput) {
-          cmdSearchInput.value = '';
-          cmdSearchInput.focus();
-        }
-      }
-
-      function closeCommandPalette() {
-        if (!cmdOverlay) return;
-        cmdOverlay.classList.remove('active');
-      }
-
-      if (cmdPaletteTrigger) cmdPaletteTrigger.onclick = openCommandPalette;
-
-      window.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-          e.preventDefault();
-          if (cmdOverlay && cmdOverlay.classList.contains('active')) closeCommandPalette();
-          else openCommandPalette();
-        } else if (e.key === 'Escape') {
-          closeCommandPalette();
-        }
-      });
-
-      if (cmdOverlay) {
-        cmdOverlay.addEventListener('click', (e) => {
-          if (e.target === cmdOverlay) closeCommandPalette();
-        });
-      }
-
-      document.querySelectorAll('.cmd-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const action = item.getAttribute('data-action');
-          closeCommandPalette();
-          if (action === 'toggle-assistant') toggleAssistant();
-          if (action === 'toggle-vision') {
-            if (toggleScreenStreaming) {
-              toggleScreenStreaming.checked = !toggleScreenStreaming.checked;
-              handleVisionToggle({ target: toggleScreenStreaming });
-            }
-          }
-          if (action === 'emergency-kill') {
-            if (btnEmergencyHalt) btnEmergencyHalt.click();
-          }
-          if (action === 'clear-stream') {
-            if (btnClearStream) btnClearStream.click();
-          }
-        });
-      });
 
     })();
   </script>
