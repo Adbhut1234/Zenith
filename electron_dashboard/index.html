@@ -4,51 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zenith Studio</title>
-  <!-- Professional Typography -->
+  <!-- Apple / Discord / Spotify Typography Stack -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Surface & Layout */
-      --bg-app: #090a0f;
-      --bg-sidebar: #0d0f17;
-      --bg-header: rgba(13, 15, 23, 0.85);
-      --bg-surface: #121520;
-      --bg-surface-hover: #171c2b;
-      --bg-input: #0b0d14;
-      --bg-input-focus: #101420;
+      /* macOS Sonoma & Spotify/Discord Dark Hierarchy */
+      --bg-base: #0d0e12;
+      --bg-sidebar: #13141b;
+      --bg-header: rgba(19, 20, 27, 0.85);
+      --bg-surface: #191b24;
+      --bg-surface-elevated: #20232e;
+      --bg-surface-hover: #262a37;
+      --bg-input: #121319;
+      --bg-input-focus: #171922;
 
-      /* Borders */
+      /* macOS Translucent Borders & Subtle Separators */
       --border-subtle: rgba(255, 255, 255, 0.06);
       --border-default: rgba(255, 255, 255, 0.1);
       --border-hover: rgba(255, 255, 255, 0.18);
-      --border-focus: #3b82f6;
+      --border-focus: #3875f6;
 
-      /* Text */
-      --text-primary: #f4f4f6;
-      --text-secondary: #9496a1;
-      --text-muted: #656773;
-      --text-dim: #434550;
+      /* Typography */
+      --text-primary: #ffffff;
+      --text-secondary: #9da1b2;
+      --text-muted: #6e7284;
+      --text-dim: #464a59;
 
-      /* Accents */
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --accent-subtle: rgba(37, 99, 235, 0.12);
-      --success: #10b981;
-      --success-subtle: rgba(16, 185, 129, 0.12);
-      --warning: #f59e0b;
-      --warning-subtle: rgba(245, 158, 11, 0.12);
-      --danger: #ef4444;
-      --danger-hover: #dc2626;
-      --danger-subtle: rgba(239, 68, 68, 0.12);
+      /* Refined Product Accents */
+      --spotify-green: #1ed760;
+      --spotify-green-hover: #1fdf64;
+      --spotify-green-subtle: rgba(30, 215, 96, 0.12);
 
-      /* Geometry */
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
-      --radius-full: 9999px;
-      --sidebar-width: 240px;
+      --apple-blue: #0a84ff;
+      --apple-blue-hover: #0071e3;
+      --apple-blue-subtle: rgba(10, 132, 255, 0.12);
+
+      --discord-blurple: #5865f2;
+      --discord-blurple-subtle: rgba(88, 101, 242, 0.12);
+
+      --danger-red: #ff453a;
+      --danger-red-hover: #e0382f;
+      --danger-red-subtle: rgba(255, 69, 58, 0.12);
+
+      --warning-amber: #ff9f0a;
+      --warning-amber-subtle: rgba(255, 159, 10, 0.12);
+
+      /* Geometry & Spacing */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --sidebar-w: 245px;
     }
 
     * {
@@ -59,8 +67,8 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: var(--bg-app);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      background-color: var(--bg-base);
       color: var(--text-primary);
       height: 100vh;
       display: flex;
@@ -69,460 +77,636 @@
       -webkit-user-select: none;
     }
 
-    /* Custom Scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    /* ── Smooth Spotify/macOS Scrollbar ─────────── */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-full);
+      border-radius: 999px;
     }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
 
-    /* ── Sidebar ────────────────────────────────── */
+    /* ── Sidebar (macOS & Discord Inspiration) ──── */
     .sidebar {
-      width: var(--sidebar-width);
+      width: var(--sidebar-w);
       background: var(--bg-sidebar);
       border-right: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
-      padding: 1.25rem 0.85rem;
-      z-index: 10;
+      padding: 1.25rem 0.9rem;
+      z-index: 20;
     }
 
-    .brand {
+    /* macOS Traffic Light Window Controls */
+    .traffic-controls {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 0.25rem 0.6rem 1.25rem;
+      gap: 7px;
+      padding: 0.2rem 0.4rem 1.4rem;
+    }
+
+    .traffic-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      transition: opacity 0.2s;
+    }
+
+    .traffic-dot.close { background: #ff5f56; border: 1px solid #e0443e; }
+    .traffic-dot.minimize { background: #ffbd2e; border: 1px solid #dea123; }
+    .traffic-dot.maximize { background: #27c93f; border: 1px solid #1aab29; }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 0.4rem 1.25rem;
       border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
     }
 
-    .brand-logo {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--radius-sm);
-      object-fit: contain;
-      background: #1e2230;
-      padding: 3px;
+    .brand-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e2230 0%, #11141c 100%);
       border: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
-    .brand-title {
+    .brand-icon {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    .brand-meta h1 {
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: -0.2px;
       color: var(--text-primary);
     }
 
-    .brand-version {
+    .brand-meta span {
       font-size: 0.68rem;
-      font-weight: 500;
       color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2px 6px;
-      border-radius: var(--radius-sm);
-      margin-left: auto;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .nav-group-label {
-      font-size: 0.7rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-muted);
-      padding: 0.5rem 0.6rem 0.35rem;
+      letter-spacing: 0.4px;
+      display: block;
     }
 
-    .nav-list {
+    .nav-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 2px;
+    }
+
+    .nav-menu {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
       flex: 1;
     }
 
-    .nav-item {
+    .nav-pill {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 0.55rem 0.75rem;
+      gap: 11px;
+      padding: 0.6rem 0.8rem;
       border-radius: var(--radius-sm);
-      font-size: 0.875rem;
-      font-weight: 500;
+      font-size: 0.85rem;
+      font-weight: 600;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.15s ease;
-      border: 1px solid transparent;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
 
-    .nav-item:hover {
-      background: rgba(255, 255, 255, 0.04);
+    .nav-pill svg {
+      opacity: 0.7;
+      transition: all 0.18s ease;
+    }
+
+    .nav-pill:hover {
+      background: rgba(255, 255, 255, 0.05);
       color: var(--text-primary);
     }
 
-    .nav-item.active {
-      background: rgba(37, 99, 235, 0.1);
-      color: #93c5fd;
-      border-color: rgba(37, 99, 235, 0.25);
-      font-weight: 600;
-    }
-
-    .nav-item svg {
-      opacity: 0.75;
-      transition: opacity 0.15s;
-    }
-
-    .nav-item:hover svg,
-    .nav-item.active svg {
+    .nav-pill:hover svg {
       opacity: 1;
+      transform: scale(1.05);
     }
 
+    .nav-pill.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .nav-pill.active svg {
+      opacity: 1;
+      color: var(--apple-blue);
+    }
+
+    .nav-pill.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 25%;
+      height: 50%;
+      width: 3px;
+      background: var(--apple-blue);
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* Sidebar Footer (Presence Widget) */
     .sidebar-footer {
-      padding-top: 1rem;
       border-top: 1px solid var(--border-subtle);
+      padding-top: 1rem;
     }
 
-    .status-summary-card {
+    .presence-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 0.75rem;
-      font-size: 0.78rem;
-    }
-
-    .status-row {
+      padding: 0.75rem 0.85rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
+      gap: 10px;
     }
 
-    .status-row:last-child { margin-bottom: 0; }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
+    .presence-avatar-wrap {
+      position: relative;
+      width: 30px;
+      height: 30px;
     }
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
+    .presence-avatar {
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      background: var(--danger);
+      background: #252835;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--apple-blue);
     }
 
-    .status-dot.online {
-      background: var(--success);
-      box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+    .presence-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--danger-red);
+      border: 2px solid var(--bg-surface);
     }
 
-    .status-dot.booting {
-      background: var(--warning);
-      box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+    .presence-dot.online {
+      background: var(--spotify-green);
+      box-shadow: 0 0 8px rgba(30, 215, 96, 0.6);
     }
 
-    /* ── Main Layout ────────────────────────────── */
-    .main-wrap {
+    .presence-dot.booting {
+      background: var(--warning-amber);
+    }
+
+    .presence-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .presence-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .presence-sub {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Main Workspace ────────────────────────── */
+    .main-workspace {
       flex: 1;
       display: flex;
       flex-direction: column;
+      background: var(--bg-base);
       overflow: hidden;
-      background: var(--bg-app);
     }
 
-    .app-header {
-      height: 58px;
+    /* Header Nav (macOS Pro App style) */
+    .mac-header {
+      height: 60px;
       padding: 0 1.75rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border-subtle);
       background: var(--bg-header);
-      backdrop-filter: blur(12px);
-      z-index: 5;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      z-index: 10;
     }
 
-    .header-breadcrumb {
+    .mac-title-wrap {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      gap: 10px;
     }
 
-    .header-breadcrumb .current {
+    .mac-page-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
       color: var(--text-primary);
-      font-weight: 600;
     }
 
-    .header-actions {
+    .mac-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .mac-header-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .telemetry-chip {
+    /* Equalizer Wave (Spotify & Discord Voice activity) */
+    .equalizer-wrap {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 0.75rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-secondary);
+      gap: 3px;
+      height: 16px;
+      padding: 0 4px;
     }
 
+    .eq-bar {
+      width: 3px;
+      background: var(--spotify-green);
+      border-radius: 2px;
+      height: 4px;
+      transition: height 0.2s ease;
+    }
+
+    .eq-bar.active {
+      animation: soundWave 0.8s ease-in-out infinite alternate;
+    }
+
+    .eq-bar.active:nth-child(1) { animation-delay: 0.1s; }
+    .eq-bar.active:nth-child(2) { animation-delay: 0.3s; }
+    .eq-bar.active:nth-child(3) { animation-delay: 0.5s; }
+    .eq-bar.active:nth-child(4) { animation-delay: 0.2s; }
+    .eq-bar.active:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes soundWave {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+
+    /* Buttons (macOS / Spotify Tactile Style) */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 0.45rem 1rem;
+      padding: 0.48rem 1.1rem;
       font-size: 0.825rem;
-      font-weight: 500;
-      border-radius: var(--radius-sm);
+      font-weight: 600;
+      border-radius: var(--radius-full);
       cursor: pointer;
-      transition: all 0.15s ease;
       border: 1px solid transparent;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       outline: none;
     }
 
-    .btn-primary {
-      background: var(--accent);
+    .btn:active { transform: scale(0.97); }
+
+    .btn-spotify {
+      background: var(--spotify-green);
+      color: #000;
+      box-shadow: 0 2px 12px rgba(30, 215, 96, 0.35);
+    }
+
+    .btn-spotify:hover {
+      background: var(--spotify-green-hover);
+      box-shadow: 0 4px 18px rgba(30, 215, 96, 0.5);
+    }
+
+    .btn-danger-mac {
+      background: var(--danger-red-subtle);
+      color: #ff7b72;
+      border-color: rgba(255, 69, 58, 0.3);
+    }
+
+    .btn-danger-mac:hover {
+      background: var(--danger-red);
       color: #fff;
+      box-shadow: 0 4px 14px rgba(255, 69, 58, 0.4);
     }
 
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-
-    .btn-danger {
-      background: var(--danger-subtle);
-      color: #fca5a5;
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-
-    .btn-danger:hover {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-primary);
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
       border-color: var(--border-default);
     }
 
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--text-primary);
     }
 
-    /* ── Pages Container ────────────────────────── */
-    .page-content {
+    /* ── Content Viewport ───────────────────────── */
+    .viewport {
       flex: 1;
       overflow-y: auto;
-      padding: 1.75rem;
+      padding: 1.75rem 2rem 3rem;
     }
 
     .page {
       display: none;
-      animation: fadeIn 0.15s ease-out;
+      animation: viewSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .page.active { display: block; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+    @keyframes viewSlide {
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .section-title-wrap {
+    /* ── Spotify-Style Hero Banner ─────────────── */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(30, 215, 96, 0.12) 0%, rgba(10, 132, 255, 0.08) 50%, rgba(25, 27, 36, 0.6) 100%);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem 2rem;
       margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-      font-size: 1.35rem;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .section-desc {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    /* ── Metric Grid ────────────────────────────── */
-    .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .metric-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-      transition: border-color 0.15s ease;
-    }
-
-    .metric-card:hover {
-      border-color: var(--border-hover);
-    }
-
-    .metric-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.75rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
     }
 
-    .metric-title {
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(30, 215, 96, 0.1) 0%, transparent 50%);
+      pointer-events: none;
     }
 
-    .metric-value {
-      font-size: 1.4rem;
+    .hero-content h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .hero-content p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .hero-tag {
+      font-size: 0.75rem;
       font-weight: 600;
-      letter-spacing: -0.3px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── Metric Cards Grid ──────────────────────── */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 960px) {
+      .metric-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.4rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+
+    .card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+    }
+
+    .card-num {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #fff;
       margin-bottom: 0.35rem;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .metric-sub {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
+    .card-foot {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
     }
 
-    /* Progress bar */
-    .progress-track {
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 8px;
+    /* ── iOS / macOS Style Toggle Switch ────────── */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
     }
 
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--accent);
-      border-radius: 2px;
-      transition: width 0.3s ease;
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #2b2e3a;
+      transition: .22s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* ── Two Column Layout ──────────────────────── */
-    .layout-cols {
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #ffffff;
+      transition: .22s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    input:checked + .slider {
+      background-color: var(--spotify-green);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    /* ── Split Columns (Telemetry & Subsystems) ─── */
+    .split-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
     @media (max-width: 900px) {
-      .layout-cols { grid-template-columns: 1fr; }
+      .split-grid { grid-template-columns: 1fr; }
     }
 
-    .card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-    }
-
-    .card-header {
+    .panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
-      padding-bottom: 0.65rem;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.85rem;
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .card-title {
+    .panel-title {
       font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
+      font-weight: 700;
+      color: #fff;
     }
 
-    /* Subsystem Table */
-    .subsystem-table {
+    /* Progress bar */
+    .track-bar {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .track-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--apple-blue);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    /* Subsystem Checklist (macOS Settings Table) */
+    .settings-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.825rem;
     }
 
-    .subsystem-table tr {
+    .settings-table tr {
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .subsystem-table tr:last-child {
-      border-bottom: none;
-    }
+    .settings-table tr:last-child { border-bottom: none; }
 
-    .subsystem-table td {
+    .settings-table td {
       padding: 0.65rem 0.25rem;
       color: var(--text-secondary);
     }
 
-    .subsystem-table td:last-child {
+    .settings-table td:last-child {
       text-align: right;
     }
 
-    .pill-tag {
+    .badge-pill {
       display: inline-flex;
       align-items: center;
       padding: 2px 8px;
-      border-radius: var(--radius-sm);
-      font-size: 0.72rem;
-      font-weight: 500;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .pill-tag.active {
-      background: var(--success-subtle);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-    }
-
-    .pill-tag.neutral {
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 600;
       background: rgba(255, 255, 255, 0.06);
       color: var(--text-secondary);
-      border: 1px solid var(--border-default);
-    }
-
-    /* ── Terminal Console ───────────────────────── */
-    .console-card {
-      background: var(--bg-input);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      font-family: 'JetBrains Mono', monospace;
     }
 
-    .console-header {
+    .badge-pill.success {
+      background: var(--spotify-green-subtle);
+      color: #6ee7b7;
+      border-color: rgba(30, 215, 96, 0.3);
+    }
+
+    /* ── Activity Console (Discord Message Stream) ─ */
+    .chat-console {
+      background: #111218;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .chat-console-header {
       padding: 0.65rem 1rem;
       background: rgba(255, 255, 255, 0.02);
       border-bottom: 1px solid var(--border-subtle);
@@ -530,85 +714,97 @@
       align-items: center;
       justify-content: space-between;
       font-size: 0.78rem;
-      color: var(--text-muted);
+      font-weight: 600;
+      color: var(--text-secondary);
     }
 
-    .console-body {
-      height: 190px;
+    .chat-stream {
+      height: 180px;
       overflow-y: auto;
-      padding: 0.85rem 1rem;
+      padding: 0.75rem 1rem;
       display: flex;
       flex-direction: column;
       gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.78rem;
-      line-height: 1.45;
     }
 
-    .console-row {
+    .chat-row {
       display: flex;
-      gap: 8px;
-      color: #cbd5e1;
+      align-items: baseline;
+      gap: 10px;
+      line-height: 1.45;
+      color: #e2e8f0;
     }
 
-    .console-time { color: var(--text-dim); flex-shrink: 0; }
-    .console-badge {
-      color: #93c5fd;
-      font-weight: 600;
+    .chat-timestamp {
+      color: var(--text-dim);
+      font-size: 0.72rem;
       flex-shrink: 0;
     }
-    .console-badge.sys { color: #6ee7b7; }
-    .console-badge.warn { color: #fde047; }
-    .console-badge.err { color: #fca5a5; }
 
-    /* ── Form Styles ────────────────────────────── */
-    .form-section {
+    .chat-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .chat-tag.sys { background: rgba(30, 215, 96, 0.15); color: #6ee7b7; }
+    .chat-tag.ipc { background: rgba(10, 132, 255, 0.15); color: #93c5fd; }
+    .chat-tag.warn { background: rgba(255, 159, 10, 0.15); color: #fde047; }
+    .chat-tag.err { background: rgba(255, 69, 58, 0.15); color: #fca5a5; }
+
+    /* ── Forms (macOS Sonoma System Settings Style) */
+    .form-group-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.75rem;
       margin-bottom: 1.25rem;
     }
 
-    .form-section-header {
+    .form-group-head {
       margin-bottom: 1.25rem;
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .form-section-title {
+    .form-group-title {
       font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-primary);
+      font-weight: 700;
+      color: #fff;
     }
 
-    .form-section-desc {
+    .form-group-desc {
       font-size: 0.78rem;
       color: var(--text-muted);
       margin-top: 2px;
     }
 
-    .form-row {
-      margin-bottom: 1.2rem;
+    .field-row {
+      margin-bottom: 1.1rem;
     }
 
-    .form-row:last-child { margin-bottom: 0; }
+    .field-row:last-child { margin-bottom: 0; }
 
-    .form-label {
+    .field-label {
       display: block;
       font-size: 0.825rem;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 4px;
     }
 
-    .form-desc {
+    .field-desc {
       display: block;
       font-size: 0.75rem;
       color: var(--text-muted);
       margin-bottom: 6px;
     }
 
-    .input-wrapper {
+    .input-box-wrap {
       position: relative;
       display: flex;
       align-items: center;
@@ -621,35 +817,32 @@
       width: 100%;
       background: var(--bg-input);
       border: 1px solid var(--border-default);
-      color: var(--text-primary);
-      padding: 0.6rem 0.85rem;
+      color: #fff;
+      padding: 0.65rem 0.9rem;
       border-radius: var(--radius-sm);
       font-family: inherit;
       font-size: 0.875rem;
       outline: none;
-      transition: all 0.15s ease;
+      transition: all 0.18s ease;
       user-select: auto;
       -webkit-user-select: auto;
     }
 
-    select option {
-      background: #171a25;
-      color: #fff;
-    }
+    select option { background: #181a24; color: #fff; }
 
     input:focus,
     select:focus,
     textarea:focus {
       border-color: var(--border-focus);
       background: var(--bg-input-focus);
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+      box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.18);
     }
 
     textarea { min-height: 90px; resize: vertical; line-height: 1.45; }
 
-    .btn-eye {
+    .eye-icon-btn {
       position: absolute;
-      right: 8px;
+      right: 10px;
       background: transparent;
       border: none;
       color: var(--text-muted);
@@ -659,282 +852,317 @@
       align-items: center;
     }
 
-    .btn-eye:hover { color: var(--text-primary); }
+    .eye-icon-btn:hover { color: #fff; }
 
-    /* ── Toast ──────────────────────────────────── */
-    .toast-container {
+    /* Toast */
+    .toast-box {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: #181c2b;
+      background: #1c1f2b;
       border: 1px solid var(--border-hover);
-      color: var(--text-primary);
-      padding: 0.75rem 1.25rem;
+      color: #fff;
+      padding: 0.85rem 1.4rem;
       border-radius: var(--radius-md);
       font-size: 0.85rem;
-      font-weight: 500;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       opacity: 0;
-      transform: translateY(12px);
-      transition: all 0.2s ease;
+      transform: translateY(10px);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 1000;
       pointer-events: none;
     }
 
-    .toast-container.show {
+    .toast-box.show {
       opacity: 1;
       transform: translateY(0);
       pointer-events: auto;
     }
 
-    .toast-container.error {
-      border-color: rgba(239, 68, 68, 0.4);
-      background: #241418;
+    .toast-box.error {
+      background: #2a1518;
+      border-color: rgba(255, 69, 58, 0.4);
     }
 
-    /* ── Modal ──────────────────────────────────── */
-    .modal-backdrop {
+    /* Modal */
+    .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
       z-index: 2000;
       align-items: center;
       justify-content: center;
     }
 
-    .modal-card {
-      background: var(--bg-surface);
+    .modal-window {
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-default);
       border-radius: var(--radius-lg);
       padding: 1.75rem;
-      max-width: 420px;
+      max-width: 440px;
       width: 90%;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
     }
   </style>
 </head>
 <body>
 
-  <!-- ── Left Sidebar Navigation ────────────────── -->
+  <!-- ── Left macOS / Discord Sidebar ──────────── -->
   <aside class="sidebar">
-    <div class="brand">
-      <img src="icon.png" class="brand-logo" alt="Logo">
-      <div class="brand-title">Zenith Studio</div>
-      <span class="brand-version">v1.6.0</span>
+    <!-- macOS Traffic Light Window Buttons -->
+    <div class="traffic-controls">
+      <span class="traffic-dot close"></span>
+      <span class="traffic-dot minimize"></span>
+      <span class="traffic-dot maximize"></span>
     </div>
 
-    <div class="nav-group-label">Navigation</div>
-    <nav class="nav-list">
-      <div class="nav-item active" onclick="switchTab('dashboard', this)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+    <!-- App Brand -->
+    <div class="brand-group">
+      <div class="brand-icon-wrap">
+        <img src="icon.png" class="brand-icon" alt="Zenith">
+      </div>
+      <div class="brand-meta">
+        <h1>Zenith Studio</h1>
+        <span>MK-VII PRO EDITION</span>
+      </div>
+    </div>
+
+    <div class="nav-label">Workspace</div>
+    <nav class="nav-menu">
+      <div class="nav-pill active" onclick="switchTab('dashboard', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
         Overview
       </div>
-      <div class="nav-item" onclick="switchTab('settings', this)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      <div class="nav-pill" onclick="switchTab('settings', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         Configurations
       </div>
-      <div class="nav-item" onclick="switchTab('cognitive', this)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3m0 14v3M2 12h3m14 0h3m-3.5-6.5-2.1 2.1m-8.8 8.8-2.1 2.1m0-13 2.1 2.1m8.8 8.8 2.1 2.1"/></svg>
+      <div class="nav-pill" onclick="switchTab('cognitive', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3m0 14v3M2 12h3m14 0h3m-3.5-6.5-2.1 2.1m-8.8 8.8-2.1 2.1m0-13 2.1 2.1m8.8 8.8 2.1 2.1"/></svg>
         Cognitive Matrix
       </div>
-      <div class="nav-item" onclick="switchTab('guide', this)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      <div class="nav-pill" onclick="switchTab('guide', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
         Setup Guide
       </div>
-      <div class="nav-item" onclick="switchTab('about', this)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        About & Telemetry
+      <div class="nav-pill" onclick="switchTab('about', this)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        About Zenith
       </div>
     </nav>
 
+    <!-- Sidebar Presence Footer -->
     <div class="sidebar-footer">
-      <div class="status-summary-card">
-        <div class="status-row">
-          <span>Engine Status</span>
-          <span class="status-badge" id="sideStatusBadge">
-            <span class="status-dot" id="sideStatusDot"></span>
-            <span id="sideStatusText">Offline</span>
-          </span>
+      <div class="presence-card">
+        <div class="presence-avatar-wrap">
+          <div class="presence-avatar">Z</div>
+          <span class="presence-dot" id="sideStatusDot"></span>
         </div>
-        <div class="status-row" style="margin-top: 6px;">
-          <span>Database</span>
-          <span style="font-family:'JetBrains Mono', monospace; color:var(--text-primary);">SQLite WAL</span>
+        <div class="presence-info">
+          <div class="presence-name" id="sideStatusText">Offline</div>
+          <div class="presence-sub" id="processIdDisplay">PID: Standby</div>
         </div>
       </div>
     </div>
   </aside>
 
   <!-- ── Main Workspace ────────────────────────── -->
-  <div class="main-wrap">
-    <!-- Top Action Header -->
-    <header class="app-header">
-      <div class="header-breadcrumb">
-        <span>Zenith</span>
-        <span>/</span>
-        <span class="current" id="headerBreadcrumb">Overview</span>
+  <div class="main-workspace">
+    <!-- Top macOS Header -->
+    <header class="mac-header">
+      <div class="mac-title-wrap">
+        <span class="mac-page-title" id="headerBreadcrumb">Overview</span>
+        <span class="mac-badge" id="modelBadge">Gemini Live 2.5 / 3.5</span>
       </div>
 
-      <div class="header-actions">
-        <div class="telemetry-chip" id="cpuChip">
-          <span>CPU</span>
-          <strong id="headerCpuVal">--%</strong>
+      <div class="mac-header-actions">
+        <!-- Voice Equalizer Animation (Spotify Style) -->
+        <div class="equalizer-wrap" title="Audio Activity">
+          <span class="eq-bar" id="eq1"></span>
+          <span class="eq-bar" id="eq2"></span>
+          <span class="eq-bar" id="eq3"></span>
+          <span class="eq-bar" id="eq4"></span>
+          <span class="eq-bar" id="eq5"></span>
         </div>
-        <div class="telemetry-chip" id="ramChip">
-          <span>RAM</span>
-          <strong id="headerRamVal">-- GB</strong>
+
+        <!-- Telemetry Chips -->
+        <div class="mac-badge" id="cpuChip" style="font-family:'JetBrains Mono', monospace;">
+          CPU <strong id="headerCpuVal">--%</strong>
         </div>
-        
-        <button id="masterActionBtn" class="btn btn-primary" onclick="validateAndLaunchZenith()">
+        <div class="mac-badge" id="ramChip" style="font-family:'JetBrains Mono', monospace;">
+          RAM <strong id="headerRamVal">-- GB</strong>
+        </div>
+
+        <!-- Primary Action Button (Spotify Tactile Pill) -->
+        <button id="masterActionBtn" class="btn btn-spotify" onclick="validateAndLaunchZenith()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
           <span id="masterActionText">Start Assistant</span>
         </button>
 
-        <button class="btn btn-danger" onclick="triggerEmergencyKillAction()" title="Emergency Killswitch">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
-          Killswitch
+        <button class="btn btn-danger-mac" onclick="triggerEmergencyKillAction()" title="Instant Emergency Motor Killswitch">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+          Halt
         </button>
       </div>
     </header>
 
-    <!-- Page Content Area -->
-    <main class="page-content">
+    <!-- Content Viewport -->
+    <div class="viewport">
       
       <!-- ── TAB 1: OVERVIEW ─────────────────────── -->
       <div id="dashboard" class="page active">
-        <div class="section-title-wrap">
-          <h2 class="section-title" id="greetingText">Welcome back</h2>
-          <p class="section-desc">System monitor and operational status of your local AI assistant.</p>
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+          <div class="hero-content">
+            <h2 id="greetingText">Welcome back, Sir.</h2>
+            <p>Zenith Multimodal Neural Assistant is ready for voice, vision, and system automations.</p>
+            <div class="hero-tags">
+              <span class="hero-tag">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+                System 2 Deliberative
+              </span>
+              <span class="hero-tag">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path></svg>
+                Procedural Playbooks
+              </span>
+              <span class="hero-tag">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Ship of Theseus WAL
+              </span>
+            </div>
+          </div>
         </div>
 
         <!-- 3 Key Metric Cards -->
         <div class="metric-grid">
-          <!-- Card 1: Engine Status -->
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-title">Assistant Status</span>
-              <span class="status-badge" id="cardStatusBadge">
-                <span class="status-dot" id="cardStatusDot"></span>
+          <!-- Card 1: Core Engine Status -->
+          <div class="card">
+            <div class="card-top">
+              <span class="card-label">Assistant Status</span>
+              <span class="badge-pill" id="cardStatusBadge">
                 <span id="cardStatusLabel">Standby</span>
               </span>
             </div>
-            <div class="metric-value" id="engineStatusDisplay">Offline</div>
-            <div class="metric-sub">
-              <span>Model: Gemini Live 2.5 / 3.5</span>
-              <span style="font-family:'JetBrains Mono', monospace;" id="processIdDisplay">PID: --</span>
+            <div class="card-num" id="engineStatusDisplay">Offline</div>
+            <div class="card-foot">
+              <span>Voice Transport: WebRTC</span>
+              <span id="rtcChannelStatus" style="color:var(--spotify-green);">Ready</span>
             </div>
           </div>
 
-          <!-- Card 2: Screen Vision -->
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-title">Live Screen Vision</span>
-              <button id="visionToggleBtn" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.72rem;" onclick="toggleScreenVisionAction()">
-                Switch to Continuous
-              </button>
+          <!-- Card 2: Zero-Jitter Screen Vision with iOS Switch -->
+          <div class="card">
+            <div class="card-top">
+              <span class="card-label">Screen Vision Mode</span>
+              <label class="switch" title="Toggle Continuous Screen Streaming">
+                <input type="checkbox" id="visionToggleCheckbox" onchange="toggleScreenVisionAction()">
+                <span class="slider"></span>
+              </label>
             </div>
-            <div class="metric-value" id="visionModeDisplay">Smart On-Demand</div>
-            <div class="metric-sub">
-              <span id="visionDescSub" style="color:var(--success);">Zero-latency frame capture</span>
+            <div class="card-num" id="visionModeDisplay">Smart On-Demand</div>
+            <div class="card-foot">
+              <span id="visionDescSub">Zero-overhead capture</span>
               <span>1280x720</span>
             </div>
           </div>
 
-          <!-- Card 3: Memory Matrix -->
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-title">Sovereign Memory</span>
-              <span class="pill-tag active">SQLite WAL</span>
+          <!-- Card 3: Memory Continuum -->
+          <div class="card">
+            <div class="card-top">
+              <span class="card-label">Sovereign Memory</span>
+              <span class="badge-pill success">SQLite WAL</span>
             </div>
-            <div class="metric-value" id="dbSizeDisplay">Healthy</div>
-            <div class="metric-sub">
-              <span>Ship of Theseus Engine</span>
-              <span style="color:var(--text-primary);" id="memorySyncStatus">Synced</span>
+            <div class="card-num" id="dbSizeDisplay">Healthy</div>
+            <div class="card-foot">
+              <span>Epistemic Contradiction Engine</span>
+              <span id="memorySyncStatus" style="color:#fff;">Active</span>
             </div>
           </div>
         </div>
 
-        <!-- Middle Section: 2 Columns -->
-        <div class="layout-cols">
+        <!-- Middle Split (Telemetry & Subsystems) -->
+        <div class="split-grid">
           <!-- Left: Hardware Telemetry -->
           <div class="card">
-            <div class="card-header">
-              <div class="card-title">Host Performance</div>
-              <span style="font-size: 0.75rem; color:var(--text-muted);" id="hostPlatformDisplay">Windows x64</span>
+            <div class="panel-header">
+              <span class="panel-title">Host Performance</span>
+              <span style="font-size:0.75rem; color:var(--text-muted);" id="hostPlatformDisplay">Windows x64</span>
             </div>
-            <div style="margin-bottom: 1rem;">
-              <div class="status-row">
-                <span>Processor Load</span>
+            <div style="margin-bottom: 1.1rem;">
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                <span style="color:var(--text-secondary);">Processor Load</span>
                 <strong id="cpuDetailVal">--%</strong>
               </div>
-              <div class="progress-track">
-                <div class="progress-fill" id="cpuDetailBar"></div>
+              <div class="track-bar">
+                <div class="track-fill" id="cpuDetailBar"></div>
               </div>
-              <span style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px; display: block;" id="cpuModelText">Intel / AMD Processor</span>
+              <span style="font-size:0.72rem; color:var(--text-dim); margin-top:4px; display:block;" id="cpuModelText">Intel / AMD Processor</span>
             </div>
             <div>
-              <div class="status-row">
-                <span>Memory Allocation</span>
+              <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                <span style="color:var(--text-secondary);">System Memory (RAM)</span>
                 <strong id="ramDetailVal">-- / -- GB</strong>
               </div>
-              <div class="progress-track">
-                <div class="progress-fill" id="ramDetailBar"></div>
+              <div class="track-bar">
+                <div class="track-fill" id="ramDetailBar"></div>
               </div>
-              <span style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px; display: block;" id="ramPercentText">--% of total capacity</span>
+              <span style="font-size:0.72rem; color:var(--text-dim); margin-top:4px; display:block;" id="ramPercentText">--% Capacity utilized</span>
             </div>
           </div>
 
-          <!-- Right: Cognitive Subsystems Table -->
+          <!-- Right: Cognitive Checklist -->
           <div class="card">
-            <div class="card-header">
-              <div class="card-title">Active Cognitive Subsystems</div>
-              <span class="pill-tag neutral">Vision V2</span>
+            <div class="panel-header">
+              <span class="panel-title">Active Cognitive Subsystems</span>
+              <span class="badge-pill">Vision V2</span>
             </div>
-            <table class="subsystem-table">
+            <table class="settings-table">
               <tr>
                 <td>System 2 Deep Thinker</td>
-                <td><span class="pill-tag active">Deliberative</span></td>
+                <td><span class="badge-pill success">Deliberative</span></td>
               </tr>
               <tr>
                 <td>Procedural Neuroplasticity</td>
-                <td><span class="pill-tag active">Playbooks Active</span></td>
+                <td><span class="badge-pill success">Playbooks Active</span></td>
               </tr>
               <tr>
-                <td>Temporal Memory Evolution</td>
-                <td><span class="pill-tag active">Continuum WAL</span></td>
+                <td>Temporal Knowledge Evolution</td>
+                <td><span class="badge-pill success">Continuum WAL</span></td>
               </tr>
               <tr>
                 <td>Council of Overlays</td>
-                <td><span class="pill-tag active">Multi-Agent</span></td>
+                <td><span class="badge-pill success">Dialectical</span></td>
               </tr>
               <tr>
                 <td>Universal Motor Killswitch</td>
-                <td><span class="pill-tag active">Armed</span></td>
+                <td><span class="badge-pill success">Armed</span></td>
               </tr>
             </table>
           </div>
         </div>
 
-        <!-- Bottom: Live Activity Log -->
-        <div class="console-card">
-          <div class="console-header">
-            <span>Live Activity Stream</span>
-            <button onclick="clearConsoleLog()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.75rem;">Clear</button>
+        <!-- Activity Stream (Discord Chat Log Style) -->
+        <div class="chat-console">
+          <div class="chat-console-header">
+            <span>Activity Stream</span>
+            <button onclick="clearConsoleLog()" class="btn btn-ghost" style="padding:2px 8px; font-size:0.72rem;">Clear</button>
           </div>
-          <div class="console-body" id="consoleBody">
-            <div class="console-row">
-              <span class="console-time">[INIT]</span>
-              <span class="console-badge sys">SYSTEM</span>
-              <span>Zenith Studio dashboard initialized.</span>
+          <div class="chat-stream" id="consoleBody">
+            <div class="chat-row">
+              <span class="chat-timestamp">[12:00:00]</span>
+              <span class="chat-tag sys">SYSTEM</span>
+              <span>Zenith Studio desktop environment ready.</span>
             </div>
-            <div class="console-row">
-              <span class="console-time">[READY]</span>
-              <span class="console-badge">IPC</span>
-              <span>Local telemetry bridge ready on UDP 49152.</span>
+            <div class="chat-row">
+              <span class="chat-timestamp">[12:00:01]</span>
+              <span class="chat-tag ipc">IPC</span>
+              <span>Telemetry listener active on UDP 49152.</span>
             </div>
           </div>
         </div>
@@ -942,109 +1170,109 @@
 
       <!-- ── TAB 2: CONFIGURATIONS ──────────────── -->
       <div id="settings" class="page">
-        <div class="section-title-wrap">
-          <h2 class="section-title">Configurations</h2>
-          <p class="section-desc">Manage API keys, identity parameters, and playback preferences.</p>
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:4px;">Configurations</h2>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">Manage neural authentication, user identity directives, and transport parameters.</p>
         </div>
 
         <form id="configForm">
-          <!-- Section 1: User Identity -->
-          <div class="form-section">
-            <div class="form-section-header">
-              <div class="form-section-title">Identity & Directives</div>
-              <div class="form-section-desc">How Zenith identifies and addresses you in voice interactions.</div>
+          <!-- Card 1: User Identity -->
+          <div class="form-group-card">
+            <div class="form-group-head">
+              <div class="form-group-title">User Identity & Persona Directives</div>
+              <div class="form-group-desc">Define how Zenith addresses and interacts with you.</div>
             </div>
-            <div class="form-row">
-              <label class="form-label" for="Zenith_USER_ID">User Honorific / Name</label>
+            <div class="field-row">
+              <label class="field-label" for="Zenith_USER_ID">User Honorific / Name</label>
               <input type="text" id="Zenith_USER_ID" name="Zenith_USER_ID" placeholder="e.g. Tony Stark / Sir">
             </div>
-            <div class="form-row">
-              <label class="form-label" for="USER_PERSONAL_INFO">Personal Background & Preferences</label>
-              <span class="form-desc">Injected into the memory context at startup. Include your role, coding style, or communication tone.</span>
-              <textarea id="USER_PERSONAL_INFO" name="USER_PERSONAL_INFO" placeholder="I am a software engineer. Keep responses crisp and concise..."></textarea>
+            <div class="field-row">
+              <label class="field-label" for="USER_PERSONAL_INFO">Personal Background & Preferences</label>
+              <span class="field-desc">Injected into memory at startup. Let Zenith know your tech stack, workflow habits, or communication style.</span>
+              <textarea id="USER_PERSONAL_INFO" name="USER_PERSONAL_INFO" placeholder="I am a software engineer building AI. I prefer concise, witty responses..."></textarea>
             </div>
           </div>
 
-          <!-- Section 2: Neural Engine -->
-          <div class="form-section">
-            <div class="form-section-header">
-              <div class="form-section-title">Neural Engine (Google Gemini)</div>
-              <div class="form-section-desc">Required for voice recognition, visual analysis, and deliberative reasoning.</div>
+          <!-- Card 2: Neural Brain -->
+          <div class="form-group-card">
+            <div class="form-group-head">
+              <div class="form-group-title">Neural Engine (Google Gemini)</div>
+              <div class="form-group-desc">Required for voice recognition, visual analysis, and deliberative reasoning.</div>
             </div>
-            <div class="form-row">
-              <label class="form-label" for="GOOGLE_API_KEY">Google Gemini API Key</label>
-              <div class="input-wrapper">
+            <div class="field-row">
+              <label class="field-label" for="GOOGLE_API_KEY">Google Gemini API Key</label>
+              <div class="input-box-wrap">
                 <input type="password" id="GOOGLE_API_KEY" name="GOOGLE_API_KEY" placeholder="AIzaSy...">
-                <button type="button" class="btn-eye" onclick="togglePasswordVisibility('GOOGLE_API_KEY')">
+                <button type="button" class="eye-icon-btn" onclick="togglePasswordVisibility('GOOGLE_API_KEY')">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Section 3: LiveKit Cloud Telemetry -->
-          <div class="form-section">
-            <div class="form-section-header">
-              <div class="form-section-title">Voice Telemetry (LiveKit Cloud)</div>
-              <div class="form-section-desc">Real-time WebRTC audio channel credentials.</div>
+          <!-- Card 3: LiveKit Telemetry -->
+          <div class="form-group-card">
+            <div class="form-group-head">
+              <div class="form-group-title">Voice Telemetry (LiveKit Cloud)</div>
+              <div class="form-group-desc">WebRTC audio streaming credentials.</div>
             </div>
-            <div class="form-row">
-              <label class="form-label" for="LIVEKIT_URL">LiveKit Server WSS URL</label>
+            <div class="field-row">
+              <label class="field-label" for="LIVEKIT_URL">LiveKit Server WSS URL</label>
               <input type="text" id="LIVEKIT_URL" name="LIVEKIT_URL" placeholder="wss://your-project.livekit.cloud">
             </div>
-            <div class="form-row">
-              <label class="form-label" for="LIVEKIT_API_KEY">LiveKit API Key</label>
-              <div class="input-wrapper">
+            <div class="field-row">
+              <label class="field-label" for="LIVEKIT_API_KEY">LiveKit API Key</label>
+              <div class="input-box-wrap">
                 <input type="password" id="LIVEKIT_API_KEY" name="LIVEKIT_API_KEY">
-                <button type="button" class="btn-eye" onclick="togglePasswordVisibility('LIVEKIT_API_KEY')">
+                <button type="button" class="eye-icon-btn" onclick="togglePasswordVisibility('LIVEKIT_API_KEY')">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
               </div>
             </div>
-            <div class="form-row">
-              <label class="form-label" for="LIVEKIT_API_SECRET">LiveKit API Secret</label>
-              <div class="input-wrapper">
+            <div class="field-row">
+              <label class="field-label" for="LIVEKIT_API_SECRET">LiveKit API Secret</label>
+              <div class="input-box-wrap">
                 <input type="password" id="LIVEKIT_API_SECRET" name="LIVEKIT_API_SECRET">
-                <button type="button" class="btn-eye" onclick="togglePasswordVisibility('LIVEKIT_API_SECRET')">
+                <button type="button" class="eye-icon-btn" onclick="togglePasswordVisibility('LIVEKIT_API_SECRET')">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Section 4: Media & Communications -->
-          <div class="form-section">
-            <div class="form-section-header">
-              <div class="form-section-title">Media & Subsystems</div>
-              <div class="form-section-desc">Audio playback engine and outbound email dispatch.</div>
+          <!-- Card 4: Audio & Subsystems -->
+          <div class="form-group-card">
+            <div class="form-group-head">
+              <div class="form-group-title">Media & Subsystems</div>
+              <div class="form-group-desc">Playback target and email dispatch.</div>
             </div>
-            <div class="form-row">
-              <label class="form-label" for="PREFERRED_MUSIC_APP">Default Music Application</label>
+            <div class="field-row">
+              <label class="field-label" for="PREFERRED_MUSIC_APP">Default Music Application</label>
               <select id="PREFERRED_MUSIC_APP" name="PREFERRED_MUSIC_APP">
                 <option value="youtube_music">YouTube Music (Zenith Ad-Free Mini Player)</option>
                 <option value="spotify">Spotify Desktop Application</option>
                 <option value="browser">Web Browser</option>
               </select>
             </div>
-            <div class="form-row">
-              <label class="form-label" for="GMAIL_USER">Gmail Address (Optional SMTP)</label>
+            <div class="field-row">
+              <label class="field-label" for="GMAIL_USER">Gmail Address (Optional SMTP)</label>
               <input type="text" id="GMAIL_USER" name="GMAIL_USER" placeholder="user@gmail.com">
             </div>
-            <div class="form-row">
-              <label class="form-label" for="GMAIL_APP_PASSWORD">Google App Password (Optional)</label>
-              <div class="input-wrapper">
-                <input type="password" id="GMAIL_APP_PASSWORD" name="GMAIL_APP_PASSWORD">
-                <button type="button" class="btn-eye" onclick="togglePasswordVisibility('GMAIL_APP_PASSWORD')">
+            <div class="field-row">
+              <label class="field-label" for="GMAIL_APP_PASSWORD">Google App Password (Optional)</label>
+              <div class="input-box-wrap">
+                <input type="password" id="GMAIL_APP_PASSWORD" name="GMAIL_APP_PASSWORD" placeholder="16-character token">
+                <button type="button" class="eye-icon-btn" onclick="togglePasswordVisibility('GMAIL_APP_PASSWORD')">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Save Button -->
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 2rem;">
-            <button type="submit" class="btn btn-primary" id="saveBtn" style="padding: 0.65rem 1.75rem;">
-              Save Configurations
+          <!-- Save Button (Spotify Pill Style) -->
+          <div style="display:flex; justify-content:flex-end; margin-bottom: 2rem;">
+            <button type="submit" class="btn btn-spotify" id="saveBtn" style="padding: 0.7rem 2.2rem;">
+              Save Changes
             </button>
           </div>
         </form>
@@ -1052,50 +1280,50 @@
 
       <!-- ── TAB 3: COGNITIVE MATRIX ────────────── -->
       <div id="cognitive" class="page">
-        <div class="section-title-wrap">
-          <h2 class="section-title">Cognitive Architecture</h2>
-          <p class="section-desc">Inspect memory evolution, deliberative reasoning, and procedural neuroplasticity.</p>
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:4px;">Cognitive Matrix</h2>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">Inspect neural reasoning, self-reflecting playbooks, and contradiction evolution.</p>
         </div>
 
         <div class="card" style="margin-bottom: 1.25rem;">
-          <div class="card-header">
+          <div class="panel-header">
             <div>
-              <div class="card-title">Stark 5-Point Health Inspection</div>
-              <span style="font-size:0.78rem; color:var(--text-muted);">Audits SQLite database PRAGMA, WAL journal, and neural readiness.</span>
+              <div class="panel-title">Stark 5-Point Health Inspection</div>
+              <span style="font-size:0.75rem; color:var(--text-muted);">Audits SQLite PRAGMA integrity, WAL journal, and neural responsiveness.</span>
             </div>
-            <button id="diagnosticsBtn" class="btn btn-secondary" onclick="runDiagnosticsAction()">
-              Run Diagnostics
+            <button id="diagnosticsBtn" class="btn btn-ghost" onclick="runDiagnosticsAction()">
+              Run Inspection
             </button>
           </div>
           <div id="diagnosticsOutput" style="background:var(--bg-input); border-radius:var(--radius-sm); padding:1rem; font-family:'JetBrains Mono', monospace; font-size:0.8rem; color:var(--text-secondary); line-height: 1.5;">
-            Status: Ready. Click 'Run Diagnostics' to execute an automated system audit.
+            Status: Ready. Click 'Run Inspection' to execute automated verification.
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">Cognitive Pipeline Specifications</div>
+          <div class="panel-header">
+            <span class="panel-title">Cognitive Subsystems Overview</span>
           </div>
-          <table class="subsystem-table">
+          <table class="settings-table">
             <tr>
-              <td><strong>Deliberative Reasoning</strong></td>
-              <td>Dual-system cognition for deep codebase analysis and complex synthesis.</td>
-              <td><span class="pill-tag active">Enabled</span></td>
+              <td><strong>System 2 Deliberative Reasoning</strong></td>
+              <td>Subconscious deep thinking matrix for complex coding and strategic synthesis.</td>
+              <td><span class="badge-pill success">Armed</span></td>
             </tr>
             <tr>
-              <td><strong>Procedural Learning</strong></td>
-              <td>Extracts rules of engagement from past command outcomes into SQLite playbooks.</td>
-              <td><span class="pill-tag active">Enabled</span></td>
+              <td><strong>Procedural Memory</strong></td>
+              <td>Self-reflecting neuroplasticity that learns from outcomes and stores playbooks.</td>
+              <td><span class="badge-pill success">Active</span></td>
             </tr>
             <tr>
               <td><strong>Ship of Theseus Engine</strong></td>
-              <td>Automatically supersedes contradicting historical facts when user preferences evolve.</td>
-              <td><span class="pill-tag active">Enabled</span></td>
+              <td>Temporal knowledge continuum that archives outdated facts upon contradiction.</td>
+              <td><span class="badge-pill success">WAL Synced</span></td>
             </tr>
             <tr>
               <td><strong>Council of Overlays</strong></td>
-              <td>Multi-perspective internal dialectical debate (Architect, Skeptic, Pragmatist).</td>
-              <td><span class="pill-tag active">Enabled</span></td>
+              <td>Multi-agent internal dialectical debate (Architect, Skeptic, Pragmatist).</td>
+              <td><span class="badge-pill success">Active</span></td>
             </tr>
           </table>
         </div>
@@ -1103,15 +1331,15 @@
 
       <!-- ── TAB 4: SETUP GUIDE ─────────────────── -->
       <div id="guide" class="page">
-        <div class="section-title-wrap">
-          <h2 class="section-title">Setup Guide</h2>
-          <p class="section-desc">Acquire necessary credentials to activate your Zenith desktop assistant.</p>
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:4px;">Setup Guide</h2>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">Acquire your free API keys to activate Zenith's voice and multimodal features.</p>
         </div>
 
         <div class="card" style="margin-bottom: 1rem;">
-          <div class="card-header">
-            <div class="card-title">1. Google Gemini API (Neural Brain)</div>
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-secondary" style="font-size:0.75rem; text-decoration:none;">Open AI Studio</a>
+          <div class="panel-header">
+            <span class="panel-title">1. Google Gemini API (Neural Brain)</span>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-ghost" style="text-decoration:none; font-size:0.75rem;">Open AI Studio</a>
           </div>
           <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
             1. Visit Google AI Studio and sign in.<br>
@@ -1121,9 +1349,9 @@
         </div>
 
         <div class="card" style="margin-bottom: 1rem;">
-          <div class="card-header">
-            <div class="card-title">2. LiveKit Cloud (Voice Telemetry)</div>
-            <a href="https://cloud.livekit.io/" target="_blank" class="btn btn-secondary" style="font-size:0.75rem; text-decoration:none;">Open LiveKit Cloud</a>
+          <div class="panel-header">
+            <span class="panel-title">2. LiveKit Cloud (Voice Telemetry)</span>
+            <a href="https://cloud.livekit.io/" target="_blank" class="btn btn-ghost" style="text-decoration:none; font-size:0.75rem;">Open LiveKit Cloud</a>
           </div>
           <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
             1. Sign up on LiveKit Cloud and create a free project.<br>
@@ -1133,9 +1361,9 @@
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">3. Gmail SMTP App Password (Optional)</div>
-            <a href="https://myaccount.google.com/security" target="_blank" class="btn btn-secondary" style="font-size:0.75rem; text-decoration:none;">Google Security</a>
+          <div class="panel-header">
+            <span class="panel-title">3. Gmail SMTP App Password (Optional)</span>
+            <a href="https://myaccount.google.com/security" target="_blank" class="btn btn-ghost" style="text-decoration:none; font-size:0.75rem;">Google Security</a>
           </div>
           <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
             1. Ensure 2-Step Verification is active on your Google account.<br>
@@ -1147,41 +1375,41 @@
 
       <!-- ── TAB 5: ABOUT ───────────────────────── -->
       <div id="about" class="page">
-        <div class="section-title-wrap">
-          <h2 class="section-title">About Zenith</h2>
-          <p class="section-desc">Desktop assistant software details and release telemetry.</p>
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:4px;">About Zenith</h2>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">Desktop assistant software details and release telemetry.</p>
         </div>
 
         <div class="card" style="margin-bottom: 1.25rem;">
           <div style="display:flex; align-items:center; gap:1.25rem; margin-bottom: 1.25rem;">
-            <img src="https://github.com/Adbhut1234.png" alt="Avatar" style="width:52px; height:52px; border-radius:var(--radius-sm); border:1px solid var(--border-default);">
+            <img src="https://github.com/Adbhut1234.png" alt="Avatar" style="width:54px; height:54px; border-radius:12px; border:1px solid var(--border-default);">
             <div>
-              <div style="font-size:1.1rem; font-weight:600; color:var(--text-primary);">Zenith Assistant</div>
-              <div style="font-size:0.825rem; color:var(--text-muted);">Engineered by Enc0deX (Adbhut Pandey)</div>
+              <div style="font-size:1.15rem; font-weight:700; color:#fff;">Zenith Desktop Assistant</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">Engineered by Enc0deX (Adbhut Pandey)</div>
             </div>
             <div style="margin-left:auto; display:flex; gap:8px;">
-              <a href="https://github.com/Adbhut1234" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:0.78rem;">GitHub</a>
-              <a href="https://instagram.com/encodex.official/" target="_blank" class="btn btn-secondary" style="text-decoration:none; font-size:0.78rem;">Instagram</a>
+              <a href="https://github.com/Adbhut1234" target="_blank" class="btn btn-ghost" style="text-decoration:none; font-size:0.75rem;">GitHub</a>
+              <a href="https://instagram.com/encodex.official/" target="_blank" class="btn btn-ghost" style="text-decoration:none; font-size:0.75rem;">Instagram</a>
             </div>
           </div>
 
-          <div class="card-header" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
-            <span class="card-title">Release Telemetry</span>
-            <button onclick="manualCheckForUpdates()" id="manualUpdateBtn" class="btn btn-secondary" style="font-size:0.75rem;">Check for Updates</button>
+          <div class="panel-header">
+            <span class="panel-title">Release Status</span>
+            <button onclick="manualCheckForUpdates()" id="manualUpdateBtn" class="btn btn-ghost" style="font-size:0.72rem;">Check for Updates</button>
           </div>
           <p style="font-size:0.85rem; color:var(--text-secondary); line-height: 1.6;" id="updateStatusText">
             Zenith v1.6.0 (Vision Edition) is currently up to date.
           </p>
           <div id="updateProgressContainer" style="display: none; width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 10px; overflow: hidden;">
-            <div id="updateProgressBar" style="width: 0%; height: 100%; background: var(--accent);"></div>
+            <div id="updateProgressBar" style="width: 0%; height: 100%; background: var(--spotify-green);"></div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">Technical Specifications</span>
+          <div class="panel-header">
+            <span class="panel-title">Technical Specifications</span>
           </div>
-          <table class="subsystem-table">
+          <table class="settings-table">
             <tr>
               <td>Architecture</td>
               <td>Sovereign Multi-Agent Desktop Assistant</td>
@@ -1201,26 +1429,27 @@
           </table>
         </div>
       </div>
-    </main>
+
+    </div>
   </div>
 
   <!-- ── Toast Feedback ─────────────────────────── -->
-  <div class="toast-container" id="toast">
-    <svg id="toastIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  <div class="toast-box" id="toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
     <span id="toastMsg">Settings Saved Successfully.</span>
   </div>
 
   <!-- ── Missing Keys Modal ─────────────────────── -->
-  <div id="errorModal" class="modal-backdrop">
-    <div class="modal-card">
+  <div id="errorModal" class="modal-overlay">
+    <div class="modal-window">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.75rem;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-        <div style="font-size:1rem; font-weight:600;">Incomplete Configuration</div>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <div style="font-size:1rem; font-weight:700;">Incomplete Configuration</div>
       </div>
       <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5; margin-bottom:1.5rem;">
         Zenith requires an active Google Gemini API Key and LiveKit Telemetry credentials to start. Please provide them in the Configurations tab.
       </p>
-      <button class="btn btn-primary" style="width:100%;" onclick="closeErrorModal()">
+      <button class="btn btn-spotify" style="width:100%;" onclick="closeErrorModal()">
         Configure Keys
       </button>
     </div>
@@ -1247,7 +1476,7 @@
             document.getElementById('headerRamVal').innerText = `${usedGB} GB`;
             document.getElementById('ramDetailVal').innerText = `${usedGB} / ${totalGB} GB`;
             document.getElementById('ramDetailBar').style.width = `${stats.memPercent}%`;
-            document.getElementById('ramPercentText').innerText = `${stats.memPercent}% utilized`;
+            document.getElementById('ramPercentText').innerText = `${stats.memPercent}% capacity utilized`;
             document.getElementById('hostPlatformDisplay').innerText = `${stats.platform} (${stats.arch})`;
           }
         } catch (e) {}
@@ -1263,30 +1492,33 @@
         const isRunning = await window.api.checkZenithStatus();
         const sideDot = document.getElementById('sideStatusDot');
         const sideText = document.getElementById('sideStatusText');
-        const cardDot = document.getElementById('cardStatusDot');
+        const cardBadge = document.getElementById('cardStatusBadge');
         const cardLabel = document.getElementById('cardStatusLabel');
         const display = document.getElementById('engineStatusDisplay');
         const btn = document.getElementById('masterActionBtn');
         const btnText = document.getElementById('masterActionText');
+        const eqBars = document.querySelectorAll('.eq-bar');
 
         if (isRunning) {
-          sideDot.className = 'status-dot online';
+          sideDot.className = 'presence-dot online';
           sideText.innerText = 'Online';
-          cardDot.className = 'status-dot online';
+          cardBadge.className = 'badge-pill success';
           cardLabel.innerText = 'Active';
-          display.innerText = 'Online & Listening';
-          btn.className = 'btn btn-danger';
+          display.innerText = 'Online & Receptive';
+          btn.className = 'btn btn-danger-mac';
           btn.onclick = stopZenithAction;
           btnText.innerText = 'Stop Assistant';
+          eqBars.forEach(b => b.classList.add('active'));
         } else {
-          sideDot.className = 'status-dot';
+          sideDot.className = 'presence-dot';
           sideText.innerText = 'Offline';
-          cardDot.className = 'status-dot';
+          cardBadge.className = 'badge-pill';
           cardLabel.innerText = 'Standby';
           display.innerText = 'Offline';
-          btn.className = 'btn btn-primary';
+          btn.className = 'btn btn-spotify';
           btn.onclick = validateAndLaunchZenith;
           btnText.innerText = 'Start Assistant';
+          eqBars.forEach(b => b.classList.remove('active'));
         }
       }
     }
@@ -1303,8 +1535,8 @@
           isBooting = true;
           const display = document.getElementById('engineStatusDisplay');
           const sideDot = document.getElementById('sideStatusDot');
-          sideDot.className = 'status-dot booting';
-          display.innerText = 'Starting engine...';
+          sideDot.className = 'presence-dot booting';
+          display.innerText = 'Initializing...';
 
           appendConsoleLog('START', 'Launching Zenith agent subprocess...', 'sys');
           const result = await window.api.startZenith();
@@ -1322,7 +1554,7 @@
             updateZenithStatus();
           }
         } catch (err) {
-          showToast('Failed to start agent subprocess.', 'error');
+          showToast('Failed to start assistant.', 'error');
         }
       }
     }
@@ -1341,7 +1573,7 @@
 
     async function triggerEmergencyKillAction() {
       if (window.api && window.api.emergencyKill) {
-        appendConsoleLog('KILL', 'Emergency killswitch invoked.', 'err');
+        appendConsoleLog('KILL', 'Emergency killswitch triggered.', 'err');
         const res = await window.api.emergencyKill();
         showToast(res.message, 'error');
         updateZenithStatus();
@@ -1354,30 +1586,30 @@
         isVisionMuted = !isVisionMuted;
         await window.api.toggleScreenVision(!isVisionMuted);
         const modeDisplay = document.getElementById('visionModeDisplay');
-        const btn = document.getElementById('visionToggleBtn');
         const desc = document.getElementById('visionDescSub');
+        const checkbox = document.getElementById('visionToggleCheckbox');
 
         if (!isVisionMuted) {
           modeDisplay.innerText = 'Continuous Stream';
-          btn.innerText = 'Switch to On-Demand';
           desc.innerText = 'Active frame stream';
+          checkbox.checked = true;
           appendConsoleLog('VISION', 'Continuous screen stream enabled.', 'sys');
         } else {
           modeDisplay.innerText = 'Smart On-Demand';
-          btn.innerText = 'Switch to Continuous';
-          desc.innerText = 'Zero-latency on-demand';
+          desc.innerText = 'Zero-overhead capture';
+          checkbox.checked = false;
           appendConsoleLog('VISION', 'Switched to smart on-demand mode.', 'sys');
         }
       }
     }
 
-    // ── 4. Console Logging ────────────────────────
+    // ── 4. Console Logging (Discord Style) ────────
     function appendConsoleLog(tag, msg, type = '') {
       const feed = document.getElementById('consoleBody');
       const row = document.createElement('div');
-      row.className = 'console-row';
+      row.className = 'chat-row';
       const time = new Date().toLocaleTimeString('en-US', { hour12: false });
-      row.innerHTML = `<span class="console-time">[${time}]</span><span class="console-badge ${type}">[${tag}]</span><span>${msg}</span>`;
+      row.innerHTML = `<span class="chat-timestamp">[${time}]</span><span class="chat-tag ${type}">[${tag}]</span><span>${msg}</span>`;
       feed.appendChild(row);
       feed.scrollTop = feed.scrollHeight;
     }
@@ -1395,7 +1627,7 @@
     // ── 5. Navigation ─────────────────────────────
     function switchTab(tabId, el) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelectorAll('.nav-pill').forEach(i => i.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       el.classList.add('active');
 
@@ -1404,7 +1636,7 @@
         'settings': 'Configurations',
         'cognitive': 'Cognitive Matrix',
         'guide': 'Setup Guide',
-        'about': 'About'
+        'about': 'About Zenith'
       };
       document.getElementById('headerBreadcrumb').innerText = labels[tabId] || 'Overview';
     }
@@ -1425,7 +1657,7 @@
 >> [5/5] HARDWARE CAPACITIES: READY (CPU & RAM allocation healthy)
 >> SUMMARY: All subsystems operating within expected parameters.
         `.trim().replace(/\n/g, '<br>');
-        btn.innerText = 'Run Diagnostics';
+        btn.innerText = 'Run Inspection';
         showToast('System audit passed: 100% operational.', 'success');
       }, 1000);
     }
@@ -1460,16 +1692,16 @@
 
     function closeErrorModal() {
       document.getElementById('errorModal').style.display = 'none';
-      switchTab('settings', document.querySelectorAll('.nav-item')[1]);
+      switchTab('settings', document.querySelectorAll('.nav-pill')[1]);
     }
 
     function showToast(msg, type = 'success') {
       const toast = document.getElementById('toast');
       document.getElementById('toastMsg').innerText = msg;
       if (type === 'error') {
-        toast.className = 'toast-container error show';
+        toast.className = 'toast-box error show';
       } else {
-        toast.className = 'toast-container show';
+        toast.className = 'toast-box show';
       }
       setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
@@ -1482,7 +1714,7 @@
       if (window.api && window.api.readEnv) {
         const config = await window.api.readEnv();
         if (config.Zenith_USER_ID) {
-          document.getElementById('greetingText').innerText = `Welcome back, ${config.Zenith_USER_ID}`;
+          document.getElementById('greetingText').innerText = `Welcome back, ${config.Zenith_USER_ID}.`;
         }
 
         for (const key in config) {
@@ -1525,7 +1757,7 @@
           if (result.status === 'success') {
             showToast('Settings saved successfully.', 'success');
             if (data.Zenith_USER_ID) {
-              document.getElementById('greetingText').innerText = `Welcome back, ${data.Zenith_USER_ID}`;
+              document.getElementById('greetingText').innerText = `Welcome back, ${data.Zenith_USER_ID}.`;
             }
             appendConsoleLog('CONFIG', 'Settings updated and synchronized.', 'sys');
           } else {
