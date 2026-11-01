@@ -200,12 +200,13 @@ if (app.isPackaged) {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1060,
-    height: 820,
-    minWidth: 900,
-    minHeight: 700,
+    width: 1080,
+    height: 840,
+    minWidth: 920,
+    minHeight: 680,
     backgroundColor: '#090a0f',
     autoHideMenuBar: true,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -611,3 +612,22 @@ ipcMain.handle('emergency-kill', async () => {
     return { status: 'error', message: e.message };
   }
 });
+
+ipcMain.handle('window-minimize', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.minimize();
+});
+
+ipcMain.handle('window-maximize', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  }
+});
+
+ipcMain.handle('window-close', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+});
+

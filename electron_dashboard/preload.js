@@ -14,6 +14,9 @@ contextBridge.exposeInMainWorld('api', {
   getSystemTelemetry: () => ipcRenderer.invoke('get-system-telemetry'),
   getCognitiveStats: () => ipcRenderer.invoke('get-cognitive-stats'),
   emergencyKill: () => ipcRenderer.invoke('emergency-kill'),
+  minimizeWindow: () => ipcRenderer.invoke('window-minimize'),
+  maximizeWindow: () => ipcRenderer.invoke('window-maximize'),
+  closeWindow: () => ipcRenderer.invoke('window-close'),
   onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state))
 });
 
