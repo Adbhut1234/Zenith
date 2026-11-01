@@ -43,7 +43,21 @@ def init_evolution_schema():
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            # Check existing columns
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS zenith_facts (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id TEXT NOT NULL,
+                    category TEXT NOT NULL DEFAULT 'general',
+                    topic TEXT NOT NULL,
+                    fact TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    is_active INTEGER DEFAULT 1,
+                    superseded_by INTEGER DEFAULT NULL,
+                    superseded_reason TEXT DEFAULT NULL,
+                    UNIQUE(user_id, topic)
+                )
+            """)
             cursor.execute("PRAGMA table_info(zenith_facts)")
             cols = [r["name"] for r in cursor.fetchall()]
             

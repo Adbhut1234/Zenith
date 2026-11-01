@@ -18,6 +18,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+!pyarmor_runtime*/*.pyd
+!pyarmor_runtime*/*.so
 
 # Temporary build folders
 dist_github/
