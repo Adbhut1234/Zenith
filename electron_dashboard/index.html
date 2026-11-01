@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zenith Studio</title>
+  <title>Zenith</title>
 
   <!-- Google Stitch Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,13 +12,12 @@
 
   <style>
     /* ==========================================================================
-       GOOGLE STITCH DESIGN SYSTEM (Soft Modernism, Bento Grids, Pill Hierarchy)
+       GOOGLE STITCH MINIMALIST DESIGN SYSTEM (Focused Bento Layout)
        ========================================================================== */
     :root {
       --bg-canvas: #0c0d12;
       --card-surface: rgba(22, 24, 34, 0.78);
-      --card-surface-elevated: rgba(30, 33, 48, 0.82);
-      --card-surface-hover: rgba(38, 42, 60, 0.85);
+      --card-surface-hover: rgba(32, 35, 50, 0.85);
 
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-hover: rgba(255, 255, 255, 0.18);
@@ -38,11 +37,7 @@
       --cyan-glow: rgba(6, 182, 212, 0.25);
       --cyan-bg: rgba(6, 182, 212, 0.12);
 
-      --indigo: #6366f1;
-      --indigo-glow: rgba(99, 102, 241, 0.25);
-
       --crimson: #ef4444;
-      --crimson-glow: rgba(239, 68, 68, 0.25);
 
       --radius-sm: 8px;
       --radius-md: 14px;
@@ -73,37 +68,37 @@
       position: relative;
     }
 
-    /* Ambient Soft Mesh Gradient (Stitch Atmosphere) */
+    /* Ambient Soft Mesh Glow */
     .stitch-ambient {
       position: absolute;
-      top: -80px;
+      top: -70px;
       left: 50%;
       transform: translateX(-50%);
-      width: 580px;
-      height: 280px;
-      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.08), transparent 70%);
-      filter: blur(60px);
+      width: 520px;
+      height: 240px;
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.06), transparent 70%);
+      filter: blur(55px);
       pointer-events: none;
       z-index: 0;
-      transition: all 0.6s ease;
+      transition: all 0.5s ease;
     }
 
     .stitch-ambient.active {
-      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.22), rgba(6, 182, 212, 0.14), transparent 70%);
-      transform: translateX(-50%) scale(1.1);
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.12), transparent 70%);
+      transform: translateX(-50%) scale(1.08);
     }
 
     /* ==========================================================================
-       TOP FLOATING HEADER (macOS Traffic Lights + Stitch Segmented Pill)
+       HEADER BAR (macOS Traffic Lights + Streamlined 2-Pill Switch)
        ========================================================================== */
     .stitch-header {
-      height: 52px;
-      min-height: 52px;
+      height: 50px;
+      min-height: 50px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
-      background: rgba(12, 13, 18, 0.85);
+      padding: 0 16px;
+      background: rgba(12, 13, 18, 0.88);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border-subtle);
       -webkit-app-region: drag;
@@ -115,7 +110,7 @@
       align-items: center;
       gap: 8px;
       -webkit-app-region: no-drag;
-      width: 80px;
+      width: 76px;
     }
 
     .traffic-dot {
@@ -143,40 +138,40 @@
     }
     .traffic-lights:hover .traffic-dot svg { opacity: 1; }
 
-    /* Center Brand Logo */
+    /* Center Brand Emblem */
     .brand-group {
       display: flex;
       align-items: center;
       gap: 10px;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13.5px;
       letter-spacing: -0.01em;
       -webkit-app-region: drag;
     }
 
     .brand-symbol {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       background: linear-gradient(135deg, #ffffff, #cbd5e1);
-      border-radius: 7px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #000000;
       font-weight: 800;
-      font-size: 12px;
-      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
+      font-size: 11px;
+      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
     }
 
     .brand-live-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 3px 9px;
+      padding: 2px 8px;
       border-radius: var(--radius-pill);
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-subtle);
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 600;
       color: var(--text-muted);
       transition: all 0.3s ease;
@@ -200,7 +195,7 @@
       box-shadow: 0 0 8px var(--emerald);
     }
 
-    /* Stitch Floating Segmented Control */
+    /* Streamlined 2-Option Navigation Capsule */
     .stitch-nav-pill {
       display: flex;
       align-items: center;
@@ -234,32 +229,30 @@
     }
 
     /* ==========================================================================
-       MAIN CONTENT (Scrollable Bento Canvas)
+       MAIN CONTENT (Scrollable Canvas)
        ========================================================================== */
     .stitch-canvas {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 28px 32px 28px;
-      max-width: 820px;
+      padding: 24px 28px 28px 28px;
+      max-width: 760px;
       width: 100%;
       margin: 0 auto;
       position: relative;
       z-index: 2;
     }
 
-    .stitch-canvas::-webkit-scrollbar,
-    .log-stream-body::-webkit-scrollbar {
+    .stitch-canvas::-webkit-scrollbar {
       width: 5px;
     }
-    .stitch-canvas::-webkit-scrollbar-thumb,
-    .log-stream-body::-webkit-scrollbar-thumb {
+    .stitch-canvas::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.1);
       border-radius: var(--radius-pill);
     }
 
     .tab-view {
       display: none;
-      animation: tabEnter 0.25s var(--spring-smooth) forwards;
+      animation: tabEnter 0.22s var(--spring-smooth) forwards;
     }
 
     .tab-view.active {
@@ -267,12 +260,12 @@
     }
 
     @keyframes tabEnter {
-      from { opacity: 0; transform: translateY(8px) scale(0.99); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ==========================================================================
-       BENTO CARD ARCHITECTURE (Stitch Signature Modular Blocks)
+       BENTO CARD ARCHITECTURE
        ========================================================================== */
     .bento-card {
       background: var(--card-surface);
@@ -280,7 +273,7 @@
       border-radius: var(--radius-bento);
       padding: 22px 24px;
       backdrop-filter: blur(20px);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 36px rgba(0, 0, 0, 0.35);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 30px rgba(0, 0, 0, 0.35);
       transition: all 0.25s var(--spring-smooth);
       position: relative;
       overflow: hidden;
@@ -288,12 +281,10 @@
 
     .bento-card:hover {
       border-color: var(--border-hover);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 44px rgba(0, 0, 0, 0.45);
-      transform: translateY(-1px);
     }
 
     /* --------------------------------------------------------------------------
-       BENTO HERO: Master Assistant Status & Acoustic Spectrum
+       BENTO HERO: Status & Real-Time Waveform
        -------------------------------------------------------------------------- */
     .bento-hero {
       display: grid;
@@ -348,7 +339,7 @@
     }
 
     .hero-title {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
@@ -356,7 +347,7 @@
     .hero-subtitle {
       font-size: 13px;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     .hero-action-row {
@@ -366,13 +357,13 @@
       margin-top: 14px;
     }
 
-    /* Stitch Pill Action Button */
+    /* Solid Pill Action Button */
     .btn-pill-action {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 24px;
+      padding: 10px 26px;
       border-radius: var(--radius-pill);
       font-size: 13px;
       font-weight: 700;
@@ -404,7 +395,7 @@
       background: #272a39;
     }
 
-    /* Waveform Canvas Container in Hero */
+    /* Waveform Container */
     .hero-spectrum-box {
       width: 100%;
       height: 110px;
@@ -434,20 +425,20 @@
     }
 
     /* --------------------------------------------------------------------------
-       BENTO GRID: 3 Modular Telemetry Cards
+       FOCUSED 2-TILE GRID: Screen Vision & Host Performance
        -------------------------------------------------------------------------- */
-    .bento-grid-3 {
+    .bento-grid-2 {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .bento-tile {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 140px;
+      min-height: 130px;
       padding: 18px 20px;
     }
 
@@ -483,9 +474,9 @@
     .chip-muted { background: rgba(255, 255, 255, 0.06); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
 
     .tile-metric-value {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       margin-bottom: 2px;
       color: var(--text-primary);
     }
@@ -495,7 +486,6 @@
       color: var(--text-muted);
     }
 
-    /* Segmented Mini Meter Bar */
     .tile-meter-bar {
       width: 100%;
       height: 4px;
@@ -561,83 +551,10 @@
       transform: translateX(18px);
     }
 
-    /* --------------------------------------------------------------------------
-       STRUCTURED BENTO LIST: Recent System Telemetry & Insights
-       -------------------------------------------------------------------------- */
-    .bento-list-card {
-      padding: 20px 24px;
-      margin-bottom: 16px;
-    }
-
-    .list-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .list-title {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .stitch-row-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid transparent;
-      margin-bottom: 6px;
-      transition: all 0.15s ease;
-    }
-
-    .stitch-row-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .stitch-row-item:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: var(--border-subtle);
-    }
-
-    .row-leading {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .row-icon-gem {
-      width: 26px;
-      height: 26px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-    }
-
-    .gem-sys { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
-    .gem-cog { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
-    .gem-vis { background: rgba(6, 182, 212, 0.12); color: #22d3ee; }
-
-    .row-text-primary {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .row-text-secondary {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
     /* Emergency Halt Link */
     .emergency-footer {
       text-align: center;
-      padding-top: 4px;
+      padding-top: 6px;
     }
 
     .btn-emergency-link {
@@ -655,99 +572,7 @@
     }
 
     /* ==========================================================================
-       TAB 2: ACTIVITY STREAM (Stitch Modern Monospace Ledger)
-       ========================================================================== */
-    .log-ledger-container {
-      background: #000000;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-bento);
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 150px);
-      overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    }
-
-    .log-ledger-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 18px;
-      background: #111218;
-      border-bottom: 1px solid var(--border-subtle);
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .live-stream-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--cyan);
-    }
-
-    .btn-ghost-pill {
-      background: transparent;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 12px;
-      border-radius: var(--radius-pill);
-      transition: all 0.15s ease;
-    }
-
-    .btn-ghost-pill:hover {
-      color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--border-hover);
-    }
-
-    .log-stream-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px 18px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      line-height: 1.6;
-      color: #cbd5e1;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .ledger-row {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-    }
-
-    .log-time {
-      color: var(--text-dim);
-      font-size: 11px;
-      white-space: nowrap;
-    }
-
-    .log-tag-pill {
-      font-size: 9.5px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .pill-sys { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-    .pill-ipc { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .pill-vis { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
-    .pill-cog { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-    .pill-wrn { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-
-    /* ==========================================================================
-       TAB 3: SETTINGS (Stitch Form Cards & Tokens)
+       SETTINGS (Stitch Form Cards)
        ========================================================================== */
     .settings-header-bar {
       display: flex;
@@ -847,9 +672,7 @@
     }
     .btn-eye-toggle:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
 
-    /* ==========================================================================
-       TOAST
-       ========================================================================== */
+    /* Toast */
     .stitch-toast {
       position: fixed;
       bottom: 24px;
@@ -905,10 +728,9 @@
       </div>
     </div>
 
-    <!-- Stitch Segmented Navigation Pill -->
+    <!-- Streamlined 2-Pill Navigation Capsule -->
     <nav class="stitch-nav-pill">
-      <button class="nav-btn active" data-tab="tab-overview">Overview</button>
-      <button class="nav-btn" data-tab="tab-activity">Activity</button>
+      <button class="nav-btn active" data-tab="tab-overview">Dashboard</button>
       <button class="nav-btn" data-tab="tab-settings">Settings</button>
     </nav>
   </header>
@@ -917,7 +739,7 @@
   <main class="stitch-canvas">
 
     <!-- ====================================================================
-         TAB 1: OVERVIEW (Stitch Signature Bento Grid)
+         TAB 1: DASHBOARD (Streamlined Bento Grid)
          ==================================================================== -->
     <div class="tab-view active" id="tab-overview">
       
@@ -939,7 +761,7 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               <span id="btnToggleText">Engage Zenith</span>
             </button>
-            <span style="font-size: 11.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;" id="engineBadge">
+            <span style="font-size: 11.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">
               Gemini 2.5 Flash Live • 48 kHz
             </span>
           </div>
@@ -952,10 +774,10 @@
         </div>
       </section>
 
-      <!-- Bento Grid (3 Pillars) -->
-      <section class="bento-grid-3">
+      <!-- Focused 2-Tile Grid: Vision & Host Performance -->
+      <section class="bento-grid-2">
         
-        <!-- Bento Tile 1: Multimodal Screen Vision -->
+        <!-- Tile 1: Multimodal Screen Vision -->
         <div class="bento-card bento-tile">
           <div>
             <div class="tile-header">
@@ -973,79 +795,23 @@
           <div class="tile-chip chip-cyan" id="visionChip">Smart Sampling</div>
         </div>
 
-        <!-- Bento Tile 2: Sovereign Memory WAL -->
-        <div class="bento-card bento-tile">
-          <div>
-            <div class="tile-header">
-              <div class="tile-icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-              </div>
-              <div class="tile-chip chip-green">WAL Active</div>
-            </div>
-            <div class="tile-metric-value" id="dbSizeText">148 KB</div>
-            <div class="tile-metric-sub">zenith_memory.db</div>
-          </div>
-          <div style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">PRAGMA Checkpoint OK</div>
-        </div>
-
-        <!-- Bento Tile 3: Host Telemetry -->
+        <!-- Tile 2: Host Performance & Memory -->
         <div class="bento-card bento-tile">
           <div>
             <div class="tile-header">
               <div class="tile-icon-box">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
               </div>
-              <div class="tile-chip chip-muted" id="ramPill">RAM: 44%</div>
+              <div class="tile-chip chip-green" id="dbChip">WAL Active</div>
             </div>
             <div class="tile-metric-value" id="cpuMetricText">CPU: 0%</div>
-            <div class="tile-metric-sub">Host Compute Load</div>
+            <div class="tile-metric-sub" id="hostDetailText">RAM: 44% • zenith_memory.db (148 KB)</div>
           </div>
           <div class="tile-meter-bar">
             <div class="tile-meter-fill" id="tileCpuMeterFill"></div>
           </div>
         </div>
 
-      </section>
-
-      <!-- Bento Structured List: System Insights & Architecture -->
-      <section class="bento-card bento-list-card">
-        <div class="list-header-row">
-          <span class="list-title">Core Subsystems Status</span>
-          <span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">IPC Port 49152</span>
-        </div>
-
-        <div class="stitch-row-item">
-          <div class="row-leading">
-            <div class="row-icon-gem gem-cog">🧠</div>
-            <div>
-              <div class="row-text-primary">System 2 Deliberative Matrix</div>
-              <div class="row-text-secondary">Subconscious chain-of-thought verification for safety-critical execution</div>
-            </div>
-          </div>
-          <div class="tile-chip chip-green">Armed</div>
-        </div>
-
-        <div class="stitch-row-item">
-          <div class="row-leading">
-            <div class="row-icon-gem gem-sys">⚡</div>
-            <div>
-              <div class="row-text-primary">Procedural Neuroplasticity Engine</div>
-              <div class="row-text-secondary">Self-authoring playbooks indexed via local vector similarity</div>
-            </div>
-          </div>
-          <div class="tile-chip chip-cyan">Playbooks Indexed</div>
-        </div>
-
-        <div class="stitch-row-item">
-          <div class="row-leading">
-            <div class="row-icon-gem gem-vis">👁️</div>
-            <div>
-              <div class="row-text-primary">Set-of-Mark (SoM) Grounding</div>
-              <div class="row-text-secondary">OmniParser coordinate resolution over Windows UIAutomation trees</div>
-            </div>
-          </div>
-          <div class="tile-chip chip-muted">Calibrated</div>
-        </div>
       </section>
 
       <!-- Emergency Disengage Footer Link -->
@@ -1056,25 +822,7 @@
     </div>
 
     <!-- ====================================================================
-         TAB 2: ACTIVITY (Stitch Real-Time Ledger)
-         ==================================================================== -->
-    <div class="tab-view" id="tab-activity">
-      <div class="log-ledger-container">
-        <div class="log-ledger-header">
-          <div class="live-stream-badge">
-            <span class="pulse-dot" style="background: var(--cyan); box-shadow: 0 0 6px var(--cyan);"></span>
-            <span>REAL-TIME TELEMETRY LEDGER</span>
-          </div>
-          <button class="btn-ghost-pill" id="btnClearLogs">Clear Log</button>
-        </div>
-        <div class="log-stream-body" id="logStreamBody">
-          <!-- Dynamically populated rows -->
-        </div>
-      </div>
-    </div>
-
-    <!-- ====================================================================
-         TAB 3: SETTINGS (Stitch Form Cards)
+         TAB 2: SETTINGS (Stitch Form Cards)
          ==================================================================== -->
     <div class="tab-view" id="tab-settings">
       <div class="settings-header-bar">
@@ -1152,7 +900,6 @@
       'use strict';
 
       let isRunning = false;
-      let logs = [];
       let acousticAmplitude = 0.12;
       let targetAcousticAmplitude = 0.12;
 
@@ -1251,7 +998,6 @@
             const res = await api.startZenith();
             if (res && res.status === 'success') {
               updateStatusUI(true);
-              appendLog('SYSTEM', 'Zenith daemon engaged in workspace.');
               showToast('Zenith engaged');
             } else {
               updateStatusUI(false);
@@ -1261,7 +1007,6 @@
             btnToggleText.textContent = 'Disengaging...';
             await api.stopZenith();
             updateStatusUI(false);
-            appendLog('SYSTEM', 'Zenith disengaged cleanly.');
             showToast('Zenith disengaged');
           }
         };
@@ -1273,7 +1018,6 @@
         btnEmergencyStop.onclick = async () => {
           await api.emergencyKill();
           updateStatusUI(false);
-          appendLog('WARN', 'Emergency motor disengagement triggered.');
           showToast('Emergency Killswitch Disengaged');
         };
       }
@@ -1292,7 +1036,6 @@
             visionChip.textContent = enable ? '30 FPS Stream' : 'Smart Sampling';
             visionChip.className = enable ? 'tile-chip chip-cyan' : 'tile-chip chip-muted';
           }
-          appendLog('VISION', `Screen streaming -> ${enable ? 'Continuous (30 FPS)' : 'Smart On-Demand'}`);
           showToast(`Vision: ${enable ? '30 FPS Stream' : 'Smart On-Demand'}`);
         };
       }
@@ -1311,21 +1054,20 @@
       // Host Telemetry Polling
       const cpuMetricText = document.getElementById('cpuMetricText');
       const tileCpuMeterFill = document.getElementById('tileCpuMeterFill');
-      const ramPill = document.getElementById('ramPill');
-      const dbSizeText = document.getElementById('dbSizeText');
+      const hostDetailText = document.getElementById('hostDetailText');
+      const dbChip = document.getElementById('dbChip');
 
       async function pollTelemetry() {
         try {
           const telem = await api.getSystemTelemetry();
-          if (telem) {
-            if (cpuMetricText) cpuMetricText.textContent = `CPU: ${telem.cpuPercent}%`;
-            if (tileCpuMeterFill) tileCpuMeterFill.style.width = `${Math.min(100, telem.cpuPercent)}%`;
-            if (ramPill) ramPill.textContent = `RAM: ${telem.memPercent}%`;
-          }
           const cog = await api.getCognitiveStats();
-          if (cog && cog.dbSizeKB && dbSizeText) {
-            dbSizeText.textContent = `${cog.dbSizeKB} KB`;
-          }
+          const ram = telem ? telem.memPercent : 0;
+          const cpu = telem ? telem.cpuPercent : 0;
+          const dbSize = cog && cog.dbSizeKB ? cog.dbSizeKB : 148;
+
+          if (cpuMetricText) cpuMetricText.textContent = `CPU: ${cpu}%`;
+          if (tileCpuMeterFill) tileCpuMeterFill.style.width = `${Math.min(100, cpu)}%`;
+          if (hostDetailText) hostDetailText.textContent = `RAM: ${ram}% • zenith_memory.db (${dbSize} KB)`;
         } catch (e) {}
       }
       setInterval(pollTelemetry, 3000);
@@ -1390,50 +1132,11 @@
       }
       requestAnimationFrame(renderWave);
 
-      // Activity Logs
-      const logStreamBody = document.getElementById('logStreamBody');
-      const btnClearLogs = document.getElementById('btnClearLogs');
-
-      function appendLog(tag, msg) {
-        const time = new Date().toTimeString().split(' ')[0];
-        logs.push({ time, tag, msg });
-        if (!logStreamBody) return;
-
-        let tagClass = 'pill-sys';
-        if (tag === 'IPC') tagClass = 'pill-ipc';
-        if (tag === 'VISION') tagClass = 'pill-vis';
-        if (tag === 'COG') tagClass = 'pill-cog';
-        if (tag === 'WARN') tagClass = 'pill-wrn';
-
-        const row = document.createElement('div');
-        row.className = 'ledger-row';
-        row.innerHTML = `
-          <span class="log-time">${time}</span>
-          <span class="log-tag-pill ${tagClass}">${tag}</span>
-          <span>${msg}</span>
-        `;
-        logStreamBody.appendChild(row);
-        logStreamBody.scrollTop = logStreamBody.scrollHeight;
-      }
-
-      if (btnClearLogs) {
-        btnClearLogs.onclick = () => {
-          logs = [];
-          if (logStreamBody) logStreamBody.innerHTML = '';
-          showToast('Logs cleared');
-        };
-      }
-
       api.onUIState((state) => {
         targetAcousticAmplitude = 0.8;
         setTimeout(() => { if (isRunning) targetAcousticAmplitude = 0.45; }, 1200);
         updateStatusUI(true, state.toUpperCase());
-        appendLog('IPC', `Assistant state -> [${state}]`);
       });
-
-      appendLog('SYSTEM', 'Zenith Stitch Engine initialized.');
-      appendLog('COG', 'Procedural playbooks indexed: git_detached_head, sqlite_vacuum.');
-      appendLog('VISION', 'Set-of-Mark locator armed.');
 
       // Settings Configuration
       const cfgGeminiKey = document.getElementById('cfgGeminiKey');
@@ -1489,7 +1192,6 @@
           const res = await api.saveEnv(payload);
           if (res && res.status === 'success') {
             showToast('Settings saved');
-            appendLog('SYSTEM', 'Saved environment tokens to local workspace.');
             if (geminiTag) {
               const hasKey = !!payload.GEMINI_API_KEY;
               geminiTag.textContent = hasKey ? 'Configured' : 'Not set';

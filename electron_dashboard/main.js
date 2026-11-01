@@ -200,11 +200,11 @@ if (app.isPackaged) {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 840,
-    height: 660,
-    minWidth: 720,
-    minHeight: 520,
-    backgroundColor: '#0c0c0c',
+    width: 820,
+    height: 580,
+    minWidth: 700,
+    minHeight: 480,
+    backgroundColor: '#0c0d12',
     autoHideMenuBar: true,
     frame: false,
     webPreferences: {
