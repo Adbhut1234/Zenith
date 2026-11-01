@@ -10,7 +10,11 @@ contextBridge.exposeInMainWorld('api', {
   onUpdateMessage: (callback) => ipcRenderer.on('update-message', (event, msg) => callback(msg)),
   onUpdateProgress: (callback) => ipcRenderer.on('update-progress', (event, percent) => callback(percent)),
   toggleScreenVision: (enable) => ipcRenderer.invoke('toggle-screen-vision', enable),
-  getScreenVisionStatus: () => ipcRenderer.invoke('get-screen-vision-status')
+  getScreenVisionStatus: () => ipcRenderer.invoke('get-screen-vision-status'),
+  getSystemTelemetry: () => ipcRenderer.invoke('get-system-telemetry'),
+  getCognitiveStats: () => ipcRenderer.invoke('get-cognitive-stats'),
+  emergencyKill: () => ipcRenderer.invoke('emergency-kill'),
+  onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state))
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {

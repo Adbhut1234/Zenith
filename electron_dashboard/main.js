@@ -19,6 +19,7 @@ const OLD_ENV_PATH = app.isPackaged
   : path.join(__dirname, '..', '.env');
 
 let overlayWindow = null;
+let mainWindow = null;
 let udpServer = null;
 let overlayTopmostTimer = null;
 
@@ -84,6 +85,9 @@ function createOverlay() {
       }
       if (overlayWindow && !overlayWindow.isDestroyed()) {
         overlayWindow.webContents.send('ui-state', raw);
+      }
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('ui-state', raw);
       }
     });
     udpServer.bind(49152);
@@ -195,9 +199,12 @@ if (app.isPackaged) {
 }
 
 function createWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 800,
+  mainWindow = new BrowserWindow({
+    width: 1060,
+    height: 820,
+    minWidth: 900,
+    minHeight: 700,
+    backgroundColor: '#05070d',
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -544,4 +551,63 @@ ipcMain.handle('toggle-screen-vision', (event, enable) => {
 
 ipcMain.handle('get-screen-vision-status', () => {
   return { active: isScreenStreamingActive && zenithProcess !== null };
+});
+
+ipcMain.handle('get-system-telemetry', () => {
+  const os = require('os');
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+  const usedMem = totalMem - freeMem;
+  const cpus = os.cpus();
+  let user = 0, sys = 0, idle = 0;
+  cpus.forEach(cpu => {
+    user += cpu.times.user;
+    sys += cpu.times.sys;
+    idle += cpu.times.idle;
+  });
+  const total = user + sys + idle || 1;
+  return {
+    platform: os.platform(),
+    arch: os.arch(),
+    uptime: Math.round(os.uptime()),
+    totalMemMB: Math.round(totalMem / (1024 * 1024)),
+    usedMemMB: Math.round(usedMem / (1024 * 1024)),
+    memPercent: Math.round((usedMem / totalMem) * 100),
+    cpuModel: cpus[0] ? cpus[0].model.replace(/\(R\)|\(TM\)/g, '').trim() : 'Neural Core',
+    cpuCores: cpus.length,
+    cpuPercent: Math.min(100, Math.round(((user + sys) / total) * 100))
+  };
+});
+
+ipcMain.handle('get-cognitive-stats', async () => {
+  const backendDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
+  const dbPath = path.join(backendDir, 'zenith_memory.db');
+  const exists = fs.existsSync(dbPath);
+  let sizeKB = exists ? Math.round(fs.statSync(dbPath).size / 1024) : 0;
+  return {
+    dbExists: exists,
+    dbSizeKB: sizeKB,
+    system2: 'Deliberative Matrix Armed',
+    neuroplasticity: 'Procedural Playbooks Active',
+    shipOfTheseus: 'Temporal Evolution WAL Active',
+    killswitch: 'Atomic Motor Disengagement Ready'
+  };
+});
+
+ipcMain.handle('emergency-kill', async () => {
+  try {
+    const backendDir = app.isPackaged ? process.resourcesPath : path.join(__dirname, '..');
+    const stopFile = path.join(backendDir, '.stop_zenith');
+    fs.writeFileSync(stopFile, 'emergency_stop');
+    if (zenithProcess) {
+      const pid = zenithProcess.pid;
+      const { exec } = require('child_process');
+      exec(`taskkill /pid ${pid} /T /F`, () => {});
+      zenithProcess = null;
+    }
+    destroyOverlay();
+    return { status: 'success', message: 'EMERGENCY MOTOR DISENGAGEMENT TRIGGERED' };
+  } catch (e) {
+    return { status: 'error', message: e.message };
+  }
 });
