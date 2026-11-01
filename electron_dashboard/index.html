@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zenith</title>
+  <title>Zenith Studio</title>
 
   <!-- Google Stitch Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,12 +12,13 @@
 
   <style>
     /* ==========================================================================
-       GOOGLE STITCH MINIMALIST DESIGN SYSTEM (Focused Bento Layout)
+       GOOGLE STITCH DESIGN SYSTEM (Bento Grids, Soft Modernism, Pill Hierarchy)
        ========================================================================== */
     :root {
       --bg-canvas: #0c0d12;
       --card-surface: rgba(22, 24, 34, 0.78);
-      --card-surface-hover: rgba(32, 35, 50, 0.85);
+      --card-surface-elevated: rgba(28, 32, 46, 0.85);
+      --card-surface-hover: rgba(36, 40, 58, 0.85);
 
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-hover: rgba(255, 255, 255, 0.18);
@@ -36,6 +37,10 @@
       --cyan: #06b6d4;
       --cyan-glow: rgba(6, 182, 212, 0.25);
       --cyan-bg: rgba(6, 182, 212, 0.12);
+
+      --indigo: #6366f1;
+      --indigo-glow: rgba(99, 102, 241, 0.25);
+      --indigo-bg: rgba(99, 102, 241, 0.12);
 
       --crimson: #ef4444;
 
@@ -68,14 +73,14 @@
       position: relative;
     }
 
-    /* Ambient Soft Mesh Glow */
+    /* Ambient Soft Mesh Gradient (Stitch Atmosphere) */
     .stitch-ambient {
       position: absolute;
       top: -70px;
       left: 50%;
       transform: translateX(-50%);
-      width: 520px;
-      height: 240px;
+      width: 540px;
+      height: 250px;
       background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.06), transparent 70%);
       filter: blur(55px);
       pointer-events: none;
@@ -84,20 +89,20 @@
     }
 
     .stitch-ambient.active {
-      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.12), transparent 70%);
-      transform: translateX(-50%) scale(1.08);
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.22), rgba(6, 182, 212, 0.12), transparent 70%);
+      transform: translateX(-50%) scale(1.1);
     }
 
     /* ==========================================================================
-       HEADER BAR (macOS Traffic Lights + Streamlined 2-Pill Switch)
+       TOP BAR (macOS Traffic Lights + 3-Pill Switch)
        ========================================================================== */
     .stitch-header {
-      height: 50px;
-      min-height: 50px;
+      height: 52px;
+      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 18px;
       background: rgba(12, 13, 18, 0.88);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border-subtle);
@@ -110,7 +115,7 @@
       align-items: center;
       gap: 8px;
       -webkit-app-region: no-drag;
-      width: 76px;
+      width: 80px;
     }
 
     .traffic-dot {
@@ -195,7 +200,7 @@
       box-shadow: 0 0 8px var(--emerald);
     }
 
-    /* Streamlined 2-Option Navigation Capsule */
+    /* Segmented Navigation Capsule */
     .stitch-nav-pill {
       display: flex;
       align-items: center;
@@ -207,7 +212,7 @@
     }
 
     .nav-btn {
-      padding: 5px 16px;
+      padding: 5px 15px;
       font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
@@ -229,13 +234,13 @@
     }
 
     /* ==========================================================================
-       MAIN CONTENT (Scrollable Canvas)
+       MAIN SCROLLABLE CANVAS
        ========================================================================== */
     .stitch-canvas {
       flex: 1;
       overflow-y: auto;
       padding: 24px 28px 28px 28px;
-      max-width: 760px;
+      max-width: 780px;
       width: 100%;
       margin: 0 auto;
       position: relative;
@@ -284,7 +289,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       BENTO HERO: Status & Real-Time Waveform
+       BENTO HERO: Assistant State & Dynamic Waveform
        -------------------------------------------------------------------------- */
     .bento-hero {
       display: grid;
@@ -357,7 +362,6 @@
       margin-top: 14px;
     }
 
-    /* Solid Pill Action Button */
     .btn-pill-action {
       display: inline-flex;
       align-items: center;
@@ -395,7 +399,6 @@
       background: #272a39;
     }
 
-    /* Waveform Container */
     .hero-spectrum-box {
       width: 100%;
       height: 110px;
@@ -425,7 +428,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       FOCUSED 2-TILE GRID: Screen Vision & Host Performance
+       FOCUSED 2-TILE GRID: Screen Vision & Active Reasoning Model
        -------------------------------------------------------------------------- */
     .bento-grid-2 {
       display: grid;
@@ -438,7 +441,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 130px;
+      min-height: 135px;
       padding: 18px 20px;
     }
 
@@ -471,10 +474,10 @@
 
     .chip-green { background: var(--emerald-bg); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.25); }
     .chip-cyan  { background: var(--cyan-bg); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.25); }
-    .chip-muted { background: rgba(255, 255, 255, 0.06); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+    .chip-indigo{ background: var(--indigo-bg); color: var(--indigo); border: 1px solid rgba(99, 102, 241, 0.25); }
 
     .tile-metric-value {
-      font-size: 18px;
+      font-size: 17.5px;
       font-weight: 800;
       letter-spacing: -0.01em;
       margin-bottom: 2px;
@@ -484,23 +487,6 @@
     .tile-metric-sub {
       font-size: 11.5px;
       color: var(--text-muted);
-    }
-
-    .tile-meter-bar {
-      width: 100%;
-      height: 4px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.08);
-      margin-top: 10px;
-      overflow: hidden;
-    }
-
-    .tile-meter-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--emerald), var(--cyan));
-      width: 0%;
-      border-radius: var(--radius-pill);
-      transition: width 0.4s ease;
     }
 
     /* Tactile Stitch Mini Toggle */
@@ -572,28 +558,44 @@
     }
 
     /* ==========================================================================
-       SETTINGS (Stitch Form Cards)
+       TAB 2: SETTINGS (Aligned with Zenith Codebase Structure)
        ========================================================================== */
-    .settings-header-bar {
+    .section-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
-    .settings-title {
-      font-size: 18px;
+    .section-title {
+      font-size: 17px;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
+    }
+
+    .stitch-settings-group {
+      margin-bottom: 22px;
+    }
+
+    .group-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .stitch-form-card {
       background: var(--card-surface);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-bento);
-      padding: 18px 22px;
-      margin-bottom: 14px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
       transition: border-color 0.2s ease;
     }
 
@@ -609,7 +611,7 @@
     }
 
     .form-label {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -631,7 +633,7 @@
     }
 
     .form-desc {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       margin-bottom: 10px;
     }
@@ -644,10 +646,10 @@
 
     .stitch-input {
       width: 100%;
-      padding: 9px 14px;
+      padding: 8px 12px;
       background: rgba(10, 11, 15, 0.7);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-sm);
       color: #ffffff;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
@@ -657,6 +659,20 @@
 
     .stitch-input:focus {
       border-color: var(--border-focus);
+    }
+
+    .stitch-select {
+      width: 100%;
+      padding: 8px 12px;
+      background: rgba(10, 11, 15, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
     }
 
     .btn-eye-toggle {
@@ -671,6 +687,154 @@
       border-radius: 4px;
     }
     .btn-eye-toggle:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+    /* ==========================================================================
+       TAB 3: ABOUT (Zenith Info, Updates, GitHub Creator & Bug Reporting)
+       ========================================================================== */
+    .about-hero-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    .about-logo-box {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #ffffff, #94a3b8);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #000000;
+      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
+    }
+
+    .about-hero-meta h3 {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .about-version-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: var(--cyan-bg);
+      color: var(--cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .about-hero-meta p {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Creator Card (GitHub Profile with Avatar) */
+    .creator-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, rgba(22, 24, 34, 0.8), rgba(28, 32, 48, 0.85));
+    }
+
+    .creator-profile {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .creator-avatar-wrap {
+      position: relative;
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-pill);
+      padding: 2px;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      box-shadow: 0 4px 16px var(--emerald-glow);
+    }
+
+    .creator-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius-pill);
+      object-fit: cover;
+      background: #181920;
+      display: block;
+    }
+
+    .creator-info h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .creator-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-hover);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s var(--spring-smooth);
+    }
+
+    .btn-github-link:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+
+    /* Updates & Bug Reports Grid */
+    .about-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .action-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 18px 20px;
+      min-height: 120px;
+    }
+
+    .action-box h5 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .action-box p {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
 
     /* Toast */
     .stitch-toast {
@@ -728,10 +892,11 @@
       </div>
     </div>
 
-    <!-- Streamlined 2-Pill Navigation Capsule -->
+    <!-- Segmented Navigation Capsule: Dashboard, Settings, About -->
     <nav class="stitch-nav-pill">
       <button class="nav-btn active" data-tab="tab-overview">Dashboard</button>
       <button class="nav-btn" data-tab="tab-settings">Settings</button>
+      <button class="nav-btn" data-tab="tab-about">About</button>
     </nav>
   </header>
 
@@ -739,7 +904,7 @@
   <main class="stitch-canvas">
 
     <!-- ====================================================================
-         TAB 1: DASHBOARD (Streamlined Bento Grid)
+         TAB 1: DASHBOARD
          ==================================================================== -->
     <div class="tab-view active" id="tab-overview">
       
@@ -761,8 +926,8 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               <span id="btnToggleText">Engage Zenith</span>
             </button>
-            <span style="font-size: 11.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">
-              Gemini 2.5 Flash Live • 48 kHz
+            <span style="font-size: 11.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;" id="engineBadge">
+              48 kHz PCM • Multimodal Live
             </span>
           </div>
         </div>
@@ -774,7 +939,7 @@
         </div>
       </section>
 
-      <!-- Focused 2-Tile Grid: Vision & Host Performance -->
+      <!-- 2-Tile Grid: Screen Vision & Active Reasoning Model -->
       <section class="bento-grid-2">
         
         <!-- Tile 1: Multimodal Screen Vision -->
@@ -795,20 +960,20 @@
           <div class="tile-chip chip-cyan" id="visionChip">Smart Sampling</div>
         </div>
 
-        <!-- Tile 2: Host Performance & Memory -->
+        <!-- Tile 2: Multimodal Reasoning Model -->
         <div class="bento-card bento-tile">
           <div>
             <div class="tile-header">
               <div class="tile-icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               </div>
-              <div class="tile-chip chip-green" id="dbChip">WAL Active</div>
+              <div class="tile-chip chip-green" id="modelPillBadge">Live Active</div>
             </div>
-            <div class="tile-metric-value" id="cpuMetricText">CPU: 0%</div>
-            <div class="tile-metric-sub" id="hostDetailText">RAM: 44% • zenith_memory.db (148 KB)</div>
+            <div class="tile-metric-value" id="modelDisplayName">gemini-3.8-live</div>
+            <div class="tile-metric-sub" id="modelDetailText">Voice: Fenrir • Memory: 148 KB WAL</div>
           </div>
-          <div class="tile-meter-bar">
-            <div class="tile-meter-fill" id="tileCpuMeterFill"></div>
+          <div style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;" id="modelSubsystemStatus">
+            System 2 Matrix Armed
           </div>
         </div>
 
@@ -822,70 +987,224 @@
     </div>
 
     <!-- ====================================================================
-         TAB 2: SETTINGS (Stitch Form Cards)
+         TAB 2: SETTINGS (Aligned directly with Zenith project files)
          ==================================================================== -->
     <div class="tab-view" id="tab-settings">
-      <div class="settings-header-bar">
-        <span class="settings-title">Model Credentials & Peripherals</span>
+      <div class="section-title-row">
+        <span class="section-title">Environment & Peripherals</span>
         <button class="btn-pill-action" id="btnSaveSettings">Save Changes</button>
       </div>
 
-      <div class="stitch-form-card">
-        <div class="form-header-row">
-          <div class="form-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <span>Gemini API Key</span>
-          </div>
-          <span class="form-status-tag" id="geminiTag">Not set</span>
+      <!-- Group 1: Google Gemini AI Credentials -->
+      <div class="stitch-settings-group">
+        <div class="group-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Gemini AI Engine</span>
         </div>
-        <div class="form-desc">Required for multimodal speech synthesis & reasoning loops.</div>
-        <div class="input-box-wrapper">
-          <input type="password" class="stitch-input" id="cfgGeminiKey" placeholder="AIzaSy...">
-          <button class="btn-eye-toggle" data-target="cfgGeminiKey">Show</button>
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">Google API Key (GOOGLE_API_KEY)</span>
+            <span class="form-status-tag" id="googleKeyTag">Not set</span>
+          </div>
+          <div class="form-desc">Primary token powering multimodal live speech, SoM computer vision, and cognitive RAG.</div>
+          <div class="input-box-wrapper">
+            <input type="password" class="stitch-input" id="cfgGoogleApiKey" placeholder="AIzaSy...">
+            <button class="btn-eye-toggle" data-target="cfgGoogleApiKey">Show</button>
+          </div>
+        </div>
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">Live Reasoning Model (GEMINI_LIVE_MODEL)</span>
+            <span class="form-status-tag active">Selected</span>
+          </div>
+          <div class="form-desc">Target multimodal model ID for the WebSocket audio stream.</div>
+          <select class="stitch-select" id="cfgLiveModel">
+            <option value="gemini-3.8-live">gemini-3.8-live (Recommended / Ultra Fast)</option>
+            <option value="gemini-2.5-flash-preview">gemini-2.5-flash-preview</option>
+            <option value="gemini-2.5-pro">gemini-2.5-pro (Deliberative Deep Reasoning)</option>
+          </select>
+        </div>
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">Voice Persona (ZENITH_VOICE)</span>
+            <span class="form-status-tag active">Native PCM</span>
+          </div>
+          <div class="form-desc">Voice timbre and acoustic persona synthesized by Gemini Live.</div>
+          <select class="stitch-select" id="cfgVoiceChoice">
+            <option value="Fenrir">Fenrir (Authoritative / Clear Default)</option>
+            <option value="Puck">Puck (Energetic & Friendly)</option>
+            <option value="Charon">Charon (Deep & Measured)</option>
+            <option value="Kore">Kore (Warm & Expressive)</option>
+            <option value="Aoede">Aoede (Brisk & Analytical)</option>
+          </select>
         </div>
       </div>
 
-      <div class="stitch-form-card">
-        <div class="form-header-row">
-          <div class="form-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <span>Tavily Research API Key</span>
-          </div>
-          <span class="form-status-tag" id="tavilyTag">Not set</span>
+      <!-- Group 2: LiveKit Cloud Infrastructure -->
+      <div class="stitch-settings-group">
+        <div class="group-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+          <span>LiveKit Gateway</span>
         </div>
-        <div class="form-desc">Enables live web intelligence and fact-grounded search.</div>
-        <div class="input-box-wrapper">
-          <input type="password" class="stitch-input" id="cfgTavilyKey" placeholder="tvly-...">
-          <button class="btn-eye-toggle" data-target="cfgTavilyKey">Show</button>
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">Server URL (LIVEKIT_URL)</span>
+          </div>
+          <div class="form-desc">Websocket endpoint for LiveKit room orchestration.</div>
+          <input type="text" class="stitch-input" id="cfgLivekitUrl" placeholder="wss://your-project.livekit.cloud">
+        </div>
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">API Key & Secret</span>
+          </div>
+          <div class="form-desc">LiveKit room authentication credentials.</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <input type="text" class="stitch-input" id="cfgLivekitKey" placeholder="LIVEKIT_API_KEY">
+            <div class="input-box-wrapper">
+              <input type="password" class="stitch-input" id="cfgLivekitSecret" placeholder="LIVEKIT_API_SECRET">
+              <button class="btn-eye-toggle" data-target="cfgLivekitSecret">Show</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="stitch-form-card">
-        <div class="form-header-row">
-          <div class="form-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0M6 9a7 7 0 0 1 12 0M10 15a2 2 0 0 1 4 0"/></svg>
-            <span>Spotify Automation Credentials</span>
-          </div>
-          <span class="form-status-tag">Optional</span>
+      <!-- Group 3: Identity & Safety Constraints -->
+      <div class="stitch-settings-group">
+        <div class="group-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Identity & System Safety</span>
         </div>
-        <div class="form-desc">Connects local playback controls to Spotify client automation.</div>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <input type="password" class="stitch-input" id="cfgSpotifyId" placeholder="Spotify Client ID">
-          <input type="password" class="stitch-input" id="cfgSpotifySecret" placeholder="Spotify Client Secret">
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">User Identifier (Zenith_USER_ID)</span>
+          </div>
+          <div class="form-desc">User name used by the Ship of Theseus episodic memory evolution engine.</div>
+          <input type="text" class="stitch-input" id="cfgUserId" placeholder="Admin">
+        </div>
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">Command Safety Confirmation</span>
+            <label class="stitch-switch">
+              <input type="checkbox" id="cfgRequireConfirm">
+              <span class="stitch-slider"></span>
+            </label>
+          </div>
+          <div class="form-desc">Prompt for explicit confirmation before executing terminal shell commands.</div>
+        </div>
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">Preferred Music Player (PREFERRED_MUSIC_APP)</span>
+          </div>
+          <div class="form-desc">Player targeted by agent_tools/music.py for soundtrack playback.</div>
+          <select class="stitch-select" id="cfgMusicApp">
+            <option value="youtube_music">YouTube Music (Web Browser)</option>
+            <option value="spotify">Spotify Desktop Client</option>
+          </select>
         </div>
       </div>
 
-      <div class="stitch-form-card">
-        <div class="form-header-row">
-          <div class="form-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-            <span>Audio Microphone Input Peripheral</span>
-          </div>
-          <span class="form-status-tag">Default Device</span>
+      <!-- Group 4: Hardware Audio -->
+      <div class="stitch-settings-group">
+        <div class="group-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+          <span>Hardware Peripherals</span>
         </div>
-        <div class="form-desc">Specify exact audio peripheral name or leave blank for system default.</div>
-        <input type="text" class="stitch-input" id="cfgInputDevice" placeholder="System Default Audio Device">
+
+        <div class="stitch-form-card">
+          <div class="form-header-row">
+            <span class="form-label">Microphone Audio Device (ZENITH_INPUT_DEVICE)</span>
+          </div>
+          <div class="form-desc">Exact Windows audio capture peripheral string or leave blank for default.</div>
+          <input type="text" class="stitch-input" id="cfgInputDevice" placeholder="Default Windows Input Device">
+        </div>
       </div>
+
+    </div>
+
+    <!-- ====================================================================
+         TAB 3: ABOUT (Zenith Info, Creator GitHub, Updates, Bug Reporting)
+         ==================================================================== -->
+    <div class="tab-view" id="tab-about">
+      <div class="section-title-row">
+        <span class="section-title">About Zenith Studio</span>
+      </div>
+
+      <!-- Hero About Card -->
+      <section class="bento-card about-hero-card">
+        <div class="about-logo-box">Z</div>
+        <div class="about-hero-meta">
+          <h3>
+            <span>Zenith Desktop Assistant</span>
+            <span class="about-version-tag">v1.6.0</span>
+          </h3>
+          <p>Autonomous multimodal voice and vision operating system. Engineered with Google Gemini Live audio streams, local-first SQLite WAL memory evolution, and Set-of-Mark (SoM) screen grounding.</p>
+        </div>
+      </section>
+
+      <!-- Creator Card (Made by Adbhut1234 with Profile Pic & External Redirect) -->
+      <section class="bento-card creator-card">
+        <div class="creator-profile">
+          <div class="creator-avatar-wrap">
+            <img class="creator-avatar-img" src="https://github.com/Adbhut1234.png" alt="Adbhut1234" onerror="this.src='icon.png'">
+          </div>
+          <div class="creator-info">
+            <h4>Adbhut1234</h4>
+            <p>Creator & Lead Architect of Zenith</p>
+          </div>
+        </div>
+
+        <button class="btn-github-link" id="btnCreatorProfile" title="Open GitHub Profile in Browser">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub Profile ↗</span>
+        </button>
+      </section>
+
+      <!-- Updates & Bug Reporting Actions -->
+      <section class="about-actions-grid">
+        
+        <!-- Check for Updates Card -->
+        <div class="bento-card action-box">
+          <div>
+            <h5>Software Updates</h5>
+            <p id="updateStatusText">Check for the latest features and security updates.</p>
+          </div>
+          <button class="btn-pill-action" id="btnCheckUpdates" style="padding: 8px 18px; font-size: 12px; align-self: flex-start;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            <span id="btnCheckUpdatesText">Check for Updates</span>
+          </button>
+        </div>
+
+        <!-- Report a Bug Card -->
+        <div class="bento-card action-box">
+          <div>
+            <h5>Bug Reporting & Issues</h5>
+            <p>Encountered an anomaly or need a new capability?</p>
+          </div>
+          <button class="btn-pill-action" id="btnReportBug" style="padding: 8px 18px; font-size: 12px; align-self: flex-start; background: #1e212d; color: #fff; border: 1px solid var(--border-hover);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2v4a4 4 0 0 0 8 0v-4h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/></svg>
+            <span>Report a Bug ↗</span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- Repository Link Card -->
+      <section class="bento-card" style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="font-size: 12.5px; color: var(--text-secondary);">
+          Source Repository: <code style="color: var(--cyan); font-family: 'JetBrains Mono', monospace;">https://github.com/Adbhut1234/Zenith</code>
+        </div>
+        <button class="btn-github-link" id="btnRepoLink" style="font-size: 11.5px; padding: 6px 14px;">
+          <span>Star on GitHub ★</span>
+        </button>
+      </section>
 
     </div>
 
@@ -910,6 +1229,9 @@
         startZenith: async () => ({ status: 'success' }),
         stopZenith: async () => ({ status: 'success' }),
         checkZenithStatus: async () => isRunning,
+        checkForUpdates: async () => ({ status: 'success' }),
+        onUpdateMessage: () => {},
+        onUpdateProgress: () => {},
         toggleScreenVision: async (val) => ({ status: 'success', active: val }),
         getScreenVisionStatus: async () => ({ active: false }),
         getSystemTelemetry: async () => ({ cpuPercent: 12, memPercent: 44 }),
@@ -918,6 +1240,7 @@
         minimizeWindow: async () => {},
         maximizeWindow: async () => {},
         closeWindow: async () => {},
+        openExternal: async (url) => { window.open(url, '_blank'); },
         onUIState: () => {}
       };
 
@@ -938,7 +1261,7 @@
       if (btnTrafficMin) btnTrafficMin.onclick = () => api.minimizeWindow();
       if (btnTrafficMax) btnTrafficMax.onclick = () => api.maximizeWindow();
 
-      // Stitch Nav Switching
+      // Stitch Nav Switching (Dashboard, Settings, About)
       const navButtons = document.querySelectorAll('.nav-btn');
       navButtons.forEach(btn => {
         btn.onclick = () => {
@@ -970,7 +1293,7 @@
           if (stitchAmbient) stitchAmbient.classList.add('active');
           if (statusOrb) statusOrb.classList.add('active');
           if (heroTitle) heroTitle.textContent = stateText ? `Zenith is ${stateText}` : 'Zenith is Active & Listening';
-          if (heroSubtitle) heroSubtitle.textContent = 'Multimodal Live Audio engaged • Responsive to voice and vision triggers';
+          if (heroSubtitle) heroSubtitle.textContent = 'Multimodal Live Audio loop engaged • Responsive to voice and vision triggers';
           if (btnToggleZenith) btnToggleZenith.className = 'btn-pill-action running';
           if (btnToggleText) btnToggleText.textContent = 'Disengage';
           if (brandLivePill) brandLivePill.classList.add('active');
@@ -1051,27 +1374,22 @@
         }
       });
 
-      // Host Telemetry Polling
-      const cpuMetricText = document.getElementById('cpuMetricText');
-      const tileCpuMeterFill = document.getElementById('tileCpuMeterFill');
-      const hostDetailText = document.getElementById('hostDetailText');
-      const dbChip = document.getElementById('dbChip');
+      // Model & Memory Details Display
+      const modelDisplayName = document.getElementById('modelDisplayName');
+      const modelDetailText = document.getElementById('modelDetailText');
 
-      async function pollTelemetry() {
+      async function refreshModelAndMemory() {
         try {
-          const telem = await api.getSystemTelemetry();
           const cog = await api.getCognitiveStats();
-          const ram = telem ? telem.memPercent : 0;
-          const cpu = telem ? telem.cpuPercent : 0;
           const dbSize = cog && cog.dbSizeKB ? cog.dbSizeKB : 148;
-
-          if (cpuMetricText) cpuMetricText.textContent = `CPU: ${cpu}%`;
-          if (tileCpuMeterFill) tileCpuMeterFill.style.width = `${Math.min(100, cpu)}%`;
-          if (hostDetailText) hostDetailText.textContent = `RAM: ${ram}% • zenith_memory.db (${dbSize} KB)`;
+          const currentVoice = cfgVoiceChoice ? cfgVoiceChoice.value : 'Fenrir';
+          if (modelDetailText) {
+            modelDetailText.textContent = `Voice: ${currentVoice} • Memory: ${dbSize} KB WAL`;
+          }
         } catch (e) {}
       }
-      setInterval(pollTelemetry, 3000);
-      pollTelemetry();
+      setInterval(refreshModelAndMemory, 3500);
+      refreshModelAndMemory();
 
       api.checkZenithStatus().then(status => updateStatusUI(!!status));
 
@@ -1138,15 +1456,21 @@
         updateStatusUI(true, state.toUpperCase());
       });
 
-      // Settings Configuration
-      const cfgGeminiKey = document.getElementById('cfgGeminiKey');
-      const cfgTavilyKey = document.getElementById('cfgTavilyKey');
-      const cfgSpotifyId = document.getElementById('cfgSpotifyId');
-      const cfgSpotifySecret = document.getElementById('cfgSpotifySecret');
+      // ------------------------------------------------------------------------
+      // SETTINGS FORM HANDLERS
+      // ------------------------------------------------------------------------
+      const cfgGoogleApiKey = document.getElementById('cfgGoogleApiKey');
+      const cfgLiveModel = document.getElementById('cfgLiveModel');
+      const cfgVoiceChoice = document.getElementById('cfgVoiceChoice');
+      const cfgLivekitUrl = document.getElementById('cfgLivekitUrl');
+      const cfgLivekitKey = document.getElementById('cfgLivekitKey');
+      const cfgLivekitSecret = document.getElementById('cfgLivekitSecret');
+      const cfgUserId = document.getElementById('cfgUserId');
+      const cfgRequireConfirm = document.getElementById('cfgRequireConfirm');
+      const cfgMusicApp = document.getElementById('cfgMusicApp');
       const cfgInputDevice = document.getElementById('cfgInputDevice');
       const btnSaveSettings = document.getElementById('btnSaveSettings');
-      const geminiTag = document.getElementById('geminiTag');
-      const tavilyTag = document.getElementById('tavilyTag');
+      const googleKeyTag = document.getElementById('googleKeyTag');
 
       document.querySelectorAll('.btn-eye-toggle').forEach(btn => {
         btn.onclick = () => {
@@ -1161,50 +1485,124 @@
 
       api.readEnv().then(env => {
         if (!env) return;
-        if (cfgGeminiKey && env.GEMINI_API_KEY) {
-          cfgGeminiKey.value = env.GEMINI_API_KEY;
-          if (geminiTag) {
-            geminiTag.textContent = 'Configured';
-            geminiTag.className = 'form-status-tag active';
+        const googleKey = env.GOOGLE_API_KEY || env.GEMINI_API_KEY || '';
+        if (cfgGoogleApiKey) {
+          cfgGoogleApiKey.value = googleKey;
+          if (googleKeyTag) {
+            googleKeyTag.textContent = googleKey ? 'Configured' : 'Not set';
+            googleKeyTag.className = googleKey ? 'form-status-tag active' : 'form-status-tag';
           }
         }
-        if (cfgTavilyKey && env.TAVILY_API_KEY) {
-          cfgTavilyKey.value = env.TAVILY_API_KEY;
-          if (tavilyTag) {
-            tavilyTag.textContent = 'Configured';
-            tavilyTag.className = 'form-status-tag active';
-          }
+        if (cfgLiveModel && env.GEMINI_LIVE_MODEL) {
+          cfgLiveModel.value = env.GEMINI_LIVE_MODEL;
+          if (modelDisplayName) modelDisplayName.textContent = env.GEMINI_LIVE_MODEL;
         }
-        if (cfgSpotifyId && env.SPOTIFY_CLIENT_ID) cfgSpotifyId.value = env.SPOTIFY_CLIENT_ID;
-        if (cfgSpotifySecret && env.SPOTIFY_CLIENT_SECRET) cfgSpotifySecret.value = env.SPOTIFY_CLIENT_SECRET;
-        if (cfgInputDevice && env.ZENITH_INPUT_DEVICE) cfgInputDevice.value = env.ZENITH_INPUT_DEVICE;
+        if (cfgVoiceChoice && (env.ZENITH_VOICE || env.JARVIS_VOICE)) {
+          cfgVoiceChoice.value = env.ZENITH_VOICE || env.JARVIS_VOICE;
+        }
+        if (cfgLivekitUrl && env.LIVEKIT_URL) cfgLivekitUrl.value = env.LIVEKIT_URL;
+        if (cfgLivekitKey && env.LIVEKIT_API_KEY) cfgLivekitKey.value = env.LIVEKIT_API_KEY;
+        if (cfgLivekitSecret && env.LIVEKIT_API_SECRET) cfgLivekitSecret.value = env.LIVEKIT_API_SECRET;
+        if (cfgUserId && (env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'])) {
+          cfgUserId.value = env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'];
+        }
+        if (cfgRequireConfirm) {
+          cfgRequireConfirm.checked = (env.REQUIRE_CMD_CONFIRMATION === 'true');
+        }
+        if (cfgMusicApp && env.PREFERRED_MUSIC_APP) {
+          cfgMusicApp.value = env.PREFERRED_MUSIC_APP;
+        }
+        if (cfgInputDevice && env.ZENITH_INPUT_DEVICE) {
+          cfgInputDevice.value = env.ZENITH_INPUT_DEVICE;
+        }
       });
 
       if (btnSaveSettings) {
         btnSaveSettings.onclick = async () => {
+          const keyVal = cfgGoogleApiKey ? cfgGoogleApiKey.value.trim() : '';
           const payload = {
-            GEMINI_API_KEY: cfgGeminiKey ? cfgGeminiKey.value.trim() : '',
-            TAVILY_API_KEY: cfgTavilyKey ? cfgTavilyKey.value.trim() : '',
-            SPOTIFY_CLIENT_ID: cfgSpotifyId ? cfgSpotifyId.value.trim() : '',
-            SPOTIFY_CLIENT_SECRET: cfgSpotifySecret ? cfgSpotifySecret.value.trim() : '',
+            GOOGLE_API_KEY: keyVal,
+            GEMINI_API_KEY: keyVal,
+            GEMINI_LIVE_MODEL: cfgLiveModel ? cfgLiveModel.value : 'gemini-3.8-live',
+            ZENITH_VOICE: cfgVoiceChoice ? cfgVoiceChoice.value : 'Fenrir',
+            LIVEKIT_URL: cfgLivekitUrl ? cfgLivekitUrl.value.trim() : '',
+            LIVEKIT_API_KEY: cfgLivekitKey ? cfgLivekitKey.value.trim() : '',
+            LIVEKIT_API_SECRET: cfgLivekitSecret ? cfgLivekitSecret.value.trim() : '',
+            Zenith_USER_ID: cfgUserId ? cfgUserId.value.trim() : 'Admin',
+            REQUIRE_CMD_CONFIRMATION: cfgRequireConfirm && cfgRequireConfirm.checked ? 'true' : 'false',
+            PREFERRED_MUSIC_APP: cfgMusicApp ? cfgMusicApp.value : 'youtube_music',
             ZENITH_INPUT_DEVICE: cfgInputDevice ? cfgInputDevice.value.trim() : ''
           };
+
           const res = await api.saveEnv(payload);
           if (res && res.status === 'success') {
-            showToast('Settings saved');
-            if (geminiTag) {
-              const hasKey = !!payload.GEMINI_API_KEY;
-              geminiTag.textContent = hasKey ? 'Configured' : 'Not set';
-              geminiTag.className = hasKey ? 'form-status-tag active' : 'form-status-tag';
+            showToast('Settings saved to .env');
+            if (googleKeyTag) {
+              googleKeyTag.textContent = keyVal ? 'Configured' : 'Not set';
+              googleKeyTag.className = keyVal ? 'form-status-tag active' : 'form-status-tag';
             }
-            if (tavilyTag) {
-              const hasKey = !!payload.TAVILY_API_KEY;
-              tavilyTag.textContent = hasKey ? 'Configured' : 'Not set';
-              tavilyTag.className = hasKey ? 'form-status-tag active' : 'form-status-tag';
+            if (modelDisplayName && payload.GEMINI_LIVE_MODEL) {
+              modelDisplayName.textContent = payload.GEMINI_LIVE_MODEL;
             }
+            refreshModelAndMemory();
           } else {
             showToast('Failed to save settings');
           }
+        };
+      }
+
+      // ------------------------------------------------------------------------
+      // ABOUT TAB ACTIONS: Updates, GitHub Links, Bug Reporting
+      // ------------------------------------------------------------------------
+      const btnCheckUpdates = document.getElementById('btnCheckUpdates');
+      const btnCheckUpdatesText = document.getElementById('btnCheckUpdatesText');
+      const updateStatusText = document.getElementById('updateStatusText');
+
+      if (btnCheckUpdates) {
+        btnCheckUpdates.onclick = async () => {
+          if (btnCheckUpdatesText) btnCheckUpdatesText.textContent = 'Checking...';
+          if (updateStatusText) updateStatusText.textContent = 'Connecting to GitHub update server...';
+          showToast('Checking for updates...');
+          try {
+            await api.checkForUpdates();
+          } catch (e) {
+            if (updateStatusText) updateStatusText.textContent = 'Current version v1.6.0 is up to date.';
+            if (btnCheckUpdatesText) btnCheckUpdatesText.textContent = 'Check for Updates';
+          }
+        };
+      }
+
+      api.onUpdateMessage((msg) => {
+        if (updateStatusText) updateStatusText.textContent = msg;
+        if (btnCheckUpdatesText) btnCheckUpdatesText.textContent = 'Check for Updates';
+        showToast(msg);
+      });
+
+      api.onUpdateProgress((percent) => {
+        if (updateStatusText) updateStatusText.textContent = `Downloading update: ${Math.round(percent)}%`;
+      });
+
+      // Creator GitHub Profile Link
+      const btnCreatorProfile = document.getElementById('btnCreatorProfile');
+      if (btnCreatorProfile) {
+        btnCreatorProfile.onclick = () => {
+          api.openExternal('https://github.com/Adbhut1234');
+        };
+      }
+
+      // Report Bug Link
+      const btnReportBug = document.getElementById('btnReportBug');
+      if (btnReportBug) {
+        btnReportBug.onclick = () => {
+          api.openExternal('https://github.com/Adbhut1234/Zenith/issues/new');
+        };
+      }
+
+      // Repository Link
+      const btnRepoLink = document.getElementById('btnRepoLink');
+      if (btnRepoLink) {
+        btnRepoLink.onclick = () => {
+          api.openExternal('https://github.com/Adbhut1234/Zenith');
         };
       }
 
