@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenith Overlay</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      background: transparent;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      pointer-events: none;
+    }
+
+    #top-trigger {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 48px;
+      z-index: 10000;
+      pointer-events: auto;
+      background: transparent;
+    }
+
+    /* ── Aurora blob animations ──────────────────── */
+    @keyframes b1   { 0%,100%{left:-20px} 50%{left:190px} }
+    @keyframes b2   { 0%,100%{right:-20px} 50%{right:170px} }
+    @keyframes b3   { 0%,100%{left:42%;transform:translate(-50%,-50%) scale(1)}
+                      50%{left:52%;transform:translate(-50%,-50%) scale(1.3)} }
+
+    /* ── Orb animations ──────────────────────────── */
+    @keyframes ohue {
+      to { filter: hue-rotate(360deg) blur(0.5px) brightness(1.22); }
+    }
+    @keyframes omorph {
+      0%,100% { border-radius:50%;           transform:scale(1);    }
+      25%     { border-radius:60% 40% 55% 45%; transform:scale(1.07); }
+      50%     { border-radius:40% 60% 45% 55%; transform:scale(0.93); }
+      75%     { border-radius:55% 45% 60% 40%; transform:scale(1.04); }
+    }
+
+    /* ── Vinyl Music Disc Animation ──────────────── */
+    @keyframes spinVinyl {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    #vinyl-disc {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: 
+        radial-gradient(circle at center, #fff 0%, #111 10%, #1c1c1e 30%, #000 32%, #2c2c2e 60%, #000 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 0 4px rgba(255,255,255,0.2);
+      position: absolute;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: spinVinyl 4s linear infinite;
+    }
+
+    #vinyl-disc::after {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.9), inset 0 0 2px rgba(0,0,0,0.5);
+    }
+
+    /* ── Rounded Siri Wave bars ──────────────────── */
+    @keyframes tw {
+      0%,100% { height: 6px; opacity: 0.4; }
+      50%     { height: var(--wh); opacity: 1; }
+    }
+    .wb {
+      width: 4px;
+      border-radius: 4px;
+      animation: tw var(--ws, 1.4s) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      transform-origin: center;
+    }
+    .wb:nth-child(1)  { --wh:12px; animation-delay:0s;    }
+    .wb:nth-child(2)  { --wh:18px; animation-delay:.1s;  }
+    .wb:nth-child(3)  { --wh:24px; animation-delay:.2s;  }
+    .wb:nth-child(4)  { --wh:32px; animation-delay:.3s;  }
+    .wb:nth-child(5)  { --wh:38px; animation-delay:.4s;  }
+    .wb:nth-child(6)  { --wh:32px; animation-delay:.5s;  }
+    .wb:nth-child(7)  { --wh:24px; animation-delay:.6s;  }
+    .wb:nth-child(8)  { --wh:18px; animation-delay:.7s;  }
+    .wb:nth-child(9)  { --wh:12px; animation-delay:.8s; }
+    .wb:nth-child(10) { --wh:8px;  animation-delay:.9s; }
+    .wb:nth-child(11) { --wh:12px; animation-delay:1.0s;  }
+
+    /* ── Spinner ─────────────────────────────────── */
+    @keyframes dring { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      animation: dring 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* ── Pill Container ──────────────────────────── */
+    #zenith-bar {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    #amb {
+      position: absolute;
+      width: 480px; height: 64px;
+      border-radius: 50%;
+      filter: blur(40px);
+      top: 34px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      background: transparent;
+      transition: background 0.8s ease, opacity 0.6s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 0;
+    }
+
+    /* Frosted glass pill */
+    #pill {
+      position: relative;
+      z-index: 1;
+      width: 488px; height: 68px;
+      border-radius: 34px;
+      overflow: hidden;
+      pointer-events: auto;
+      background: rgba(8, 10, 18, 0.72);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      transition:
+        opacity   0.45s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.6s ease;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+    }
+
+    #pill.slid-up {
+      opacity: 0;
+      transform: translateY(-80px) scale(0.92);
+      pointer-events: none;
+    }
+
+    #pill.off {
+      opacity: 0;
+      transform: translateY(-80px) scale(0.88);
+      pointer-events: none;
+    }
+
+    .ablob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(26px);
+      top: 50%;
+      mix-blend-mode: screen;
+      opacity: 0.90;
+      transition: background 0.8s ease;
+      will-change: left, right, transform;
+    }
+    #a1 { width: 240px; height: 110px; transform: translateY(-50%); animation: b1 3.5s ease-in-out infinite; }
+    #a2 { width: 200px; height: 100px; transform: translateY(-50%); animation: b2 4.2s ease-in-out infinite; }
+    #a3 { width: 170px; height: 90px; animation: b3 3.1s ease-in-out infinite; }
+
+    #glass {
+      position: absolute;
+      inset: 0;
+      background: rgba(4, 5, 12, 0.76);
+      border-radius: inherit;
+      z-index: 1;
+    }
+    
+    #border-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* Content Layout */
+    #content {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 16px 0 12px;
+      gap: 14px;
+    }
+
+    #left-slot {
+      width: 44px; height: 44px;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #orb {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff 0%, #4285F4 20%, #9C27B0 60%, #00BCD4 100%);
+      animation: ohue 6s linear infinite, omorph 4s ease-in-out infinite;
+      filter: blur(1.5px) brightness(1.3);
+      box-shadow: 0 0 15px rgba(255,255,255,0.2), inset -4px -4px 10px rgba(0,0,0,0.5);
+      position: absolute;
+    }
+
+    /* Thumbnail in left slot */
+    #thumb-wrap {
+      width: 42px; height: 42px;
+      position: relative;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    #album-thumb {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    #thumb-wrap:hover #album-thumb {
+      transform: scale(1.08);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.8);
+    }
+    #mini-vinyl-badge {
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 17px; height: 17px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #ffffff 0%, #a855f7 30%, #111116 35%, #22222a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      animation: spinVinyl 3s linear infinite;
+    }
+
+    #wv {
+      display: none;
+      align-items: center;
+      gap: 3px;
+      height: 38px;
+      width: 42px;
+      justify-content: center;
+      position: absolute;
+      inset: 0;
+    }
+
+    #text-area {
+      flex: 1;
+      overflow: hidden;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #pst {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+    #psb {
+      color: rgba(235, 235, 245, 0.65);
+      font-size: 13px;
+      font-weight: 400;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0px;
+    }
+
+    #pbg {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    #pbg:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.05);
+    }
+
+    /* ── Apple Music Style Controls ──────────────── */
+    #music-controls {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .m-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.85);
+      transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .m-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .m-btn:active {
+      transform: scale(0.9);
+      opacity: 0.7;
+    }
+
+    .m-btn.play-btn {
+      width: 36px; height: 36px;
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .m-btn.play-btn:hover {
+      background: #f0f0f0;
+      transform: scale(1.06);
+    }
+    
+    .m-btn.play-btn:active {
+      transform: scale(0.94);
+    }
+
+    .m-btn.close-btn {
+      width: 28px; height: 28px;
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.6);
+      margin-left: 4px;
+    }
+
+    .m-btn.close-btn:hover {
+      background: rgba(255, 59, 48, 0.25);
+      color: #ff3b30;
+    }
+
+    /* ── Floating Expanded Thumbnail Preview Card ─────────────── */
+    #thumb-preview-card {
+      position: absolute;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px) scale(0.95);
+      width: 340px;
+      border-radius: 20px;
+      background: rgba(14, 15, 22, 0.88);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(168, 85, 247, 0.25);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10001;
+    }
+
+    #thumb-preview-card.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .preview-img-container {
+      width: 100%;
+      height: 168px;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+      background: #111;
+    }
+
+    #preview-card-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .preview-badge {
+      position: absolute;
+      top: 8px; right: 8px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(12px);
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #a855f7;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+    }
+
+    .preview-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .preview-title {
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-artist {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-source {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* ── Floating Detailed Weather Report Card ─────────────────── */
+    #weather-preview-card {
+      position: absolute;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px) scale(0.95);
+      width: 440px;
+      border-radius: 22px;
+      background: rgba(16, 20, 30, 0.90);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(255, 170, 0, 0.25);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10001;
+    }
+
+    #weather-preview-card.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .weather-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .weather-loc-title {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 280px;
+    }
+
+    .weather-loc-sub {
+      color: rgba(235, 235, 245, 0.6);
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    .weather-live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 170, 0, 0.15);
+      border: 1px solid rgba(255, 170, 0, 0.4);
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #ffaa00;
+      letter-spacing: 0.5px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ffaa00;
+      box-shadow: 0 0 8px #ffaa00;
+      animation: pulseGlow 1.8s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .weather-current-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px;
+    }
+
+    .weather-temp-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .weather-icon-big {
+      font-size: 30px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+      line-height: 1;
+    }
+
+    .weather-temp-num {
+      font-size: 34px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .weather-condition-group {
+      text-align: right;
+    }
+
+    .weather-condition-text {
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .weather-hl-text {
+      color: rgba(235, 235, 245, 0.65);
+      font-size: 11px;
+      margin-top: 2px;
+      display: flex;
+      gap: 5px;
+      justify-content: flex-end;
+    }
+
+    .weather-hl-text b {
+      color: #ffffff;
+    }
+
+    .weather-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 7px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .weather-metric-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      text-align: center;
+    }
+
+    .metric-icon {
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 9px;
+      color: rgba(235, 235, 245, 0.55);
+      font-weight: 500;
+    }
+
+    .metric-val {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .weather-hourly-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hourly-header {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: rgba(235, 235, 245, 0.5);
+    }
+
+    .weather-hourly-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+
+    .weather-hourly-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hourly-slot-card {
+      flex: 1;
+      min-width: 42px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 5px 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .hourly-slot-card:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .hourly-time {
+      font-size: 9px;
+      color: rgba(235, 235, 245, 0.6);
+      font-weight: 600;
+    }
+
+    .hourly-icon {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .hourly-temp {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .hourly-rain {
+      font-size: 8px;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+  <div id="top-trigger"></div>
+
+  <div id="zenith-bar">
+    <div id="amb"></div>
+
+    <div id="pill" class="off">
+      <div id="a1" class="ablob"></div>
+      <div id="a2" class="ablob"></div>
+      <div id="a3" class="ablob"></div>
+
+      <div id="glass"></div>
+      <div id="border-ring"></div>
+      <div id="top-light"></div>
+
+      <div id="content">
+        <div id="left-slot">
+          <div id="orb"></div>
+          <div id="thumb-wrap">
+            <img id="album-thumb" src="" alt="Thumbnail" />
+            <div id="mini-vinyl-badge"></div>
+          </div>
+          <div id="vinyl-disc"></div>
+          <div id="wv">
+            <div class="wb"></div><div class="wb"></div><div class="wb"></div>
+            <div class="wb"></div><div class="wb"></div><div class="wb"></div>
+            <div class="wb"></div><div class="wb"></div><div class="wb"></div>
+            <div class="wb"></div><div class="wb"></div>
+          </div>
+        </div>
+
+        <div id="text-area">
+          <div id="pst">Initializing...</div>
+          <div id="psb">Zenith System</div>
+        </div>
+
+        <div id="pbg"></div>
+
+        <div id="music-controls">
+          <button id="btn-prev" class="m-btn" title="Previous / Restart">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button id="btn-playpause" class="m-btn play-btn" title="Play / Pause">
+            <svg id="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            <svg id="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button id="btn-next" class="m-btn" title="Next Track">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+          <button id="btn-close" class="m-btn close-btn" title="Close Player">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Expanded Thumbnail Preview Card -->
+    <div id="thumb-preview-card">
+      <div class="preview-img-container">
+        <img id="preview-card-img" src="" alt="Album Artwork Preview" />
+        <div class="preview-badge">NOW PLAYING</div>
+      </div>
+      <div class="preview-info">
+        <div id="preview-title" class="preview-title">Playing Music</div>
+        <div id="preview-artist" class="preview-artist">YouTube Music</div>
+        <div class="preview-source">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#fff"/></svg>
+          <span>Direct Audio Stream • Zenith Player</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Expanded Detailed Weather Report Card -->
+    <div id="weather-preview-card">
+      <div class="weather-card-header">
+        <div class="weather-loc-group">
+          <div class="weather-loc-title" id="wc-city">London, United Kingdom</div>
+          <div class="weather-loc-sub" id="wc-date">Today's Whole Day Forecast</div>
+        </div>
+        <div class="weather-live-badge">
+          <span class="pulse-dot"></span>
+          <span>LIVE WEATHER</span>
+        </div>
+      </div>
+
+      <div class="weather-current-row">
+        <div class="weather-temp-main">
+          <span class="weather-icon-big" id="wc-icon">🌤️</span>
+          <span class="weather-temp-num" id="wc-temp">--°</span>
+        </div>
+        <div class="weather-condition-group">
+          <div class="weather-condition-text" id="wc-condition">Clear</div>
+          <div class="weather-hl-text">
+            <span>H: <b id="wc-high">--°</b></span>
+            <span>•</span>
+            <span>L: <b id="wc-low">--°</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key metrics bar -->
+      <div class="weather-metrics-grid">
+        <div class="weather-metric-item">
+          <span class="metric-icon">💧</span>
+          <span class="metric-label">Humidity</span>
+          <span class="metric-val" id="wc-humidity">--%</span>
+        </div>
+        <div class="weather-metric-item">
+          <span class="metric-icon">💨</span>
+          <span class="metric-label">Wind</span>
+          <span class="metric-val" id="wc-wind">-- km/h</span>
+        </div>
+        <div class="weather-metric-item">
+          <span class="metric-icon">☔</span>
+          <span class="metric-label">Rain Chance</span>
+          <span class="metric-val" id="wc-rain">--%</span>
+        </div>
+        <div class="weather-metric-item">
+          <span class="metric-icon">☀️</span>
+          <span class="metric-label">UV Index</span>
+          <span class="metric-val" id="wc-uv">--</span>
+        </div>
+      </div>
+
+      <!-- Whole Day Hourly Forecast row -->
+      <div class="weather-hourly-section">
+        <div class="hourly-header">WHOLE DAY FORECAST (HOURLY)</div>
+        <div class="weather-hourly-row" id="wc-hourly-list">
+          <!-- Dynamically populated hourly slots -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="musicAudio" style="display:none;"></audio>
+
+  <script>
+    // ── State definitions ────────────────────────────────────────────────────
+    const STATES = {
+      idle: {
+        c1:'rgba(66,133,244,.90)', c2:'rgba(168,85,247,.80)', c3:'rgba(0,188,212,.70)',
+        glow:'rgba(66,133,244,.28)',
+        sh:'0 0 50px rgba(66,133,244,.38),0 0 110px rgba(168,85,247,.14)',
+        status:'Zenith Online', sub:'Voice assistant ready',
+        wave:false, ba1:3.6, ba2:4.2, ba3:3.1,
+        ws:'1.1s', wc1:'#4285F4', wc2:'#A855F7', ri:'mic'
+      },
+      hidden: {
+        c1:'rgba(66,133,244,.90)', c2:'rgba(168,85,247,.80)', c3:'rgba(0,188,212,.70)',
+        glow:'rgba(66,133,244,.28)',
+        sh:'0 0 50px rgba(66,133,244,.38),0 0 110px rgba(168,85,247,.14)',
+        status:'Zenith Online', sub:'Voice assistant ready',
+        wave:false, ba1:3.6, ba2:4.2, ba3:3.1,
+        ws:'1.1s', wc1:'#4285F4', wc2:'#A855F7', ri:'mic'
+      },
+      startup: {
+        c1:'rgba(66,133,244,.92)', c2:'rgba(168,85,247,.82)', c3:'rgba(0,188,212,.72)',
+        glow:'rgba(66,133,244,.28)',
+        sh:'0 0 60px rgba(66,133,244,.42),0 0 130px rgba(168,85,247,.14)',
+        status:'Zenith Online', sub:'Voice assistant ready',
+        wave:false, ba1:3.0, ba2:3.5, ba3:2.8,
+        ws:'1.0s', wc1:'#4285F4', wc2:'#A855F7', ri:'mic'
+      },
+      listening: {
+        c1:'rgba(66,133,244,.92)', c2:'rgba(0,150,200,.82)', c3:'rgba(103,58,183,.72)',
+        glow:'rgba(66,133,244,.28)',
+        sh:'0 0 60px rgba(66,133,244,.42),0 0 130px rgba(66,133,244,.14)',
+        status:'Listening…', sub:'Speak now',
+        wave:true, ba1:3.5, ba2:4.2, ba3:3.1,
+        ws:'1.0s', wc1:'#4285F4', wc2:'#00BCD4', ri:'mic'
+      },
+      thinking: {
+        c1:'rgba(124,58,237,.92)', c2:'rgba(219,39,119,.82)', c3:'rgba(245,158,11,.72)',
+        glow:'rgba(124,58,237,.28)',
+        sh:'0 0 60px rgba(124,58,237,.42),0 0 130px rgba(124,58,237,.14)',
+        status:'Thinking…', sub:'Processing your request',
+        wave:false, ba1:1.4, ba2:1.8, ba3:1.2,
+        ws:'1.1s', wc1:'#7C3AED', wc2:'#EC4899', ri:'spin'
+      },
+      speaking: {
+        c1:'rgba(219,39,119,.92)', c2:'rgba(109,40,217,.82)', c3:'rgba(37,99,235,.72)',
+        glow:'rgba(219,39,119,.28)',
+        sh:'0 0 60px rgba(219,39,119,.42),0 0 130px rgba(109,40,217,.18)',
+        status:'Speaking', sub:'Zenith AI',
+        wave:true, ba1:2.8, ba2:3.4, ba3:2.2,
+        ws:'0.72s', wc1:'#DB2777', wc2:'#6D28D9', ri:'wave'
+      },
+      waiting: {
+        c1:'rgba(75,85,99,.7)', c2:'rgba(55,65,81,.65)', c3:'rgba(107,114,128,.6)',
+        glow:'rgba(255,255,255,.04)',
+        sh:'0 0 30px rgba(255,255,255,.06)',
+        status:'Standing by…', sub:'',
+        wave:false, ba1:7, ba2:8.5, ba3:6,
+        ws:'1.6s', wc1:'#6B7280', wc2:'#4B5563', ri:'pause'
+      },
+      tool: {
+        c1:'rgba(5,150,105,.92)', c2:'rgba(2,132,199,.82)', c3:'rgba(124,58,237,.72)',
+        glow:'rgba(5,150,105,.28)',
+        sh:'0 0 60px rgba(5,150,105,.42),0 0 130px rgba(5,150,105,.14)',
+        status:'Running tool', sub:'',
+        wave:false, ba1:3.0, ba2:3.8, ba3:2.5,
+        ws:'1.1s', wc1:'#059669', wc2:'#0284C7', ri:'gear'
+      }
+    };
+
+    // ── SVG icon strings ─────────────────────────────────────────────────────
+    const ICONS = {
+      mic: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="rgba(255,255,255,.75)" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="22"/>
+            </svg>`,
+      wave:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="rgba(255,255,255,.75)" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12h3l2-7 3 14 3-10 2 6 2-3h5"/>
+            </svg>`,
+      gear:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="rgba(255,255,255,.75)" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0
+                       1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33
+                       1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
+                       A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0
+                       0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06
+                       A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0
+                       0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0
+                       0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06
+                       a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0
+                       0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0
+                       1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65
+                       0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83
+                       l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65
+                       0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
+                       a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>`,
+      pause:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="rgba(255,255,255,.75)" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+               <circle cx="12" cy="12" r="10"/>
+               <line x1="10" y1="15" x2="10" y2="9"/>
+               <line x1="14" y1="15" x2="14" y2="9"/>
+             </svg>`,
+      weather:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`,
+      system:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M9 2v2M15 20v2M9 20v2M20 15h2M20 9h2M2 15h2M2 9h2"/></svg>`,
+      timer:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      search:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+      file:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`,
+      bluetooth:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/></svg>`,
+      sparkle:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>`
+    };
+
+    // ── DOM references ────────────────────────────────────────────────────────
+    const $topTrigger  = document.getElementById('top-trigger');
+    const $pill        = document.getElementById('pill');
+    const $a1          = document.getElementById('a1');
+    const $a2          = document.getElementById('a2');
+    const $a3          = document.getElementById('a3');
+    const $orb         = document.getElementById('orb');
+    const $thumbWrap   = document.getElementById('thumb-wrap');
+    const $albumThumb  = document.getElementById('album-thumb');
+    const $miniVinyl   = document.getElementById('mini-vinyl-badge');
+    const $disc        = document.getElementById('vinyl-disc');
+    const $wv          = document.getElementById('wv');
+    const $pst         = document.getElementById('pst');
+    const $psb         = document.getElementById('psb');
+    const $pbg         = document.getElementById('pbg');
+    const $amb         = document.getElementById('amb');
+    const $audio       = document.getElementById('musicAudio');
+
+    const $previewCard   = document.getElementById('thumb-preview-card');
+    const $previewImg    = document.getElementById('preview-card-img');
+    const $previewTitle  = document.getElementById('preview-title');
+    const $previewArtist = document.getElementById('preview-artist');
+
+    const $weatherCard = document.getElementById('weather-preview-card');
+    const $wcCity      = document.getElementById('wc-city');
+    const $wcDate      = document.getElementById('wc-date');
+    const $wcIcon      = document.getElementById('wc-icon');
+    const $wcTemp      = document.getElementById('wc-temp');
+    const $wcCondition = document.getElementById('wc-condition');
+    const $wcHigh      = document.getElementById('wc-high');
+    const $wcLow       = document.getElementById('wc-low');
+    const $wcHumidity  = document.getElementById('wc-humidity');
+    const $wcWind      = document.getElementById('wc-wind');
+    const $wcRain      = document.getElementById('wc-rain');
+    const $wcUv        = document.getElementById('wc-uv');
+    const $wcHourlyList= document.getElementById('wc-hourly-list');
+
+    let isWeatherActive = false;
+    let currentWeatherReport = null;
+    let weatherCardTimer = null;
+    let weatherFetchLock = false;
+
+    const WEATHER_ICONS_MAP = {
+      0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+      45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌦️',
+      55: '🌧️', 61: '🌧️', 63: '🌧️', 65: '🌧️',
+      71: '🌨️', 73: '🌨️', 75: '❄️', 80: '🌦️',
+      81: '🌧️', 82: '⛈️', 95: '🌩️', 96: '⛈️'
+    };
+
+    function getWeatherEmoji(code) {
+      return WEATHER_ICONS_MAP[code] || '🌤️';
+    }
+
+    function handleWeatherReport(data) {
+      if (!data) return;
+      isWeatherActive = true;
+      currentWeatherReport = data;
+
+      if ($wcCity) $wcCity.textContent = data.city + (data.country ? `, ${data.country}` : '');
+      if ($wcDate) $wcDate.textContent = "Today's Whole Day Forecast";
+      if ($wcTemp) $wcTemp.textContent = `${data.temp}°`;
+      if ($wcIcon) $wcIcon.textContent = getWeatherEmoji(data.code);
+      if ($wcCondition) $wcCondition.textContent = data.condition || 'Clear';
+      if ($wcHigh) $wcHigh.textContent = `${data.max_temp !== undefined ? data.max_temp : data.temp}°`;
+      if ($wcLow) $wcLow.textContent = `${data.min_temp !== undefined ? data.min_temp : data.temp}°`;
+      if ($wcHumidity) $wcHumidity.textContent = `${data.humidity !== undefined ? data.humidity : 50}%`;
+      if ($wcWind) $wcWind.textContent = `${data.wind || 0} km/h`;
+      if ($wcRain) $wcRain.textContent = `${data.rain || 0}%`;
+      if ($wcUv) $wcUv.textContent = `${data.uv || 0} UV`;
+
+      if ($wcHourlyList && Array.isArray(data.hourly) && data.hourly.length > 0) {
+        $wcHourlyList.innerHTML = '';
+        data.hourly.forEach(slot => {
+          const card = document.createElement('div');
+          card.className = 'hourly-slot-card';
+          card.innerHTML = `
+            <span class="hourly-time">${slot.time}</span>
+            <span class="hourly-icon">${getWeatherEmoji(slot.code)}</span>
+            <span class="hourly-temp">${slot.temp}°</span>
+            ${slot.rain > 0 ? `<span class="hourly-rain">${slot.rain}%</span>` : ''}
+          `;
+          $wcHourlyList.appendChild(card);
+        });
+      }
+    }
+
+    async function fetchWeatherDetails(city) {
+      if (!city || weatherFetchLock) return;
+      weatherFetchLock = true;
+      try {
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city.trim())}&count=1`);
+        const geoData = await geoRes.json();
+        if (geoData && geoData.results && geoData.results.length > 0) {
+          const loc = geoData.results[0];
+          const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current_weather=true&hourly=temperature_2m,weathercode,relativehumidity_2m,apparent_temperature,precipitation_probability,windspeed_10m&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto`);
+          const wData = await wRes.json();
+          const cw = wData.current_weather || {};
+          const h = wData.hourly || {};
+          const daily = wData.daily || {};
+
+          const hourly = [];
+          const times = h.time || [];
+          for (let i = 0; i < Math.min(24, times.length); i += 3) {
+            hourly.push({
+              time: times[i].includes('T') ? times[i].split('T')[1] : times[i],
+              temp: Math.round(h.temperature_2m[i]),
+              code: h.weathercode[i],
+              rain: h.precipitation_probability ? h.precipitation_probability[i] : 0,
+              humidity: h.relativehumidity_2m ? h.relativehumidity_2m[i] : 0,
+              wind: h.windspeed_10m ? Math.round(h.windspeed_10m[i]) : 0
+            });
+          }
+
+          const maxT = Math.round(daily.temperature_2m_max ? daily.temperature_2m_max[0] : cw.temperature);
+          const minT = Math.round(daily.temperature_2m_min ? daily.temperature_2m_min[0] : cw.temperature);
+
+          handleWeatherReport({
+            type: 'weather',
+            city: loc.name,
+            country: loc.country || '',
+            temp: Math.round(cw.temperature || 0),
+            code: cw.weathercode || 0,
+            condition: (cw.weathercode === 0 ? 'Clear Sky' : 'Partly Cloudy/Rain'),
+            max_temp: maxT,
+            min_temp: minT,
+            humidity: h.relativehumidity_2m ? h.relativehumidity_2m[0] : 50,
+            rain: h.precipitation_probability ? h.precipitation_probability[0] : 0,
+            uv: Math.round(daily.uv_index_max ? daily.uv_index_max[0] : 0),
+            wind: Math.round(cw.windspeed || 0),
+            hourly: hourly
+          });
+        }
+      } catch (err) {
+        console.warn("Weather fetch error:", err);
+      } finally {
+        weatherFetchLock = false;
+      }
+    }
+
+    const $mControls = document.getElementById('music-controls');
+    const $btnPrev    = document.getElementById('btn-prev');
+    const $btnPP      = document.getElementById('btn-playpause');
+    const $btnNext    = document.getElementById('btn-next');
+    const $btnClose   = document.getElementById('btn-close');
+    const $iconPause  = document.getElementById('icon-pause');
+    const $iconPlay   = document.getElementById('icon-play');
+
+    let isMusicActive = false;
+    let currentMusicTrack = null;
+    let isHovered = false;
+    let slideUpTimer = null;
+    const SLIDE_STAY_DURATION = 4000; // 4.0s stay before auto sliding up
+    let currentRawState = 'startup';
+
+    function shouldSlideUp() {
+      if (isHovered) return false;
+      // Keep pill down while actively communicating
+      if (currentRawState === 'listening' || currentRawState === 'thinking' || currentRawState === 'speaking' || currentRawState === 'tool') {
+        return false;
+      }
+      return true;
+    }
+
+    function slideDown(stayDuration = 0) {
+      if (slideUpTimer) {
+        clearTimeout(slideUpTimer);
+        slideUpTimer = null;
+      }
+      $pill.classList.remove('slid-up');
+      $pill.classList.remove('off');
+      $amb.style.opacity = '1';
+      $amb.style.transform = 'translate(-50%, -50%)';
+
+      if (stayDuration > 0 && !isHovered) {
+        slideUpTimer = setTimeout(() => {
+          if (shouldSlideUp()) {
+            slideUp();
+          }
+        }, stayDuration);
+      }
+    }
+
+    function slideUp() {
+      if (slideUpTimer) {
+        clearTimeout(slideUpTimer);
+        slideUpTimer = null;
+      }
+      if (!shouldSlideUp()) return;
+
+      $pill.classList.add('slid-up');
+      $amb.style.opacity = '0';
+      $amb.style.transform = 'translate(-50%, -100px)';
+      if ($previewCard) {
+        $previewCard.classList.remove('show');
+      }
+      if ($weatherCard) {
+        $weatherCard.classList.remove('show');
+      }
+    }
+
+    function resetSlideTimer() {
+      if (slideUpTimer) {
+        clearTimeout(slideUpTimer);
+        slideUpTimer = null;
+      }
+      if (shouldSlideUp()) {
+        slideUpTimer = setTimeout(() => {
+          if (shouldSlideUp()) {
+            slideUp();
+          }
+        }, SLIDE_STAY_DURATION);
+      }
+    }
+
+    function updatePlayPauseIcon() {
+      if ($audio.paused) {
+        $iconPause.style.display = 'none';
+        $iconPlay.style.display = 'block';
+        $disc.style.animationPlayState = 'paused';
+        if ($miniVinyl) $miniVinyl.style.animationPlayState = 'paused';
+      } else {
+        $iconPause.style.display = 'block';
+        $iconPlay.style.display = 'none';
+        $disc.style.animationPlayState = 'running';
+        if ($miniVinyl) $miniVinyl.style.animationPlayState = 'running';
+      }
+    }
+
+    let lastCustomTitle = null;
+    let lastCustomSub = null;
+    let lastCustomTime = 0;
+    let lastCustomIconKey = null;
+    let customTimer = null;
+    const CUSTOM_TTL = 14000;
+
+    // ── Main state function ──────────────────────────────────────────
+    function go(name) {
+      currentRawState = name;
+      if (isMusicActive) {
+        if (name === 'hidden' || name === 'idle') {
+          restoreMusicState();
+          return;
+        }
+        slideDown(0);
+      }
+
+      const s = STATES[name] || STATES.idle;
+      const isCustomActive = (Date.now() - lastCustomTime < CUSTOM_TTL);
+
+      if (!isCustomActive) {
+        $pill.style.boxShadow = s.sh;
+        $a1.style.background = s.c1; $a1.style.animationDuration = s.ba1 + 's';
+        $a2.style.background = s.c2; $a2.style.animationDuration = s.ba2 + 's';
+        $a3.style.background = s.c3; $a3.style.animationDuration = s.ba3 + 's';
+        $amb.style.background = s.glow;
+      }
+
+      if (!isMusicActive) {
+        $thumbWrap.style.display = 'none';
+        $disc.style.display = 'none';
+        $orb.style.display = s.wave ? 'none' : 'block';
+        $wv.style.display  = s.wave ? 'flex'  : 'none';
+        
+        if (!isCustomActive) {
+          $pst.textContent = s.status;
+          $psb.textContent = s.sub;
+        } else {
+          $pst.textContent = lastCustomTitle;
+          $psb.textContent = lastCustomSub;
+        }
+
+        $mControls.style.display = 'none';
+        $pbg.style.display = 'flex';
+      } else {
+        $pst.textContent = isCustomActive ? lastCustomTitle : (s.status || (currentMusicTrack ? currentMusicTrack.title : ''));
+        $psb.textContent = isCustomActive ? lastCustomSub : (currentMusicTrack ? (currentMusicTrack.artist || s.sub) : s.sub);
+      }
+
+      document.querySelectorAll('.wb').forEach(b => {
+        b.style.background = 'linear-gradient(to top,' + s.wc1 + ',' + s.wc2 + ')';
+        b.style.animationDuration = s.ws;
+      });
+
+      if (!isMusicActive) {
+        if (isCustomActive) {
+          $pbg.innerHTML = ICONS[lastCustomIconKey] || ICONS.sparkle;
+        } else if (s.ri === 'spin') {
+          $pbg.innerHTML = '<div class="spinner"></div>';
+        } else {
+          $pbg.innerHTML = ICONS[s.ri] || ICONS.mic;
+        }
+      }
+
+      if (name === 'listening' || name === 'thinking' || name === 'speaking' || name === 'tool' || isCustomActive) {
+        slideDown(0);
+      } else if (name === 'idle' || name === 'hidden') {
+        if (!isHovered) {
+          resetSlideTimer();
+        }
+      }
+    }
+
+    function setCustomText(text) {
+      if (!text) return;
+      
+      let title = "Zenith Info";
+      let sub = text;
+      
+      if (text.includes(' | ')) {
+        const parts = text.split(' | ');
+        title = parts[0].trim();
+        sub = parts.slice(1).join(' | ').trim();
+      }
+      
+      const combined = (title + ' ' + sub).toLowerCase();
+      
+      let c1, c2, c3, glow, sh, iconKey;
+      
+      isWeatherActive = false;
+      if ($weatherCard) $weatherCard.classList.remove('show');
+
+      if (combined.includes('weather') || combined.includes('temp') || combined.includes('forecast') || combined.includes('rain') || combined.includes('sun') || combined.includes('degree')) {
+        c1 = 'rgba(255, 170, 0, 0.95)'; c2 = 'rgba(0, 191, 255, 0.88)'; c3 = 'rgba(255, 94, 0, 0.78)'; glow = 'rgba(255, 170, 0, 0.35)'; sh = '0 0 60px rgba(255, 170, 0, 0.45), 0 0 130px rgba(0, 191, 255, 0.2)'; iconKey = 'weather';
+        isWeatherActive = true;
+
+        let candidateCity = null;
+        if (text.includes(' | ')) {
+          const parts = text.split(' | ');
+          if (parts.length > 1) {
+            candidateCity = parts[1].split(',')[0].replace(/checking/i, '').trim();
+          }
+        }
+        if (candidateCity && (!currentWeatherReport || currentWeatherReport.city.toLowerCase() !== candidateCity.toLowerCase())) {
+          fetchWeatherDetails(candidateCity);
+        }
+      } else if (combined.includes('system') || combined.includes('ram') || combined.includes('cpu') || combined.includes('disk') || combined.includes('stats') || combined.includes('process') || combined.includes('junk')) {
+        c1 = 'rgba(16, 185, 129, 0.95)'; c2 = 'rgba(6, 182, 212, 0.88)'; c3 = 'rgba(59, 130, 246, 0.78)'; glow = 'rgba(16, 185, 129, 0.35)'; sh = '0 0 60px rgba(16, 185, 129, 0.45), 0 0 130px rgba(6, 182, 212, 0.2)'; iconKey = 'system';
+      } else if (combined.includes('timer') || combined.includes('alarm') || combined.includes('clock') || combined.includes('stopwatch') || combined.includes('countdown')) {
+        c1 = 'rgba(249, 115, 22, 0.95)'; c2 = 'rgba(239, 68, 68, 0.88)'; c3 = 'rgba(234, 179, 8, 0.78)'; glow = 'rgba(249, 115, 22, 0.35)'; sh = '0 0 60px rgba(249, 115, 22, 0.45), 0 0 130px rgba(239, 68, 68, 0.2)'; iconKey = 'timer';
+      } else if (combined.includes('search') || combined.includes('google') || combined.includes('web') || combined.includes('news') || combined.includes('wiki')) {
+        c1 = 'rgba(59, 130, 246, 0.95)'; c2 = 'rgba(139, 92, 246, 0.88)'; c3 = 'rgba(14, 165, 233, 0.78)'; glow = 'rgba(59, 130, 246, 0.35)'; sh = '0 0 60px rgba(59, 130, 246, 0.45), 0 0 130px rgba(139, 92, 246, 0.2)'; iconKey = 'search';
+      } else if (combined.includes('file') || combined.includes('folder') || combined.includes('pdf') || combined.includes('doc') || combined.includes('zip') || combined.includes('screenshot') || combined.includes('note')) {
+        c1 = 'rgba(245, 158, 11, 0.95)'; c2 = 'rgba(217, 119, 6, 0.88)'; c3 = 'rgba(251, 191, 36, 0.78)'; glow = 'rgba(245, 158, 11, 0.35)'; sh = '0 0 60px rgba(245, 158, 11, 0.45), 0 0 130px rgba(217, 119, 6, 0.2)'; iconKey = 'file';
+      } else if (combined.includes('bluetooth') || combined.includes('pair') || combined.includes('device')) {
+        c1 = 'rgba(37, 99, 235, 0.95)'; c2 = 'rgba(99, 102, 241, 0.88)'; c3 = 'rgba(168, 85, 247, 0.78)'; glow = 'rgba(37, 99, 235, 0.35)'; sh = '0 0 60px rgba(37, 99, 235, 0.45), 0 0 130px rgba(99, 102, 241, 0.2)'; iconKey = 'bluetooth';
+      } else {
+        c1 = 'rgba(124, 58, 237, 0.95)'; c2 = 'rgba(236, 72, 153, 0.88)'; c3 = 'rgba(6, 182, 212, 0.78)'; glow = 'rgba(124, 58, 237, 0.35)'; sh = '0 0 60px rgba(124, 58, 237, 0.45), 0 0 130px rgba(236, 72, 153, 0.2)'; iconKey = 'sparkle';
+      }
+
+      lastCustomTitle = title;
+      lastCustomSub = sub;
+      lastCustomTime = Date.now();
+      lastCustomIconKey = iconKey;
+
+      if (customTimer) clearTimeout(customTimer);
+      customTimer = setTimeout(() => {
+        lastCustomTime = 0;
+        isWeatherActive = false;
+        if ($weatherCard) $weatherCard.classList.remove('show');
+        if (!isMusicActive) {
+          $pill.classList.add('off');
+        } else {
+          restoreMusicState();
+        }
+      }, CUSTOM_TTL);
+
+      $pill.classList.remove('off');
+      $pill.style.boxShadow = sh;
+
+      $a1.style.background = c1; $a1.style.animationDuration = '3.0s';
+      $a2.style.background = c2; $a2.style.animationDuration = '3.5s';
+      $a3.style.background = c3; $a3.style.animationDuration = '2.8s';
+
+      $amb.style.background = glow;
+      $amb.style.opacity = '1';
+
+      if (!isMusicActive) {
+        $thumbWrap.style.display = 'none';
+        $disc.style.display = 'none';
+        $orb.style.display = 'block';
+        $wv.style.display = 'none';
+        $pst.textContent = title;
+        $psb.textContent = sub;
+        $mControls.style.display = 'none';
+        $pbg.style.display = 'flex';
+        $pbg.innerHTML = ICONS[iconKey] || ICONS.gear;
+      } else {
+        $pst.textContent = title;
+        $psb.textContent = sub;
+      }
+    }
+
+    function setState(state) {
+      if (!state) return;
+      if (state.startsWith('custom:')) {
+        slideDown(0);
+        setCustomText(state.substring(7));
+      } else if (state === 'idle') {
+        if (!isMusicActive) {
+          go('idle');
+          if (!isHovered) resetSlideTimer();
+        } else {
+          restoreMusicState();
+          resetSlideTimer();
+        }
+      } else {
+        if (state === 'listening' || state === 'thinking' || state === 'speaking' || state === 'tool') {
+          slideDown(0);
+        }
+        go(state);
+      }
+    }
+
+    function restoreMusicState() {
+      if (!isMusicActive || !currentMusicTrack) return;
+      if (customTimer) {
+        clearTimeout(customTimer);
+        customTimer = null;
+      }
+      $pill.classList.remove('off');
+
+      $a1.style.background = 'rgba(66, 133, 244, 0.9)';
+      $a2.style.background = 'rgba(168, 85, 247, 0.8)';
+      $a3.style.background = 'rgba(217, 101, 112, 0.7)';
+      $amb.style.background = 'rgba(168, 85, 247, 0.3)';
+      if (!$pill.classList.contains('slid-up')) {
+        $amb.style.opacity = '1';
+        $amb.style.transform = 'translate(-50%, -50%)';
+      }
+      $pill.style.boxShadow = '0 0 60px rgba(168, 85, 247, 0.45)';
+
+      $orb.style.display = 'none';
+      $wv.style.display = 'none';
+
+      // Thumbnail Preview & Cover setup
+      if (currentMusicTrack.cover) {
+        $albumThumb.src = currentMusicTrack.cover;
+        $previewImg.src = currentMusicTrack.cover;
+        $thumbWrap.style.display = 'flex';
+        $disc.style.display = 'none';
+      } else {
+        $thumbWrap.style.display = 'none';
+        $disc.style.display = 'flex';
+      }
+
+      $previewTitle.textContent = currentMusicTrack.title || 'Playing Music';
+      $previewArtist.textContent = currentMusicTrack.artist || 'YouTube Music';
+
+      $pst.textContent = currentMusicTrack.title || 'Playing Music';
+      $psb.textContent = currentMusicTrack.artist || 'YouTube Music';
+
+      $pbg.style.display = 'none';
+      $mControls.style.display = 'flex';
+      updatePlayPauseIcon();
+    }
+
+    // ── Music Control Button Listeners ─────────────────────────────────
+    $btnPP.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if ($audio.paused) {
+        $audio.play().catch(e => console.error(e));
+      } else {
+        $audio.pause();
+      }
+      updatePlayPauseIcon();
+      resetSlideTimer();
+    });
+
+    $btnPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      $audio.currentTime = 0;
+      $audio.play().catch(e => console.error(e));
+      updatePlayPauseIcon();
+      resetSlideTimer();
+    });
+
+    $btnNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if ($audio.duration && !isNaN($audio.duration)) {
+        $audio.currentTime = Math.max(0, $audio.duration - 1);
+      }
+      updatePlayPauseIcon();
+      resetSlideTimer();
+    });
+
+    $btnClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      $audio.pause();
+      isMusicActive = false;
+      currentMusicTrack = null;
+      if (slideUpTimer) {
+        clearTimeout(slideUpTimer);
+        slideUpTimer = null;
+      }
+      $thumbWrap.style.display = 'none';
+      $disc.style.display = 'none';
+      $previewCard.classList.remove('show');
+      $orb.style.display = 'block';
+      $mControls.style.display = 'none';
+      $pbg.style.display = 'flex';
+      $pill.classList.remove('slid-up');
+      go('hidden');
+    });
+
+    // Clicking or hovering thumbnail triggers expanded preview card
+    $thumbWrap.addEventListener('mouseenter', () => {
+      if (currentMusicTrack && currentMusicTrack.cover) {
+        $previewCard.classList.add('show');
+        resetSlideTimer();
+      }
+    });
+
+    $thumbWrap.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentMusicTrack && currentMusicTrack.cover) {
+        $previewCard.classList.toggle('show');
+        resetSlideTimer();
+      }
+    });
+
+    $albumThumb.onerror = () => {
+      $thumbWrap.style.display = 'none';
+      $disc.style.display = 'flex';
+    };
+
+    $audio.addEventListener('play', updatePlayPauseIcon);
+    $audio.addEventListener('pause', updatePlayPauseIcon);
+    $audio.addEventListener('ended', () => {
+      updatePlayPauseIcon();
+      setTimeout(() => {
+        if ($audio.ended && isMusicActive) {
+          isMusicActive = false;
+          currentMusicTrack = null;
+          if (slideUpTimer) {
+            clearTimeout(slideUpTimer);
+            slideUpTimer = null;
+          }
+          $thumbWrap.style.display = 'none';
+          $disc.style.display = 'none';
+          $previewCard.classList.remove('show');
+          $orb.style.display = 'block';
+          $mControls.style.display = 'none';
+          $pbg.style.display = 'flex';
+          $pill.classList.remove('slid-up');
+          go('hidden');
+        }
+      }, 1500);
+    });
+
+    // ── Music Engine Handlers ──────────────────────────────────────────────
+    function playMusicTrack(data) {
+      isMusicActive = true;
+      currentMusicTrack = data;
+      restoreMusicState();
+
+      if (data.stream_url) {
+        $audio.src = data.stream_url;
+        $audio.load();
+        $audio.play().catch(e => console.error("Audio stream playback error", e));
+      }
+
+      // Show pill for 4.5s stay then auto slide up
+      slideDown(SLIDE_STAY_DURATION);
+    }
+
+    function handleMusicControl(data) {
+      const action = data.action;
+      if (action === 'pause') {
+        $audio.pause();
+        updatePlayPauseIcon();
+        resetSlideTimer();
+      } else if (action === 'play' || action === 'resume') {
+        $audio.play().catch(e => console.error(e));
+        updatePlayPauseIcon();
+        slideDown(SLIDE_STAY_DURATION);
+      } else if (action === 'toggle') {
+        if ($audio.paused) {
+          $audio.play().catch(e => console.error(e));
+        } else {
+          $audio.pause();
+        }
+        updatePlayPauseIcon();
+        resetSlideTimer();
+      } else if (action === 'stop' || action === 'close') {
+        $audio.pause();
+        isMusicActive = false;
+        currentMusicTrack = null;
+        if (slideUpTimer) {
+          clearTimeout(slideUpTimer);
+          slideUpTimer = null;
+        }
+        $thumbWrap.style.display = 'none';
+        $disc.style.display = 'none';
+        $previewCard.classList.remove('show');
+        $orb.style.display = 'block';
+        $mControls.style.display = 'none';
+        $pbg.style.display = 'flex';
+        $pill.classList.remove('slid-up');
+        go('hidden');
+      } else if (action === 'volume' && data.volume >= 0) {
+        $audio.volume = Math.max(0, Math.min(1, data.volume / 100));
+        resetSlideTimer();
+      }
+    }
+
+    // ── Interactive Mouse & Hover Tracking ────────────────────────────────
+    let isInteractive = false;
+    let previewTimer = null;
+
+    window.addEventListener('mousemove', (e) => {
+      const pillRect = $pill.getBoundingClientRect();
+      const previewRect = $previewCard.classList.contains('show') ? $previewCard.getBoundingClientRect() : null;
+      const weatherRect = $weatherCard && $weatherCard.classList.contains('show') ? $weatherCard.getBoundingClientRect() : null;
+      const topRect = $topTrigger.getBoundingClientRect();
+
+      const isPillVisible = !$pill.classList.contains('slid-up') && !$pill.classList.contains('off');
+
+      const overPill = isPillVisible && (
+        e.clientX >= pillRect.left && e.clientX <= pillRect.right &&
+        e.clientY >= pillRect.top && e.clientY <= pillRect.bottom
+      );
+      const overPreview = previewRect && (
+        e.clientX >= previewRect.left && e.clientX <= previewRect.right &&
+        e.clientY >= previewRect.top && e.clientY <= previewRect.bottom
+      );
+      const overWeather = weatherRect && (
+        e.clientX >= weatherRect.left && e.clientX <= weatherRect.right &&
+        e.clientY >= weatherRect.top && e.clientY <= weatherRect.bottom
+      );
+      const overTop = (
+        e.clientX >= topRect.left && e.clientX <= topRect.right &&
+        e.clientY >= topRect.top && e.clientY <= topRect.bottom
+      );
+
+      const isOverInteractiveZone = overPill || overPreview || overWeather || overTop;
+
+      if (isOverInteractiveZone) {
+        isHovered = true;
+        if (previewTimer) clearTimeout(previewTimer);
+        if (weatherCardTimer) clearTimeout(weatherCardTimer);
+
+        // Slide down smoothly when hovering top trigger or pill
+        if ($pill.classList.contains('slid-up') || $pill.classList.contains('off') || overTop) {
+          if (!isMusicActive && (currentRawState === 'hidden' || currentRawState === 'idle')) {
+            go('idle');
+          }
+          slideDown(0);
+        } else {
+          if (slideUpTimer) {
+            clearTimeout(slideUpTimer);
+            slideUpTimer = null;
+          }
+        }
+
+        // On hovering over pill while weather is active, show detailed whole day report!
+        if (isWeatherActive && currentWeatherReport && !isMusicActive) {
+          $weatherCard.classList.add('show');
+        }
+
+        if (!isInteractive) {
+          isInteractive = true;
+          if (window.electronAPI && window.electronAPI.setIgnoreMouseEvents) {
+            window.electronAPI.setIgnoreMouseEvents(false);
+          }
+        }
+      } else {
+        const wasHovered = isHovered;
+        isHovered = false;
+
+        if (isInteractive) {
+          isInteractive = false;
+          if (window.electronAPI && window.electronAPI.setIgnoreMouseEvents) {
+            window.electronAPI.setIgnoreMouseEvents(true, { forward: true });
+          }
+        }
+
+        if ($previewCard.classList.contains('show')) {
+          if (previewTimer) clearTimeout(previewTimer);
+          previewTimer = setTimeout(() => {
+            if (!isHovered) {
+              $previewCard.classList.remove('show');
+            }
+          }, 350);
+        }
+
+        if ($weatherCard && $weatherCard.classList.contains('show')) {
+          if (weatherCardTimer) clearTimeout(weatherCardTimer);
+          weatherCardTimer = setTimeout(() => {
+            if (!isHovered) {
+              $weatherCard.classList.remove('show');
+            }
+          }, 350);
+        }
+
+        // When mouse leaves interactive zone:
+        // Stay down for SLIDE_STAY_DURATION then auto slide up smoothly!
+        if (!$pill.classList.contains('slid-up') && !$pill.classList.contains('off')) {
+          if (wasHovered || !slideUpTimer) {
+            resetSlideTimer();
+          }
+        }
+      }
+    });
+
+    window.addEventListener('mouseleave', () => {
+      isHovered = false;
+      if (isInteractive) {
+        isInteractive = false;
+        if (window.electronAPI && window.electronAPI.setIgnoreMouseEvents) {
+          window.electronAPI.setIgnoreMouseEvents(true, { forward: true });
+        }
+      }
+      if ($previewCard) $previewCard.classList.remove('show');
+      if ($weatherCard) {
+        if (weatherCardTimer) clearTimeout(weatherCardTimer);
+        weatherCardTimer = setTimeout(() => {
+          if (!isHovered) $weatherCard.classList.remove('show');
+        }, 350);
+      }
+
+      // Auto slide up smoothly after mouse leaves window
+      if (!$pill.classList.contains('slid-up') && !$pill.classList.contains('off')) {
+        resetSlideTimer();
+      }
+    });
+
+    // Clicking weather icon in pill toggles detailed report card
+    $pbg.addEventListener('click', (e) => {
+      if (isWeatherActive && currentWeatherReport) {
+        e.stopPropagation();
+        $weatherCard.classList.toggle('show');
+      }
+    });
+
+    // Register IPC events from Electron main process
+    if (window.electronAPI) {
+      if (window.electronAPI.onUIState) {
+        window.electronAPI.onUIState((state) => {
+          setState(state);
+        });
+      }
+      if (window.electronAPI.onWeatherEvent) {
+        window.electronAPI.onWeatherEvent((data) => {
+          handleWeatherReport(data);
+        });
+      }
+      if (window.electronAPI.onMusicEvent) {
+        window.electronAPI.onMusicEvent((data) => {
+          if (data.type === 'play_music') {
+            playMusicTrack(data);
+          } else if (data.type === 'control_music') {
+            handleMusicControl(data);
+          } else if (data.type === 'weather') {
+            handleWeatherReport(data);
+          }
+        });
+      }
+    }
+
+    // Start with startup state sliding down for 4.5s then auto sliding up into notch
+    go('startup');
+    slideDown(4500);
+  </script>
+
+</body>
+</html>

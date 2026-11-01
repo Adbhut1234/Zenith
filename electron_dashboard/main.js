@@ -1,11 +1,15 @@
-const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog, desktopCapturer } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 const { autoUpdater } = require('electron-updater');
 const { spawn } = require('child_process');
 const dgram = require('dgram');
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
 
 const ENV_PATH = app.isPackaged 
   ? path.join(app.getPath('userData'), '.env') 
@@ -16,6 +20,7 @@ const OLD_ENV_PATH = app.isPackaged
 
 let overlayWindow = null;
 let udpServer = null;
+let overlayTopmostTimer = null;
 
 function createOverlay() {
   if (overlayWindow) return;
@@ -33,6 +38,7 @@ function createOverlay() {
     y: 5,
     transparent: true,
     frame: false,
+    hasShadow: false,
     alwaysOnTop: true,
     focusable: false,
     skipTaskbar: true,
@@ -44,8 +50,19 @@ function createOverlay() {
     }
   });
 
+  overlayWindow.setAlwaysOnTop(true, 'screen-saver', 1);
+  overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   overlayWindow.setIgnoreMouseEvents(true, { forward: true });
   overlayWindow.loadFile(path.join(__dirname, 'jarvis_ui.html'));
+
+  // Keep overlay window persistently topmost across Windows focus changes & desktop clicks
+  if (overlayTopmostTimer) clearInterval(overlayTopmostTimer);
+  overlayTopmostTimer = setInterval(() => {
+    if (overlayWindow && !overlayWindow.isDestroyed()) {
+      overlayWindow.setAlwaysOnTop(true, 'screen-saver', 1);
+      overlayWindow.moveTop();
+    }
+  }, 1000);
 
   if (!udpServer) {
     udpServer = dgram.createSocket('udp4');
@@ -73,7 +90,75 @@ function createOverlay() {
   }
 }
 
+// --- Native Screen Vision Streamer (Zero-Friction Vision for Gemini Live) ---
+
+let isScreenStreamingActive = false;
+
+function postScreenFrame(jpegBuffer) {
+  const req = http.request({
+    hostname: '127.0.0.1',
+    port: 49153,
+    path: '/screen_frame',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'image/jpeg',
+      'Content-Length': jpegBuffer.length
+    },
+    timeout: 800
+  }, () => {});
+
+  req.on('error', () => {});
+  req.on('timeout', () => { req.destroy(); });
+  req.write(jpegBuffer);
+  req.end();
+}
+
+let screenStreamTimeout = null;
+let isCapturingFrame = false;
+
+async function captureAndSendScreen() {
+  if (!isScreenStreamingActive || !zenithProcess || isCapturingFrame) return;
+  isCapturingFrame = true;
+  try {
+    const sources = await desktopCapturer.getSources({
+      types: ['screen'],
+      thumbnailSize: { width: 640, height: 360 }
+    });
+    if (sources && sources.length > 0) {
+      const jpegBuf = sources[0].thumbnail.toJPEG(40);
+      if (jpegBuf && jpegBuf.length > 0) {
+        postScreenFrame(jpegBuf);
+      }
+    }
+  } catch (e) {
+  } finally {
+    isCapturingFrame = false;
+    if (isScreenStreamingActive) {
+      screenStreamTimeout = setTimeout(captureAndSendScreen, 2500);
+    }
+  }
+}
+
+function startScreenStreaming() {
+  if (isScreenStreamingActive) return;
+  isScreenStreamingActive = true;
+  captureAndSendScreen();
+}
+
+function stopScreenStreaming() {
+  isScreenStreamingActive = false;
+  if (screenStreamTimeout) {
+    clearTimeout(screenStreamTimeout);
+    screenStreamTimeout = null;
+  }
+}
+
 function destroyOverlay() {
+  stopScreenStreaming();
+  if (overlayTopmostTimer) {
+    clearInterval(overlayTopmostTimer);
+    overlayTopmostTimer = null;
+  }
   if (overlayWindow && !overlayWindow.isDestroyed()) {
     overlayWindow.close();
     overlayWindow = null;
@@ -88,6 +173,9 @@ ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   if (win && !win.isDestroyed()) {
     win.setIgnoreMouseEvents(ignore, options);
+    // Re-assert topmost position on every hover state transition
+    win.setAlwaysOnTop(true, 'screen-saver', 1);
+    win.moveTop();
   }
 });
 
@@ -135,7 +223,14 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Auto Updater logic
-  autoUpdater.forceDevUpdateConfig = true;
+  const devUpdateConfigPath = path.join(__dirname, 'dev-app-update.yml');
+  const hasDevUpdateConfig = fs.existsSync(devUpdateConfigPath);
+
+  if (!app.isPackaged) {
+    if (hasDevUpdateConfig) {
+      autoUpdater.forceDevUpdateConfig = true;
+    }
+  }
   
   autoUpdater.on('checking-for-update', () => {
     mainWindow.webContents.send('update-message', 'Checking for updates...');
@@ -150,7 +245,7 @@ function createWindow() {
   });
   
   autoUpdater.on('error', (err) => {
-    mainWindow.webContents.send('update-message', 'Update error. ' + err.message);
+    mainWindow.webContents.send('update-message', 'Update error: ' + err.message);
   });
   
   autoUpdater.on('download-progress', (progressObj) => {
@@ -166,6 +261,10 @@ function createWindow() {
 
   // Check for updates after the window is loaded
   mainWindow.webContents.on('did-finish-load', async () => {
+    if (!app.isPackaged && !hasDevUpdateConfig) {
+      mainWindow.webContents.send('update-message', 'Development mode');
+      return;
+    }
     try {
       await autoUpdater.checkForUpdatesAndNotify();
     } catch (error) {
@@ -177,13 +276,21 @@ function createWindow() {
 }
 
 ipcMain.handle('check-for-updates', async () => {
+  const devUpdateConfigPath = path.join(__dirname, 'dev-app-update.yml');
+  const hasDevUpdateConfig = fs.existsSync(devUpdateConfigPath);
+  if (!app.isPackaged && !hasDevUpdateConfig) {
+    return { status: 'dev', message: 'Auto-updates disabled in development mode.' };
+  }
   try {
     await autoUpdater.checkForUpdatesAndNotify();
     return { status: 'success' };
   } catch (error) {
     let msg = error.message;
     if (msg.includes('404')) msg = 'Unable to fetch latest release from server.';
-    BrowserWindow.getAllWindows()[0].webContents.send('update-message', 'Update error: ' + msg);
+    const windows = BrowserWindow.getAllWindows();
+    if (windows.length > 0) {
+      windows[0].webContents.send('update-message', 'Update error: ' + msg);
+    }
     return { status: 'error', message: msg };
   }
 });
@@ -366,6 +473,10 @@ ipcMain.handle('start-zenith', () => {
       console.error('Failed to parse .env', e);
     }
 
+    if (envVars['ZENITH_INPUT_DEVICE']) {
+      args.push('--input-device', envVars['ZENITH_INPUT_DEVICE']);
+    }
+
     zenithProcess = spawn(command, args, {
       cwd: cwdToUse,
       windowsHide: true,
@@ -383,6 +494,7 @@ ipcMain.handle('start-zenith', () => {
     });
 
     createOverlay();
+    // startScreenStreaming(); // Runs in Smart On-Demand mode by default for zero jitter
 
     return { status: 'success' };
   } catch (error) {
@@ -419,4 +531,17 @@ ipcMain.handle('stop-zenith', () => {
 
 ipcMain.handle('check-zenith-status', () => {
   return zenithProcess !== null;
+});
+
+ipcMain.handle('toggle-screen-vision', (event, enable) => {
+  if (enable) {
+    startScreenStreaming();
+  } else {
+    stopScreenStreaming();
+  }
+  return { status: 'success', active: isScreenStreamingActive };
+});
+
+ipcMain.handle('get-screen-vision-status', () => {
+  return { active: isScreenStreamingActive && zenithProcess !== null };
 });

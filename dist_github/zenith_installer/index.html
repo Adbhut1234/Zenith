@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenith Installer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="titlebar">
+    <div class="drag-region"></div>
+    <button id="close-btn" class="close-btn">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="installer-container">
+    <div class="left-panel">
+      <div class="logo-container">
+        <img src="logo.png?v=2" alt="Zenith" class="logo-image">
+        <h1 class="logo-text">ZENITH</h1>
+        <p class="tagline">The future of assistance.</p>
+      </div>
+    </div>
+    
+    <div class="right-panel">
+      <div class="content-wrapper">
+        <h2 id="main-title">Ready to Install</h2>
+        <p id="sub-title">Zenith will be installed to your local application data folder.</p>
+        
+        
+        <div id="options-container" class="options-container">
+          <div class="input-group">
+            <label for="install-path">Install Location</label>
+            <div class="path-row">
+              <input type="text" id="install-path" readonly>
+              <button id="browse-btn" class="secondary-btn">Browse</button>
+            </div>
+          </div>
+          <div class="checkbox-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="desktop-shortcut" checked>
+              <span class="checkmark"></span>
+              Create Desktop Shortcut
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="start-shortcut" checked>
+              <span class="checkmark"></span>
+              Create Start Menu Shortcut
+            </label>
+          </div>
+        </div>
+
+        <div id="progress-container" class="hidden">
+          <div class="progress-bar-bg">
+            <div id="progress-bar" class="progress-bar-fill"></div>
+          </div>
+          <p id="status-text">Preparing...</p>
+        </div>
+
+        <div class="actions" id="action-buttons">
+          <button id="install-btn" class="primary-btn">Accept and Install</button>
+          <button id="retry-btn" class="secondary-btn hidden" style="width: 100%; border: 1px solid rgba(255,100,100,0.5); color: #ff8888;">Retry Installation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    const installBtn = document.getElementById('install-btn');
+    const retryBtn = document.getElementById('retry-btn');
+    const closeBtn = document.getElementById('close-btn');
+    const browseBtn = document.getElementById('browse-btn');
+    
+    const progressContainer = document.getElementById('progress-container');
+    const actionButtons = document.getElementById('action-buttons');
+    const optionsContainer = document.getElementById('options-container');
+    
+    const progressBar = document.getElementById('progress-bar');
+    const statusText = document.getElementById('status-text');
+    const mainTitle = document.getElementById('main-title');
+    const subTitle = document.getElementById('sub-title');
+
+    const installPathInput = document.getElementById('install-path');
+    const desktopShortcut = document.getElementById('desktop-shortcut');
+    const startShortcut = document.getElementById('start-shortcut');
+
+    // Get default path
+    ipcRenderer.invoke('get-default-path').then(defaultPath => {
+      installPathInput.value = defaultPath;
+    });
+
+    closeBtn.addEventListener('click', () => {
+      ipcRenderer.send('close-installer');
+    });
+
+    browseBtn.addEventListener('click', async () => {
+      const selectedPath = await ipcRenderer.invoke('select-directory');
+      if (selectedPath) {
+        installPathInput.value = selectedPath;
+      }
+    });
+
+    const startInstall = () => {
+      // Start install
+      actionButtons.classList.add('hidden');
+      retryBtn.classList.add('hidden');
+      optionsContainer.classList.add('hidden');
+      progressContainer.classList.remove('hidden');
+      
+      mainTitle.innerText = "Installing Zenith";
+      subTitle.innerText = "Please wait while we set things up for you.";
+      statusText.style.color = '#94a3b8'; // Reset color
+      
+      const options = {
+        destDir: installPathInput.value,
+        createDesktop: desktopShortcut.checked,
+        createStartMenu: startShortcut.checked
+      };
+
+      ipcRenderer.send('install-app', options);
+    };
+
+    installBtn.addEventListener('click', startInstall);
+    retryBtn.addEventListener('click', startInstall);
+
+    ipcRenderer.on('install-status', (event, status) => {
+      statusText.innerText = status;
+    });
+    
+    ipcRenderer.on('install-error', (event, errorMessage) => {
+      progressContainer.classList.remove('hidden');
+      progressBar.style.width = '0%';
+      statusText.innerText = errorMessage;
+      statusText.style.color = '#ff6b6b';
+      
+      // Show retry button
+      actionButtons.classList.remove('hidden');
+      installBtn.classList.add('hidden');
+      retryBtn.classList.remove('hidden');
+    });
+
+    ipcRenderer.on('install-progress', (event, percent) => {
+      progressBar.style.width = percent + '%';
+    });
+  </script>
+</body>
+</html>

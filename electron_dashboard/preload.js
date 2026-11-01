@@ -8,7 +8,9 @@ contextBridge.exposeInMainWorld('api', {
   checkZenithStatus: () => ipcRenderer.invoke('check-zenith-status'),
   checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
   onUpdateMessage: (callback) => ipcRenderer.on('update-message', (event, msg) => callback(msg)),
-  onUpdateProgress: (callback) => ipcRenderer.on('update-progress', (event, percent) => callback(percent))
+  onUpdateProgress: (callback) => ipcRenderer.on('update-progress', (event, percent) => callback(percent)),
+  toggleScreenVision: (enable) => ipcRenderer.invoke('toggle-screen-vision', enable),
+  getScreenVisionStatus: () => ipcRenderer.invoke('get-screen-vision-status')
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {

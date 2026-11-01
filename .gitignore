@@ -12,14 +12,28 @@ electron_dashboard/resources/
 electron_dashboard/dev-app-update.yml
 .stop_zenith
 ff.html
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+!pyarmor_runtime*/*.pyd
+!pyarmor_runtime*/*.so
+
+# Temporary build folders
+temp_build/
+temp_split_web_test/
+temp_dist_web_split/
+
 # IDEs and Editors
 .vscode/
 .idea/
+
 # MacOS
 .DS_Store
-# Temporary files
+
+# Temporary files & logs
 out.txt
 zenith.log
 log*.txt
@@ -31,3 +45,13 @@ web/
 *.db
 zenith_mem_db/
 
+# AI Agent Meta-Rules and Workflow Scratchpads (Keep repo clean)
+.agent/
+.agents/
+.gemini/
+.gsd/
+adapters/
+GSD-STYLE.md
+PROJECT_RULES.md
+model_capabilities.yaml
+scripts/
