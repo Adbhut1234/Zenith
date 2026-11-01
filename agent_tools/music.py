@@ -19,14 +19,17 @@ def _send_ipc_message(payload: dict):
 async def play_music(
     context: RunContext,  # type: ignore
     song_name: str,
-    artist: str = ""
+    artist: str = "",
+    play_on_web: bool = False
 ) -> str:
     """
-    Play a requested song or music track.
-    Use this tool whenever the user asks to play music, a song, playlist, or artist track.
-    Supports YouTube Music internal mini player (ad-free direct streaming), Spotify Desktop app, or web browser depending on configuration.
+    Play a requested song, music track, or video.
+    Use this tool whenever the user asks to play music, a song, playlist, artist track, or play on web/YouTube/browser.
+    If play_on_web is True or PREFERRED_MUSIC_APP is set to browser/web/youtube, it immediately resolves the direct video and begins playing on YouTube in the web browser.
+    Otherwise, plays in the Zenith Mini Player (or Spotify if preferred).
     """
     try:
+        from agent_tools.web import find_top_youtube_video, open_website, _focus_chrome_window
         preferred_app = os.getenv("PREFERRED_MUSIC_APP", "youtube_music").lower().strip()
         query = f"{song_name} {artist}".strip()
         ui_state.set_text(f"🎵 Searching {query}...")
@@ -36,11 +39,24 @@ async def play_music(
             subprocess.run(f"start spotify:search:{query}", shell=True)
             return f"Opening Spotify to play '{query}'."
 
-        elif preferred_app == "browser" or preferred_app == "web":
-            import webbrowser
-            url = f"https://music.youtube.com/search?q={query}"
-            webbrowser.open(url)
-            return f"Opened YouTube Music in web browser for '{query}'."
+        is_web_mode = play_on_web or (preferred_app in ["browser", "web", "youtube", "chrome"])
+
+        if is_web_mode:
+            vid_info = await asyncio.to_thread(find_top_youtube_video, query)
+            if vid_info and vid_info.get("video_id"):
+                v_id = vid_info["video_id"]
+                track_title = vid_info.get("title", query)
+                play_url = f"https://www.youtube.com/watch?v={v_id}"
+                ui_state.set_text(f"🎵 {track_title[:25]}")
+                await open_website(None, play_url)
+                _focus_chrome_window()
+                return f"Started playing '{track_title}' on YouTube in your web browser. Say ONLY 'Enjoy the music, Sir.' and do not interrupt."
+            else:
+                import urllib.parse
+                fallback_url = f"https://www.youtube.com/results?search_query={urllib.parse.quote_plus(query)}"
+                await open_website(None, fallback_url)
+                _focus_chrome_window()
+                return f"Opened YouTube search for '{query}' in your web browser."
 
         else:
             # YouTube Music Internal Mini Player (Default - Audio Only)
@@ -50,24 +66,33 @@ async def play_music(
             duration = 0
             video_id = None
 
-            # 1. Search via ytmusicapi explicitly filtered for songs
-            try:
-                from ytmusicapi import YTMusic
-                ytmusic = YTMusic()
-                search_results = await asyncio.to_thread(ytmusic.search, query, filter="songs")
-                if search_results and len(search_results) > 0:
-                    top = search_results[0]
-                    video_id = top.get("videoId")
-                    track_title = top.get("title", query)
-                    artists_list = [a.get("name") for a in top.get("artists", []) if a.get("name")]
-                    if artists_list:
-                        artist_name = ", ".join(artists_list)
-                    duration = top.get("duration_seconds", 0)
-                    thumbnails = top.get("thumbnails", [])
-                    if thumbnails:
-                        cover_url = thumbnails[-1].get("url", "")
-            except Exception as e:
-                logging.warning(f"ytmusicapi search warning: {e}")
+            # 1. Search via find_top_youtube_video first, then ytmusicapi
+            vid_info = await asyncio.to_thread(find_top_youtube_video, query)
+            if vid_info and vid_info.get("video_id"):
+                video_id = vid_info["video_id"]
+                track_title = vid_info.get("title", query)
+                cover_url = vid_info.get("cover", "")
+                if vid_info.get("artist"):
+                    artist_name = vid_info["artist"]
+
+            if not video_id:
+                try:
+                    from ytmusicapi import YTMusic
+                    ytmusic = YTMusic()
+                    search_results = await asyncio.to_thread(ytmusic.search, query, filter="songs")
+                    if search_results and len(search_results) > 0:
+                        top = search_results[0]
+                        video_id = top.get("videoId")
+                        track_title = top.get("title", query)
+                        artists_list = [a.get("name") for a in top.get("artists", []) if a.get("name")]
+                        if artists_list:
+                            artist_name = ", ".join(artists_list)
+                        duration = top.get("duration_seconds", 0)
+                        thumbnails = top.get("thumbnails", [])
+                        if thumbnails:
+                            cover_url = thumbnails[-1].get("url", "")
+                except Exception as e:
+                    logging.warning(f"ytmusicapi search warning: {e}")
 
             if video_id:
                 target_url = f"https://www.youtube.com/watch?v={video_id}"
@@ -101,11 +126,11 @@ async def play_music(
                 info = await loop.run_in_executor(None, extract_stream)
             except Exception as stream_err:
                 logging.warning(f"yt_dlp stream extraction warning ({stream_err}), falling back to web browser player...")
-                import webbrowser
-                fallback_url = target_url if target_url.startswith("http") else f"https://www.youtube.com/results?search_query={urllib.parse.quote_plus(query)}"
-                webbrowser.open(fallback_url)
+                fallback_url = f"https://www.youtube.com/watch?v={video_id}" if video_id else f"https://www.youtube.com/results?search_query={urllib.parse.quote_plus(query)}"
+                await open_website(None, fallback_url)
+                _focus_chrome_window()
                 ui_state.set_text(f"🎵 {track_title[:25]}")
-                return f"Opened '{track_title}' on YouTube in your web browser. Say ONLY 'Enjoy the music, Sir.' and do not interrupt."
+                return f"Started playing '{track_title}' on YouTube in your web browser. Say ONLY 'Enjoy the music, Sir.' and do not interrupt."
 
             stream_url = info.get("url")
             if not stream_url and "requested_formats" in info:
@@ -134,10 +159,10 @@ async def play_music(
                     cover_url = info.get("thumbnail")
 
             if not stream_url:
-                import webbrowser
                 fallback_url = f"https://www.youtube.com/watch?v={video_id}" if video_id else f"https://www.youtube.com/results?search_query={urllib.parse.quote_plus(query)}"
-                webbrowser.open(fallback_url)
-                return f"Opened '{track_title}' in your web browser."
+                await open_website(None, fallback_url)
+                _focus_chrome_window()
+                return f"Started playing '{track_title}' in your web browser."
 
             # 3. Send IPC payload to Electron Mini Player
             payload = {
@@ -156,6 +181,16 @@ async def play_music(
 
     except Exception as e:
         logging.error(f"Error in play_music: {e}", exc_info=True)
+        try:
+            from agent_tools.web import find_top_youtube_video, open_website, _focus_chrome_window
+            vid_info = find_top_youtube_video(query)
+            if vid_info and vid_info.get("video_id"):
+                v_url = f"https://www.youtube.com/watch?v={vid_info['video_id']}"
+                await open_website(None, v_url)
+                _focus_chrome_window()
+                return f"Started playing '{vid_info.get('title', query)}' on YouTube in your web browser."
+        except Exception:
+            pass
         import webbrowser
         webbrowser.open(f"https://www.youtube.com/results?search_query={urllib.parse.quote_plus(query)}")
         return f"Opened YouTube search for '{query}' in your web browser."

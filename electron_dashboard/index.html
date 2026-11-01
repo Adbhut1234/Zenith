@@ -123,7 +123,9 @@
             cursor: pointer;
             color: var(--text-secondary);
             font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, color 0.25s ease;
+            will-change: transform;
+            transform: translateZ(0);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -431,11 +433,22 @@
                 </div>
                 <div class="card">
                     <h3>Active Neural Model</h3>
-                    <div class="value">Gemini 3.1 Flash</div>
+                    <div class="value" id="activeModelText">Gemini 3.8 Live</div>
+                </div>
+                <div class="card" id="screenVisionCard">
+                    <h3>Live Screen Vision</h3>
+                    <div class="value" style="display: flex; align-items: center; justify-content: space-between; font-size: 1.15rem; margin-top: 5px;">
+                        <span id="screenVisionIndicator" style="display: flex; align-items: center; gap: 8px;">
+                            <span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Inactive
+                        </span>
+                        <button id="screenVisionToggleBtn" onclick="toggleScreenVisionAction()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">Mute Vision</button>
+                    </div>
                 </div>
                 <div class="card">
-                    <h3>Memory Context</h3>
-                    <div class="value">Mem0 Isolated</div>
+                    <h3>Memory Matrix</h3>
+                    <div class="value" style="color: #66fcf1; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                        <span class="status-indicator" style="background:#66fcf1;box-shadow:0 0 10px #66fcf1;"></span> Local SQLite RAG
+                    </div>
                 </div>
                 <div class="card" id="launchCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; border-color: rgba(102, 252, 241, 0.4); background: rgba(102, 252, 241, 0.05); cursor: pointer;" onclick="validateAndLaunchZenith()">
                     <div class="value" id="launchText" style="color: #66fcf1; display: flex; align-items: center; gap: 10px;">
@@ -507,7 +520,7 @@
                 </div>
 
                 <div class="settings-group">
-                    <div class="settings-group-title">Neural Engine & Memory Authentication</div>
+                    <div class="settings-group-title">Neural Engine Authentication</div>
                     
                     <div class="settings-row">
                         <div class="row-label">
@@ -516,16 +529,6 @@
                         </div>
                         <div class="row-input">
                             <input type="text" id="GOOGLE_API_KEY" name="GOOGLE_API_KEY" placeholder="AIzaSy...">
-                        </div>
-                    </div>
-                    
-                    <div class="settings-row">
-                        <div class="row-label">
-                            Mem0 API Key
-                            <span class="row-desc">Get your key from <a href="https://app.mem0.ai/" target="_blank" style="color: var(--accent-solid); text-decoration: none;">Mem0 Platform</a></span>
-                        </div>
-                        <div class="row-input">
-                            <input type="text" id="MEM0_API_KEY" name="MEM0_API_KEY">
                         </div>
                     </div>
                 </div>
@@ -632,18 +635,7 @@
                 </div>
             </div>
 
-            <div class="settings-group">
-                <div class="settings-group-title">4. Mem0 Platform (Long-Term Memory)</div>
-                <div class="settings-row vertical">
-                    <div class="row-label" style="font-weight: 400; font-size: 0.95rem; line-height: 1.6;">
-                        <ul style="padding-left: 20px; color: var(--text-secondary);">
-                            <li style="margin-bottom: 8px;">Go to <a href="https://app.mem0.ai/" target="_blank" style="color: var(--accent-solid);">Mem0 Platform</a> and sign in.</li>
-                            <li style="margin-bottom: 8px;">Generate a new API key from the dashboard.</li>
-                            <li style="margin-bottom: 8px;">Copy and paste it into the <em>Mem0 API Key</em> field.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+
         </div>
         <!-- ABOUT PAGE -->
         <div id="about" class="page">
@@ -746,6 +738,15 @@
             });
         }
 
+        let isVisionMuted = false;
+        async function toggleScreenVisionAction() {
+            if (window.api && window.api.toggleScreenVision) {
+                isVisionMuted = !isVisionMuted;
+                await window.api.toggleScreenVision(!isVisionMuted);
+                updateZenithStatus();
+            }
+        }
+
         async function updateZenithStatus() {
             if (isBooting) return;
             if (window.api && window.api.checkZenithStatus) {
@@ -753,6 +754,26 @@
                 const btn = document.getElementById('engineStatusText');
                 const launchCard = document.getElementById('launchCard');
                 const launchText = document.getElementById('launchText');
+                const visionInd = document.getElementById('screenVisionIndicator');
+                const visionBtn = document.getElementById('screenVisionToggleBtn');
+                if (visionInd && visionBtn && window.api && window.api.getScreenVisionStatus) {
+                    if (isRunning) {
+                        const vStat = await window.api.getScreenVisionStatus();
+                        if (vStat && vStat.active) {
+                            visionInd.innerHTML = '<span class="status-indicator" style="background:#0a84ff;box-shadow:0 0 10px #0a84ff;"></span> Continuous Stream Active';
+                            visionBtn.textContent = 'Switch to Smart Mode';
+                            visionBtn.style.background = 'rgba(255,255,255,0.1)';
+                        } else {
+                            visionInd.innerHTML = '<span class="status-indicator" style="background:#30d158;box-shadow:0 0 10px #30d158;"></span> Smart On-Demand (Zero-Jitter Active)';
+                            visionBtn.textContent = 'Enable Continuous Stream';
+                            visionBtn.style.background = 'rgba(10, 132, 255, 0.2)';
+                        }
+                    } else {
+                        visionInd.innerHTML = '<span class="status-indicator" style="background:#ff3b30;box-shadow:0 0 10px #ff3b30;"></span> Inactive';
+                        visionBtn.textContent = 'Mute Vision';
+                        visionBtn.style.background = 'rgba(255,255,255,0.1)';
+                    }
+                }
 
                 if (isRunning) {
                     if (!btn.innerHTML.includes('Online')) {

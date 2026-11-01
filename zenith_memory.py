@@ -2,11 +2,24 @@ import os
 import sqlite3
 import json
 import logging
+import asyncio
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from livekit.agents import function_tool, RunContext
+from agent_tools.semantic_memory import hybrid_rag, knowledge_graph
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "zenith_memory.db")
+
+_genai_client = None
+_genai_client_key = None
+
+def get_genai_client(api_key: str):
+    global _genai_client, _genai_client_key
+    if _genai_client is None or _genai_client_key != api_key:
+        from google import genai
+        _genai_client = genai.Client(api_key=api_key)
+        _genai_client_key = api_key
+    return _genai_client
 
 def get_db_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
@@ -73,6 +86,16 @@ def save_fact(topic: str, fact: str, category: str = "general", user_id: str = "
                     updated_at = excluded.updated_at
             """, (user_id, category_clean, topic_clean, fact_clean, now, now))
             conn.commit()
+            
+            # Index vector embedding and graph triples
+            cursor.execute("SELECT id FROM zenith_facts WHERE user_id = ? AND topic = ?", (user_id, topic_clean))
+            row = cursor.fetchone()
+            if row:
+                try:
+                    hybrid_rag.index_fact(row[0], topic_clean, fact_clean, category_clean)
+                except Exception as ex:
+                    logging.warning(f"Vector indexing deferred: {ex}")
+                    
             logging.info(f"Stored fact [{category_clean}] {topic_clean}: {fact_clean}")
             return True
     except Exception as e:
@@ -80,11 +103,17 @@ def save_fact(topic: str, fact: str, category: str = "general", user_id: str = "
         return False
 
 def delete_fact(topic: str, user_id: str = "Admin") -> bool:
-    """Delete a specific stored fact by topic."""
+    """Delete a specific stored fact by topic and its vector embedding."""
     topic_clean = topic.strip().lower()
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
+            cursor.execute("""
+                DELETE FROM zenith_embeddings 
+                WHERE ref_type = 'fact' AND ref_id IN (
+                    SELECT id FROM zenith_facts WHERE user_id = ? AND topic = ?
+                )
+            """, (user_id, topic_clean))
             cursor.execute("DELETE FROM zenith_facts WHERE user_id = ? AND topic = ?", (user_id, topic_clean))
             conn.commit()
             return cursor.rowcount > 0
@@ -97,7 +126,7 @@ def get_all_facts(user_id: str = "Admin") -> List[Dict[str, Any]]:
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT category, topic, fact, updated_at FROM zenith_facts WHERE user_id = ? ORDER BY category, topic", (user_id,))
+            cursor.execute("SELECT category, topic, fact, updated_at FROM zenith_facts WHERE user_id = ? AND (is_active IS NULL OR is_active = 1) ORDER BY category, topic", (user_id,))
             rows = cursor.fetchall()
             return [dict(r) for r in rows]
     except Exception as e:
@@ -113,7 +142,7 @@ def search_facts(query: str, user_id: str = "Admin") -> List[Dict[str, Any]]:
             cursor.execute("""
                 SELECT category, topic, fact, updated_at 
                 FROM zenith_facts 
-                WHERE user_id = ? AND (topic LIKE ? OR fact LIKE ? OR category LIKE ?)
+                WHERE user_id = ? AND (is_active IS NULL OR is_active = 1) AND (topic LIKE ? OR fact LIKE ? OR category LIKE ?)
                 ORDER BY updated_at DESC
             """, (user_id, query_clean, query_clean, query_clean))
             rows = cursor.fetchall()
@@ -142,6 +171,19 @@ def get_memory_prompt_injection(user_id: str = "Admin") -> str:
         lines.append(f"**[{cat}]**")
         lines.extend(items)
         
+    # Append top knowledge graph relations
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT source_entity, relation, target_entity FROM zenith_relations ORDER BY weight DESC LIMIT 8")
+            rel_rows = cursor.fetchall()
+            if rel_rows:
+                lines.append("\n**[Knowledge Graph Relationships]**")
+                for r in rel_rows:
+                    lines.append(f"- ({r['source_entity']}) -[{r['relation']}]-> ({r['target_entity']})")
+    except Exception:
+        pass
+
     lines.append("Use these known facts naturally to personalize responses without unnecessarily repeating that you read them from memory.")
     return "\n".join(lines)
 
@@ -161,11 +203,17 @@ def record_chat_turn(role: str, content: str, user_id: str = "Admin") -> None:
     except Exception as e:
         logging.error(f"Error recording chat turn: {e}")
 
-async def extract_and_learn_facts(user_id: str, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:
+_memory_quota_exhausted = False
+
+async def extract_and_learn_facts(user_id: str, messages: List[Dict[str, str]]) -> List[Dict[str, Any]]:
     """
-    Uses Gemini to extract user facts/preferences/rules from a conversation batch,
-    and automatically stores them in SQLite. 100% free and runs in background.
+    Background worker that sends recent conversation messages to Gemini
+    to extract facts and save them to SQLite.
     """
+    global _memory_quota_exhausted
+    if _memory_quota_exhausted:
+        return []
+
     if not messages:
         return []
         
@@ -185,10 +233,9 @@ async def extract_and_learn_facts(user_id: str, messages: List[Dict[str, str]]) 
         return []
 
     try:
-        from google import genai
         from google.genai import types
         
-        client = genai.Client(api_key=api_key)
+        client = await asyncio.to_thread(get_genai_client, api_key)
         prompt = (
             "You are Zenith's memory extraction engine. Analyze the following conversation transcript.\n"
             "Identify any persistent facts, personal details, preferences, workflows, project context, or user instructions.\n"
@@ -202,14 +249,27 @@ async def extract_and_learn_facts(user_id: str, messages: List[Dict[str, str]]) 
             f"Transcript:\n{convo_text}"
         )
         
-        response = await client.aio.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.1
-            )
-        )
+        response = None
+        last_mem_err = None
+        for m in ["gemini-3.5-flash-lite", "gemini-2.5-flash"]:
+            try:
+                response = await client.aio.models.generate_content(
+                    model=m,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        temperature=0.1
+                    )
+                )
+                if response and response.text:
+                    break
+            except Exception as m_err:
+                last_mem_err = m_err
+                logging.warning(f"Memory extraction model {m} failed: {m_err}, trying fallback...")
+                continue
+
+        if not response or not response.text:
+            raise last_mem_err or RuntimeError("All memory extraction models failed.")
         
         raw_json = response.text.strip()
         if not raw_json:
@@ -223,14 +283,20 @@ async def extract_and_learn_facts(user_id: str, messages: List[Dict[str, str]]) 
                 f = item.get("fact")
                 c = item.get("category", "general")
                 if t and f:
-                    if save_fact(topic=t, fact=f, category=c, user_id=user_id):
+                    ok = await asyncio.to_thread(save_fact, topic=t, fact=f, category=c, user_id=user_id)
+                    if ok:
                         saved.append(item)
                         
         if saved:
             logging.info(f"Learned and saved {len(saved)} new memories for {user_id}: {saved}")
         return saved
     except Exception as e:
-        logging.error(f"Error during memory extraction: {e}")
+        err_str = str(e)
+        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+            _memory_quota_exhausted = True
+            logging.warning("Gemini 2.5 Flash free-tier quota exhausted. Pausing background fact extraction until next session to preserve system speed.")
+        else:
+            logging.error(f"Error during memory extraction: {e}")
         return []
 
 
@@ -267,24 +333,60 @@ async def recall_user_memory(
     query: str
 ) -> str:
     """
-    Search and retrieve facts, preferences, or personal details stored in Zenith's long-term memory.
-    Use this when the user asks "What do you remember about...", "What are my preferences for...", or when you need past context.
+    Search and retrieve facts, preferences, workflows, or project details stored in Zenith's long-term memory
+    using hybrid semantic vector search and knowledge graph relations.
+    Use this whenever Sir asks "What do you remember about...", "What are my preferences for...", or when you need past context.
     
     Args:
-        query: Keyword or subject to search for in memory (e.g. 'music', 'name', 'project', 'email', 'preferences').
+        query: Subject, concept, or natural language question to search for in memory.
     """
     user_id = os.getenv("Zenith_USER_ID") or "Admin"
-    results = search_facts(query=query, user_id=user_id)
-    if not results:
-        # If specific search yields nothing, return all facts if under 10
+    hybrid_res = await asyncio.to_thread(hybrid_rag.search_hybrid, query=query, user_id=user_id, top_k=5)
+    facts = hybrid_res.get("facts", [])
+    graph = hybrid_res.get("graph_context", [])
+
+    if not facts and not graph:
         all_facts = get_all_facts(user_id)
         if all_facts:
-            summary = "\n".join([f"- [{f['category']}] {f['topic']}: {f['fact']}" for f in all_facts[:10]])
-            return f"No exact match for '{query}'. Here are known memories:\n{summary}"
-        return f"I don't have any saved memories related to '{query}' yet."
-        
-    summary = "\n".join([f"- [{r['category']}] {r['topic']}: {r['fact']}" for r in results])
-    return f"Found {len(results)} memory record(s):\n{summary}"
+            summary = "\n".join([f"- [{f['category']}] {f['topic']}: {f['fact']}" for f in all_facts[:6]])
+            return f"No direct semantic match for '{query}'. Recent active facts:\n{summary}"
+        return f"I don't have any saved memories related to '{query}' yet, Sir."
+
+    lines = []
+    if facts:
+        lines.append(f"Retrieved {len(facts)} memory record(s):")
+        for f in facts:
+            lines.append(f"- [{f['category']}] {f['topic']}: {f['fact']} (Relevance: {f['rrf_score']:.3f})")
+
+    if graph:
+        lines.append("\nConnected Knowledge Graph Relations:")
+        for rel in graph:
+            lines.append(f"  • ({rel['source_entity']}) -[{rel['relation']}]-> ({rel['target_entity']})")
+
+    return "\n".join(lines)
+
+@function_tool()
+async def explore_knowledge_graph(
+    context: RunContext,  # type: ignore
+    entity: str,
+    depth: int = 1
+) -> str:
+    """
+    Explore the semantic knowledge graph around an entity or topic to discover connections, dependencies, and preferences.
+    Use this when Sir asks about relationships or dependencies between technologies, people, or preferences.
+    
+    Args:
+        entity: The entity or keyword to traverse (e.g. 'Python', 'Electron', 'Sir', 'Zenith').
+        depth: Graph traversal depth (1 for immediate relations, 2 for multi-hop graph neighborhood).
+    """
+    triples = await asyncio.to_thread(knowledge_graph.get_subgraph, entity_name=entity, depth=min(depth, 2))
+    if not triples:
+        return f"No knowledge graph relations recorded for '{entity}' yet, Sir."
+
+    lines = [f"Knowledge Graph Subgraph for '{entity}' ({len(triples)} edges):"]
+    for tr in triples:
+        lines.append(f"  • ({tr['source_entity']}) -[{tr['relation']}]-> ({tr['target_entity']})")
+    return "\n".join(lines)
 
 @function_tool()
 async def forget_user_fact(

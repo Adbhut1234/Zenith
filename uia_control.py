@@ -1,4 +1,5 @@
 import asyncio, json, logging, os
+from agent_tools.procedural_memory import reflect_on_outcome
 from dotenv import load_dotenv
 from google import genai
 
@@ -6,6 +7,11 @@ load_dotenv()
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 _uia_lock = asyncio.Lock()
 _uia_cancel = asyncio.Event()
+
+def cancel_active_uia_task() -> bool:
+    """Signals any currently running UIA automation task to stop immediately."""
+    _uia_cancel.set()
+    return _uia_lock.locked()
 
 UIA_SCHEMA = """
 Respond ONLY with valid JSON, no other text:
@@ -139,15 +145,26 @@ async def uia_loop(task: str, max_steps: int = 20) -> str:
             )
 
             try:
-                api_task = asyncio.create_task(
-                    client.aio.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents=[prompt],  # text only — no image at all
-                        config=genai.types.GenerateContentConfig(
-                            response_mime_type="application/json"
-                        )
-                    )
-                )
+                async def _call_uia_with_fallback():
+                    last_err = None
+                    for m in ["gemini-3.5-flash-lite", "gemini-2.5-flash"]:
+                        try:
+                            res = await client.aio.models.generate_content(
+                                model=m,
+                                contents=[prompt],
+                                config=genai.types.GenerateContentConfig(
+                                    response_mime_type="application/json"
+                                )
+                            )
+                            if res and res.text:
+                                return res
+                        except Exception as err:
+                            last_err = err
+                            logging.warning(f"UIA model {m} failed: {err}, trying next fallback...")
+                            continue
+                    raise last_err or RuntimeError("All UIA models failed.")
+
+                api_task = asyncio.create_task(_call_uia_with_fallback())
                 cancel_task = asyncio.create_task(_uia_cancel.wait())
 
                 done, pending = await asyncio.wait(
@@ -187,6 +204,12 @@ async def uia_loop(task: str, max_steps: int = 20) -> str:
             except Exception as e:
                 logging.warning(f"UIA action failed at step {step}: {e}")
                 history[-1]["error"] = str(e)
+                asyncio.create_task(reflect_on_outcome(
+                    task_desc=f"UIA action for: {task}",
+                    action_taken=f"{action.get('action')} target={action.get('element_name') or action.get('window_title')}",
+                    raw_output=str(e),
+                    is_error=True
+                ))
 
             await asyncio.sleep(0.5)
 

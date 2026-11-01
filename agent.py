@@ -11,21 +11,37 @@ from livekit.agents import AgentSession, Agent, RoomInputOptions, ChatContext
 from livekit.plugins import noise_cancellation
 from livekit.plugins import google
 from prompts import AGENT_INSTRUCTION, SESSION_INSTRUCTION
-from agent_tools.web import get_weather, search_web, send_email, open_website, control_browser, autonomous_web_task
+from agent_tools.web import get_weather, search_web, send_email, open_website, control_browser, launch_chrome_with_control, autonomous_web_task, stop_current_task
 from zenith_memory import (
-    remember_user_fact, recall_user_memory, forget_user_fact,
+    remember_user_fact, recall_user_memory, forget_user_fact, explore_knowledge_graph,
     get_memory_prompt_injection, record_chat_turn, extract_and_learn_facts
 )
 from agent_tools.system import (
     execute_pc_command, write_and_open_file, open_application, open_file, get_now_playing,
     change_volume, control_media, change_brightness, system_power_control,
-    take_screenshot, get_system_stats, empty_recycle_bin,
+    take_screenshot, inspect_screen, get_system_stats, empty_recycle_bin,
     get_clipboard, set_clipboard, manage_windows, open_user_folder, manage_notes,
     search_files_on_pc, kill_process, read_file_content,
     zip_manage_archive, get_top_running_apps, find_large_files, manage_file_system,
-    clean_disk_temp_junk, generate_qr_code, set_timer_or_alarm, manage_bluetooth, register_voice_macro
+    clean_disk_temp_junk, generate_qr_code, set_timer_or_alarm, manage_bluetooth, register_voice_macro, get_terminal_state, reset_terminal_session
 )
 from agent_tools.os_control import move_and_click_mouse, type_keyboard_text, press_keyboard_shortcut, control_computer
+from agent_tools.documents import read_pdf_document
+from agent_tools.research import deep_research, search_academic_papers
+from agent_tools.smart_tts import narrate_script_multivoice, control_narration
+from agent_tools.screen_stream import screen_video_input, start_screen_receiver, stop_screen_receiver
+from agent_tools.task_manager import task_manager, dispatch_background_task, check_background_tasks, cancel_background_task
+from agent_tools.ambient_watchers import ambient_manager, explain_clipboard_error, watch_process, configure_ambient_watchers
+from agent_tools.persistent_shell import persistent_shell
+from agent_tools.deep_thinker import deep_reasoning_matrix
+from agent_tools.procedural_memory import consult_playbooks, record_learned_playbook
+from agent_tools.working_memory import inspect_scratchpad, update_scratchpad, clear_scratchpad
+from agent_tools.council_of_overlays import council_of_overlays
+from agent_tools.code_phasing import phase_into_codebase
+from agent_tools.dream_cycle import dream_cycle
+from agent_tools.emergency import emergency_stop_all
+from agent_tools.memory_evolution import reconcile_memory_evolution
+from agent_tools.system_diagnostics import diagnose_system_health
 
 import os
 import json
@@ -38,6 +54,7 @@ load_dotenv()
 
 # --- UI UDP Management ---
 import socket
+import ui_state
 
 def start_ui():
     pass
@@ -56,19 +73,34 @@ def stop_ui():
 
 
 
+from google.genai import types as genai_types
+from livekit.agents.voice.turn import TurnHandlingOptions, EndpointingOptions, PreemptiveGenerationOptions, InterruptionOptions
 from agent_tools.music import play_music, control_music
 
 class Assistant(Agent):
     def __init__(self, chat_ctx=None, custom_instructions=None) -> None:
         voice_choice = os.getenv("ZENITH_VOICE", os.getenv("JARVIS_VOICE", "Fenrir")).strip()
-        model_choice = os.getenv("GEMINI_LIVE_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025").strip()
+        model_choice = os.getenv("GEMINI_LIVE_MODEL", "gemini-3.8-live").strip()
         super().__init__(
             instructions=custom_instructions or AGENT_INSTRUCTION,
             llm=google.beta.realtime.RealtimeModel(
                  model=model_choice,
                  voice=voice_choice,
-                 temperature=0.85,
-                 modalities=["AUDIO"],
+                 temperature=0.6,
+                 tool_response_scheduling=genai_types.FunctionResponseScheduling.INTERRUPT,
+            ),
+            turn_handling=TurnHandlingOptions(
+                endpointing=EndpointingOptions(
+                    min_delay=0.5,
+                    max_delay=1.2,
+                ),
+                preemptive_generation=PreemptiveGenerationOptions(
+                    enabled=False,
+                ),
+                interruption=InterruptionOptions(
+                    enabled=True,
+                    min_duration=0.4,
+                ),
             ),
             tools=[
                 get_weather,
@@ -77,6 +109,7 @@ class Assistant(Agent):
                 execute_pc_command,
                 open_website,
                 control_browser,
+                launch_chrome_with_control,
                 open_file,
                 write_and_open_file,
                 move_and_click_mouse,
@@ -89,6 +122,7 @@ class Assistant(Agent):
                 change_brightness,
                 system_power_control,
                 take_screenshot,
+                inspect_screen,
                 get_system_stats,
                 empty_recycle_bin,
                 get_clipboard,
@@ -99,6 +133,11 @@ class Assistant(Agent):
                 search_files_on_pc,
                 kill_process,
                 read_file_content,
+                read_pdf_document,
+                deep_research,
+                search_academic_papers,
+                narrate_script_multivoice,
+                control_narration,
                 zip_manage_archive,
                 get_top_running_apps,
                 find_large_files,
@@ -111,9 +150,30 @@ class Assistant(Agent):
                 play_music,
                 control_music,
                 autonomous_web_task,
+                stop_current_task,
+                dispatch_background_task,
+                check_background_tasks,
+                cancel_background_task,
+                explain_clipboard_error,
+                watch_process,
+                configure_ambient_watchers,
+                get_terminal_state,
+                reset_terminal_session,
                 remember_user_fact,
                 recall_user_memory,
-                forget_user_fact
+                forget_user_fact,
+                explore_knowledge_graph,
+                deep_reasoning_matrix,
+                consult_playbooks,
+                record_learned_playbook,
+                inspect_scratchpad,
+                update_scratchpad,
+                clear_scratchpad,
+                council_of_overlays,
+                phase_into_codebase,
+                emergency_stop_all,
+                reconcile_memory_evolution,
+                diagnose_system_health
             ],
             chat_ctx=chat_ctx
         )
@@ -198,6 +258,10 @@ async def entrypoint(ctx: agents.JobContext):
                 logging.error(f"Failed to extract facts on shutdown: {e}")
 
     session = AgentSession()
+    task_manager.set_notifier(session.say)
+    ambient_manager.set_notifier(session.say)
+    ambient_manager.start()
+    dream_cycle.start()
 
     raw_user_name = ctx.room.metadata if ctx.room.metadata else (os.getenv('Zenith_USER_ID') or os.getenv('J.A.R.V.I.S._USER_ID') or 'Admin')
     user_name = raw_user_name.strip() if raw_user_name and raw_user_name.strip() else 'Admin'
@@ -222,14 +286,31 @@ async def entrypoint(ctx: agents.JobContext):
     if personal_info:
         dynamic_instructions += f"\n\nUser's Personal Background & Preferences: {personal_info}"
 
+    # Restore active mission scratchpad if an unfinished multi-step mission exists
+    try:
+        from agent_tools.working_memory import working_memory
+        scratchpad_summary = working_memory.get_summary()
+        if scratchpad_summary and "empty" not in scratchpad_summary.lower():
+            dynamic_instructions += f"\n\n[Active Working Memory Scratchpad From Prior Session]:\n{scratchpad_summary}"
+            logging.info("Restored active working memory scratchpad on session boot.")
+    except Exception as e:
+        logging.warning(f"Could not load working memory scratchpad on boot: {e}")
+
+    # Inject top learned procedural playbooks so Zenith remembers PC rules immediately
+    try:
+        from agent_tools.procedural_memory import find_playbooks
+        top_playbooks = find_playbooks("", limit=5)
+        if top_playbooks:
+            pb_lines = ["\n[Learned Procedural Playbooks & PC Rules]:"]
+            for pb in top_playbooks:
+                pb_lines.append(f"- Scenario '{pb['task_pattern']}': {pb['recommended_action']}")
+            dynamic_instructions += "\n".join(pb_lines)
+            logging.info(f"Injected {len(top_playbooks)} procedural playbooks on session boot.")
+    except Exception as e:
+        logging.warning(f"Could not load procedural playbooks on boot: {e}")
+
     # Append session instructions
     dynamic_instructions += f"\n\n{SESSION_INSTRUCTION}"
-
-    initial_ctx.add_message(
-        role="user",
-        content="Hello Zenith, please greet me."
-    )
-
 
     agent = Assistant(chat_ctx=initial_ctx, custom_instructions=dynamic_instructions)
     
@@ -256,25 +337,32 @@ async def entrypoint(ctx: agents.JobContext):
     def on_agent_state_changed(event):
         if event.new_state == "speaking":
             print(">>> UI TRIGGER: AGENT SPEAKING <<<")
+            screen_video_input.set_speaking(True)
             update_ui("speaking")
             interaction_state["last_active"] = asyncio.get_event_loop().time()
             interaction_state["state"] = "speaking"
-        elif event.new_state == "thinking":
-            print(">>> UI TRIGGER: AGENT COMMITTED (WAITING) <<<")
-            update_ui("waiting")
-            interaction_state["last_active"] = asyncio.get_event_loop().time()
-            interaction_state["state"] = "waiting"
+        else:
+            screen_video_input.set_speaking(False)
+            if event.new_state == "thinking":
+                print(">>> UI TRIGGER: AGENT COMMITTED (WAITING) <<<")
+                update_ui("waiting")
+                interaction_state["last_active"] = asyncio.get_event_loop().time()
+                interaction_state["state"] = "waiting"
 
     @session.on("error")
     def on_session_error(err):
         logging.error(f"LiveKit session error: {err}")
         err_msg = str(err).lower()
-        if "quota" in err_msg or "1011" in err_msg:
-            ui_state.set_text("⚠️ Gemini Rate Limited")
+        if "quota" in err_msg or "resource_exhausted" in err_msg or "429" in err_msg:
+            ui_state.set_text("⚠️ Gemini Quota Exceeded")
+            if ctx:
+                ctx.shutdown()
+        elif "1007" in err_msg or "content_type_audio" in err_msg:
+            ui_state.set_text("⚠️ Gemini Audio Sync Error")
+            if ctx:
+                ctx.shutdown()
         else:
-            ui_state.set_text("⚠️ Session Disconnected")
-        if ctx:
-            ctx.shutdown()
+            logging.warning("Transient LiveKit session error; letting LiveKit retry connection...")
 
     @session.on("close")
     def on_session_close(reason):
@@ -284,7 +372,6 @@ async def entrypoint(ctx: agents.JobContext):
 
     # Watchdog: Monitors UI state timeouts to return to idle and save memories
     async def ui_watchdog():
-        import ui_state
         await asyncio.sleep(4) # Let the 3-second startup animation play first!
         last_memory_save_len = 0
         
@@ -309,9 +396,6 @@ async def entrypoint(ctx: agents.JobContext):
                     items = agent.chat_ctx.messages()
                 except Exception as e:
                     items = []
-
-                if len(items) > last_memory_save_len:
-                    logging.info(f"Watchdog debug: len(items)={len(items)} last={last_memory_save_len} state={interaction_state['state']} inactive_time={now - interaction_state['last_active']}")
                 
                 if interaction_state["state"] == "idle" or (now - interaction_state["last_active"] > 10.0):
                     if len(items) > last_memory_save_len:
@@ -336,6 +420,14 @@ async def entrypoint(ctx: agents.JobContext):
 
     asyncio.create_task(ui_watchdog())
 
+    # Start native high-speed desktop screen receiver
+    try:
+        await start_screen_receiver()
+        session.input.video = screen_video_input
+        logging.info("Desktop Screen Video Input stream linked to Gemini Live Session.")
+    except Exception as e:
+        logging.error(f"Failed to initialize Screen Video Stream: {e}")
+
     await session.start(
         room=ctx.room,
         agent=agent,
@@ -352,8 +444,16 @@ async def entrypoint(ctx: agents.JobContext):
     interaction_state["last_active"] = asyncio.get_event_loop().time()
 
     async def on_shutdown():
+        ambient_manager.stop()
+        dream_cycle.stop()
+        persistent_shell.terminate()
+        task_manager.cancel_all()
+        try:
+            await stop_screen_receiver()
+        except Exception:
+            pass
         await shutdown_hook(agent.chat_ctx, tracked_messages, user_name)
     ctx.add_shutdown_callback(on_shutdown)
 
 if __name__ == "__main__":
-    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))
+    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))

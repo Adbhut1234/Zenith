@@ -1,11 +1,15 @@
 import logging
 import os
+import io
 import subprocess
 import asyncio
 import sys
 import pyautogui
 from livekit.agents import function_tool, RunContext
 import ui_state
+from .persistent_shell import persistent_shell
+from .procedural_memory import reflect_on_outcome
+from .working_memory import working_memory
 
 @function_tool()
 async def open_file(
@@ -83,21 +87,108 @@ async def execute_pc_command(
             return f"Action requires user confirmation. Command '{command}' was NOT executed. Please verbally ask the user to confirm. If they say yes, call this tool again with user_confirmed=True."
 
         ui_state.set_text(f"System | Command: {command[:25]}")
-        logging.info(f"Executing PC command: {command} (Reasoning: {reasoning}, Confirmed: {user_confirmed})")
-        # Run the command using powershell/cmd
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=10)
+        logging.info(f"Executing PC command via persistent shell: {command} (Reasoning: {reasoning}, Confirmed: {user_confirmed})")
         
-        output = result.stdout.strip()
-        error = result.stderr.strip()
-        
-        if result.returncode == 0:
-            return f"Command executed successfully. Output: {output}"
-        else:
-            return f"Command failed with error: {error}"
-    except subprocess.TimeoutExpired:
-        return "Command timed out."
+        # Route through persistent stateful shell with self-healing
+        result = await persistent_shell.execute(command, timeout_sec=25.0)
+        if result.exit_code != 0:
+            asyncio.create_task(reflect_on_outcome(
+                task_desc=reasoning or f"Execute {command}",
+                action_taken=command,
+                raw_output=result.output,
+                is_error=True
+            ))
+        return result.to_formatted_response()
     except Exception as e:
+        asyncio.create_task(reflect_on_outcome(
+            task_desc=reasoning or f"Execute {command}",
+            action_taken=command,
+            raw_output=str(e),
+            is_error=True
+        ))
         return f"Error executing command: {str(e)}"
+
+@function_tool()
+async def get_terminal_state(
+    context: RunContext  # type: ignore
+) -> str:
+    """
+    Get the state of the persistent terminal session, including the current working directory ($PWD),
+    active process status, and recent command history.
+    """
+    state = persistent_shell.get_state()
+    history_summary = []
+    for item in state.get("recent_history", []):
+        history_summary.append(f"  - [{item['exit_code']}] {item['original_cmd']} ({item['duration_ms']:.1f}ms)")
+    
+    hist_text = "\n".join(history_summary) if history_summary else "  (None)"
+    return (
+        f"Terminal Status: {'Active' if state['alive'] else 'Inactive'}\n"
+        f"Working Directory: {state['cwd']}\n"
+        f"Recent Commands:\n{hist_text}"
+    )
+
+@function_tool()
+async def reset_terminal_session(
+    context: RunContext  # type: ignore
+) -> str:
+    """
+    Resets the persistent terminal shell session to a fresh state and initial project directory.
+    Use this if a shell environment becomes corrupted or locked by a previous process.
+    """
+    persistent_shell.reset()
+    return f"Terminal session successfully reset. Current directory: {persistent_shell.cwd}"
+
+def resolve_user_target_path(raw_path: str, default_to_desktop: bool = True) -> str:
+    """
+    Intelligently resolves paths for user file/folder operations:
+    - Expands '~' to the user's home directory.
+    - Resolves common aliases like 'desktop', 'downloads', 'documents', 'pictures', 'videos', 'music'
+      (e.g., 'desktop/1 2 3', 'desktop\\1 2 3', 'downloads/file.txt').
+    - Preserves absolute paths (e.g. 'C:\\...', '\\\\...').
+    - If a simple/relative name is passed (e.g., '1 2 3' or 'story.txt') and default_to_desktop is True,
+      defaults to the user's Desktop directory so files/folders are easily visible to the user
+      rather than hidden inside the project backend directory.
+    """
+    if not raw_path:
+        return os.path.join(os.path.expanduser("~"), "Desktop") if default_to_desktop else ""
+        
+    p = raw_path.strip().strip('"').strip("'")
+    user_home = os.path.expanduser("~")
+    desktop_dir = os.path.join(user_home, "Desktop")
+    
+    # 1. Expand '~'
+    if p.startswith("~"):
+        return os.path.abspath(os.path.expanduser(p))
+        
+    # 2. Check if absolute path (Windows drive like C:\ or UNC)
+    if os.path.isabs(p) or (len(p) > 2 and p[1] == ':'):
+        return os.path.abspath(p)
+        
+    # 3. Check for well-known folder prefixes (case-insensitive)
+    norm = p.replace("\\", "/").strip("/")
+    folder_map = {
+        "desktop": desktop_dir,
+        "downloads": os.path.join(user_home, "Downloads"),
+        "documents": os.path.join(user_home, "Documents"),
+        "pictures": os.path.join(user_home, "Pictures"),
+        "videos": os.path.join(user_home, "Videos"),
+        "music": os.path.join(user_home, "Music"),
+    }
+    
+    norm_lower = norm.lower()
+    for prefix, folder_path in folder_map.items():
+        if norm_lower == prefix:
+            return folder_path
+        if norm_lower.startswith(f"{prefix}/"):
+            sub_path = norm[len(prefix) + 1:]
+            return os.path.join(folder_path, sub_path.replace("/", os.sep))
+            
+    # 4. If relative and default_to_desktop is True
+    if default_to_desktop:
+        return os.path.join(desktop_dir, p.replace("/", os.sep))
+        
+    return os.path.abspath(p)
 
 @function_tool()
 async def write_and_open_file(
@@ -108,11 +199,11 @@ async def write_and_open_file(
     """
     Write text or code to a file and then instantly open it with the default application (like Notepad).
     Use this when the user asks you to write an application, script, or document and show it to them.
+    Relative filenames (e.g. 'story.txt' or 'desktop/story.txt') automatically save to the user's Desktop.
     """
     try:
         ui_state.set_text(f"File | Writing '{os.path.basename(filename)}'")
-        filename = os.path.expanduser(filename)
-        filename = os.path.abspath(filename)
+        filename = resolve_user_target_path(filename, default_to_desktop=True)
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         logging.info(f"Writing to file: {filename}")
         with open(filename, 'w', encoding='utf-8') as f:
@@ -139,6 +230,11 @@ async def open_application(context: RunContext, app_name: str) -> str:
     instead of guessing 'start <name>' in execute_pc_command.
     """
     try:
+        app_clean = app_name.lower().strip()
+        if app_clean in ["chrome", "google chrome", "google-chrome", "browser"]:
+            from agent_tools.web import launch_chrome_with_control
+            return await launch_chrome_with_control(context)
+
         ui_state.set_text(f"File | Launching '{app_name}'")
         logging.info(f"Opening application via Windows Search: {app_name}")
         await asyncio.to_thread(pyautogui.press, 'win')
@@ -327,6 +423,61 @@ async def take_screenshot(
         return f"Screenshot captured and saved to {filepath}"
     except Exception as e:
         return f"Failed to capture screenshot: {e}"
+
+@function_tool()
+async def inspect_screen(
+    context: RunContext,  # type: ignore
+    focus_or_question: str = "Describe what is currently visible on the user's screen"
+) -> str:
+    """
+    Look at and inspect the user's current computer display in crystal-clear high definition.
+    Use this whenever Sir asks "what's on my screen?", "look at this", "read this error",
+    "what code is open?", or asks about any application, document, browser tab, or image on screen.
+    """
+    try:
+        ui_state.set_text("Vision | Analyzing Screen")
+        screenshot = await asyncio.to_thread(pyautogui.screenshot)
+        
+        buf = io.BytesIO()
+        screenshot.save(buf, format="JPEG", quality=80)
+        jpeg_bytes = buf.getvalue()
+        
+        from google.genai import types
+        from zenith_memory import get_genai_client
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            return "Cannot inspect screen: Google API key is missing."
+            
+        client = get_genai_client(api_key)
+        prompt = (
+            f"You are Zenith's high-definition vision core analyzing Sir's current Windows screen.\n"
+            f"Question / Focus: {focus_or_question}\n"
+            f"Provide a clear, accurate, concise breakdown of the visible applications, code, text, or errors. "
+            f"Answer Sir's question directly."
+        )
+        
+        img_part = types.Part.from_bytes(data=jpeg_bytes, mime_type="image/jpeg")
+        response_text = ""
+        for m in ["gemini-3.5-flash-lite", "gemini-2.5-flash"]:
+            try:
+                res = await client.aio.models.generate_content(
+                    model=m,
+                    contents=[prompt, img_part],
+                    config=types.GenerateContentConfig(temperature=0.2)
+                )
+                if res.text:
+                    response_text = res.text.strip()
+                    break
+            except Exception:
+                continue
+                
+        if not response_text:
+            return "Screen captured, but vision models are momentarily congested. Please repeat in a moment."
+
+        working_memory.add_note(f"Visual Scan: {response_text[:120]}")
+        return response_text
+    except Exception as e:
+        return f"Error analyzing screen: {e}"
 
 @function_tool()
 async def get_system_stats(
@@ -594,6 +745,25 @@ async def read_file_content(
         if not os.path.exists(target_path):
             return f"File '{filepath}' not found."
 
+        ext = os.path.splitext(target_path)[1].lower()
+        if ext == ".pdf":
+            from agent_tools.documents import extract_pdf_data
+            data = await asyncio.to_thread(extract_pdf_data, target_path, None, max_lines // 5 or 10)
+            if data["success"] and data["full_text"].strip():
+                return f"Content of PDF '{os.path.basename(target_path)}' (Total pages: {data['total_pages']}):\n\n{data['full_text'][:3500]}"
+            elif data.get("error"):
+                return f"Error reading PDF '{os.path.basename(target_path)}': {data['error']}"
+            else:
+                return f"PDF '{os.path.basename(target_path)}' has {data['total_pages']} page(s) but no selectable text (may be image scans)."
+
+        elif ext in [".docx", ".doc"]:
+            from agent_tools.documents import extract_docx_data
+            data = await asyncio.to_thread(extract_docx_data, target_path, max_lines)
+            if data["success"] and data["full_text"].strip():
+                return f"Content of Word document '{os.path.basename(target_path)}':\n\n{data['full_text'][:3500]}"
+            elif data.get("error"):
+                return f"Error reading Word document '{os.path.basename(target_path)}': {data['error']}"
+
         with open(target_path, "r", encoding="utf-8", errors="ignore") as f:
             lines = [f.readline() for _ in range(max_lines)]
             content = "".join([l for l in lines if l])
@@ -724,21 +894,35 @@ async def manage_file_system(
     destination_path: str = ""
 ) -> str:
     """
-    File system management: create folder, copy file/folder, move file/folder, rename, or delete file.
+    File system management: create folder(s), copy file/folder, move file/folder, rename, or delete file.
     action: 'mkdir' | 'copy' | 'move' | 'rename' | 'delete'
+    source_path: Target path or folder name. Common user locations like 'desktop/folder_name', 'downloads/file.txt', or full paths are supported. If a relative name is given for mkdir (e.g., '1 2 3'), it automatically creates it on the user's Desktop. To create multiple folders, provide comma-separated names (e.g. '1, 2, 3').
+    destination_path: Destination path for copy, move, or rename actions.
     """
     import shutil
     try:
         ui_state.set_text(f"📁 File System {action}...")
         act = action.lower().strip()
-        src = os.path.expanduser(source_path.strip().strip('"').strip("'"))
 
         if act in ["mkdir", "create_folder"]:
-            os.makedirs(src, exist_ok=True)
-            return f"Created directory: '{src}'"
+            paths_to_create = [p.strip() for p in source_path.split(",") if p.strip()] if "," in source_path else [source_path.strip()]
+            created_dirs = []
+            for p in paths_to_create:
+                resolved_dir = resolve_user_target_path(p, default_to_desktop=True)
+                os.makedirs(resolved_dir, exist_ok=True)
+                created_dirs.append(resolved_dir)
+            if len(created_dirs) == 1:
+                return f"Created directory: '{created_dirs[0]}'"
+            else:
+                return f"Created directories:\n" + "\n".join(f"- {d}" for d in created_dirs)
 
         elif act in ["copy"]:
-            dest = os.path.expanduser(destination_path.strip().strip('"').strip("'"))
+            src = resolve_user_target_path(source_path, default_to_desktop=False)
+            if not os.path.exists(src):
+                desktop_src = resolve_user_target_path(source_path, default_to_desktop=True)
+                if os.path.exists(desktop_src):
+                    src = desktop_src
+            dest = resolve_user_target_path(destination_path, default_to_desktop=True)
             if os.path.isdir(src):
                 shutil.copytree(src, dest, dirs_exist_ok=True)
             else:
@@ -746,11 +930,21 @@ async def manage_file_system(
             return f"Copied '{src}' to '{dest}'"
 
         elif act in ["move", "rename"]:
-            dest = os.path.expanduser(destination_path.strip().strip('"').strip("'"))
+            src = resolve_user_target_path(source_path, default_to_desktop=False)
+            if not os.path.exists(src):
+                desktop_src = resolve_user_target_path(source_path, default_to_desktop=True)
+                if os.path.exists(desktop_src):
+                    src = desktop_src
+            dest = resolve_user_target_path(destination_path, default_to_desktop=True)
             shutil.move(src, dest)
             return f"Moved/renamed '{src}' to '{dest}'"
 
         elif act in ["delete", "remove"]:
+            src = resolve_user_target_path(source_path, default_to_desktop=False)
+            if not os.path.exists(src):
+                desktop_src = resolve_user_target_path(source_path, default_to_desktop=True)
+                if os.path.exists(desktop_src):
+                    src = desktop_src
             if os.path.isdir(src):
                 shutil.rmtree(src)
             else:

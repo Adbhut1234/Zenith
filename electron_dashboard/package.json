@@ -44,8 +44,6 @@
           ".env.example",
           "generate_token.py",
           "prompts.py",
-          "jarvis_overlay.py",
-          "jarvis_ui.html",
           "computer_use.py",
           "uia_control.py",
           "ui_state.py",

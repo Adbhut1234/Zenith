@@ -3,8 +3,8 @@ livekit-plugins-openai
 livekit-plugins-silero
 livekit-plugins-google
 livekit-plugins-noise-cancellation
-mem0ai
 duckduckgo-search
+ddgs
 langchain_community
 requests
 python-dotenv
@@ -20,3 +20,9 @@ ytmusicapi
 yt-dlp
 browser-use
 playwright
+pypdf
+python-docx
+edge-tts
+pygame
+mss
+opencv-python-headless
