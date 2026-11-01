@@ -3,47 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zenith</title>
+  <title>Zenith Studio</title>
 
-  <!-- Clean Typography -->
+  <!-- Google Stitch Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     /* ==========================================================================
-       ENHANCED MINIMALIST DESIGN SYSTEM (Ollama Simplicity + Linear Polish)
+       GOOGLE STITCH DESIGN SYSTEM (Soft Modernism, Bento Grids, Pill Hierarchy)
        ========================================================================== */
     :root {
-      --bg: #0a0a0c;
-      --card-bg: rgba(18, 18, 22, 0.85);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --card-hover-border: rgba(255, 255, 255, 0.15);
-      
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      
-      --accent: #ffffff;
-      --accent-hover: #e2e8f0;
-      
-      --status-green: #10b981;
-      --status-green-glow: rgba(16, 185, 129, 0.3);
-      --status-green-bg: rgba(16, 185, 129, 0.12);
+      --bg-canvas: #0c0d12;
+      --card-surface: rgba(22, 24, 34, 0.78);
+      --card-surface-elevated: rgba(30, 33, 48, 0.82);
+      --card-surface-hover: rgba(38, 42, 60, 0.85);
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.18);
+      --border-focus: #38bdf8;
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-dim: #475569;
+
+      /* Stitch Semantic Accents */
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --emerald-bg: rgba(16, 185, 129, 0.12);
 
       --cyan: #06b6d4;
       --cyan-glow: rgba(6, 182, 212, 0.25);
-      
-      --status-gray: #64748b;
-      --status-gray-bg: rgba(100, 116, 139, 0.12);
+      --cyan-bg: rgba(6, 182, 212, 0.12);
 
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.1);
-      
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      --radius-full: 9999px;
+      --indigo: #6366f1;
+      --indigo-glow: rgba(99, 102, 241, 0.25);
+
+      --crimson: #ef4444;
+      --crimson-glow: rgba(239, 68, 68, 0.25);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-bento: 20px;
+      --radius-pill: 9999px;
+
+      --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+      --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     * {
@@ -56,8 +63,8 @@
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg-canvas);
+      color: var(--text-primary);
       width: 100vw;
       height: 100vh;
       display: flex;
@@ -66,39 +73,39 @@
       position: relative;
     }
 
-    /* Ambient Subtle Mesh Backdrop */
-    .ambient-glow {
+    /* Ambient Soft Mesh Gradient (Stitch Atmosphere) */
+    .stitch-ambient {
       position: absolute;
-      top: -60px;
+      top: -80px;
       left: 50%;
       transform: translateX(-50%);
-      width: 480px;
-      height: 240px;
-      border-radius: var(--radius-full);
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 70%);
+      width: 580px;
+      height: 280px;
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.08), transparent 70%);
+      filter: blur(60px);
       pointer-events: none;
       z-index: 0;
       transition: all 0.6s ease;
-      filter: blur(50px);
     }
 
-    .ambient-glow.running {
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.18), rgba(6, 182, 212, 0.08), transparent 70%);
+    .stitch-ambient.active {
+      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.22), rgba(6, 182, 212, 0.14), transparent 70%);
+      transform: translateX(-50%) scale(1.1);
     }
 
     /* ==========================================================================
-       TOP BAR (Frameless Window Chrome)
+       TOP FLOATING HEADER (macOS Traffic Lights + Stitch Segmented Pill)
        ========================================================================== */
-    .header {
-      height: 48px;
-      min-height: 48px;
+    .stitch-header {
+      height: 52px;
+      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
-      background: rgba(10, 10, 12, 0.9);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--card-border);
+      padding: 0 18px;
+      background: rgba(12, 13, 18, 0.85);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border-subtle);
       -webkit-app-region: drag;
       z-index: 50;
     }
@@ -114,14 +121,14 @@
     .traffic-dot {
       width: 12px;
       height: 12px;
-      border-radius: var(--radius-full);
+      border-radius: var(--radius-pill);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: transform 0.15s ease, filter 0.15s ease;
     }
-    .traffic-dot:hover { transform: scale(1.1); filter: brightness(1.15); }
+    .traffic-dot:hover { transform: scale(1.12); filter: brightness(1.15); }
     .traffic-dot:active { transform: scale(0.92); }
     .dot-close { background: #ff5f56; }
     .dot-min   { background: #ffbd2e; }
@@ -136,504 +143,504 @@
     }
     .traffic-lights:hover .traffic-dot svg { opacity: 1; }
 
-    /* Brand Logo / Title with Live Dot */
-    .brand {
+    /* Center Brand Logo */
+    .brand-group {
       display: flex;
       align-items: center;
       gap: 10px;
       font-weight: 700;
-      font-size: 13.5px;
+      font-size: 14px;
       letter-spacing: -0.01em;
       -webkit-app-region: drag;
     }
 
-    .brand-icon-box {
-      width: 22px;
-      height: 22px;
+    .brand-symbol {
+      width: 24px;
+      height: 24px;
       background: linear-gradient(135deg, #ffffff, #cbd5e1);
-      border-radius: 6px;
+      border-radius: 7px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #000000;
       font-weight: 800;
-      font-size: 11px;
-      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+      font-size: 12px;
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
     }
 
-    .brand-pulse-badge {
+    .brand-live-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 2px 7px;
-      border-radius: var(--radius-full);
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--card-border);
-      font-size: 10px;
+      border: 1px solid var(--border-subtle);
+      font-size: 10.5px;
       font-weight: 600;
-      color: var(--text-dim);
-    }
-
-    .brand-pulse-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: var(--radius-full);
-      background: var(--status-gray);
+      color: var(--text-muted);
       transition: all 0.3s ease;
     }
 
-    .brand-pulse-badge.active {
-      color: var(--status-green);
-      background: var(--status-green-bg);
-      border-color: rgba(16, 185, 129, 0.25);
-    }
-    .brand-pulse-badge.active .brand-pulse-dot {
-      background: var(--status-green);
-      box-shadow: 0 0 6px var(--status-green);
+    .pulse-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: var(--radius-pill);
+      background: var(--text-muted);
+      transition: all 0.3s ease;
     }
 
-    /* Segmented Tab Controls */
-    .segmented-tabs {
+    .brand-live-pill.active {
+      background: var(--emerald-bg);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--emerald);
+    }
+    .brand-live-pill.active .pulse-dot {
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
+    }
+
+    /* Stitch Floating Segmented Control */
+    .stitch-nav-pill {
       display: flex;
       align-items: center;
       background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
-      padding: 2px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 3px;
       -webkit-app-region: no-drag;
     }
 
-    .tab-btn {
-      padding: 4px 14px;
+    .nav-btn {
+      padding: 5px 16px;
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-muted);
       background: transparent;
       border: none;
-      border-radius: 4px;
+      border-radius: var(--radius-pill);
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s var(--spring-smooth);
     }
 
-    .tab-btn:hover {
-      color: var(--text);
+    .nav-btn:hover {
+      color: var(--text-primary);
     }
 
-    .tab-btn.active {
+    .nav-btn.active {
       background: rgba(255, 255, 255, 0.12);
-      color: var(--text);
-      font-weight: 600;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     /* ==========================================================================
-       MAIN CONTENT CONTAINER
+       MAIN CONTENT (Scrollable Bento Canvas)
        ========================================================================== */
-    .main-container {
+    .stitch-canvas {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 32px 28px 32px;
-      max-width: 720px;
+      padding: 24px 28px 32px 28px;
+      max-width: 820px;
       width: 100%;
       margin: 0 auto;
       position: relative;
       z-index: 2;
     }
 
-    .main-container::-webkit-scrollbar,
-    .terminal-body::-webkit-scrollbar {
+    .stitch-canvas::-webkit-scrollbar,
+    .log-stream-body::-webkit-scrollbar {
       width: 5px;
     }
-    .main-container::-webkit-scrollbar-thumb,
-    .terminal-body::-webkit-scrollbar-thumb {
+    .stitch-canvas::-webkit-scrollbar-thumb,
+    .log-stream-body::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-full);
+      border-radius: var(--radius-pill);
     }
 
-    .tab-content {
+    .tab-view {
       display: none;
-      animation: fadeIn 0.18s ease-out;
+      animation: tabEnter 0.25s var(--spring-smooth) forwards;
     }
 
-    .tab-content.active {
+    .tab-view.active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes tabEnter {
+      from { opacity: 0; transform: translateY(8px) scale(0.99); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     /* ==========================================================================
-       TAB 1: STATUS (Ollama Minimalist Hero + Micro Audio Wave Visual)
+       BENTO CARD ARCHITECTURE (Stitch Signature Modular Blocks)
        ========================================================================== */
-    .hero-status-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 28px 24px;
-      text-align: center;
-      margin-bottom: 20px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.4);
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    .bento-card {
+      background: var(--card-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-bento);
+      padding: 22px 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 36px rgba(0, 0, 0, 0.35);
+      transition: all 0.25s var(--spring-smooth);
       position: relative;
       overflow: hidden;
     }
 
-    .hero-status-card:hover {
-      border-color: var(--card-hover-border);
+    .bento-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 44px rgba(0, 0, 0, 0.45);
+      transform: translateY(-1px);
     }
 
-    /* Glowing Visualizer Orb in Hero */
-    .status-orb-wrapper {
-      position: relative;
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 16px auto;
+    /* --------------------------------------------------------------------------
+       BENTO HERO: Master Assistant Status & Acoustic Spectrum
+       -------------------------------------------------------------------------- */
+    .bento-hero {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 24px;
+      margin-bottom: 18px;
+      align-items: center;
+    }
+
+    .hero-meta-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hero-header-row {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 12px;
+      margin-bottom: 4px;
     }
 
-    .status-ring-aura {
-      position: absolute;
-      inset: -4px;
-      border-radius: var(--radius-full);
-      border: 2px solid transparent;
-      background: conic-gradient(from 0deg, var(--status-green), var(--cyan), transparent, var(--status-green)) border-box;
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      animation: ringSpin 6s linear infinite;
-    }
-
-    @keyframes ringSpin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-
-    .status-badge-circle {
-      width: 52px;
-      height: 52px;
-      border-radius: var(--radius-full);
-      background: var(--status-gray-bg);
+    .status-orb {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
-      position: relative;
-      z-index: 2;
     }
 
-    .status-dot-core {
-      width: 16px;
-      height: 16px;
-      border-radius: var(--radius-full);
-      background: var(--status-gray);
+    .status-orb-inner {
+      width: 14px;
+      height: 14px;
+      border-radius: var(--radius-pill);
+      background: var(--text-muted);
       transition: all 0.3s ease;
     }
 
-    .status-orb-wrapper.running .status-ring-aura {
-      opacity: 1;
+    .status-orb.active {
+      background: var(--emerald-bg);
+      border-color: rgba(16, 185, 129, 0.35);
+      box-shadow: 0 0 20px var(--emerald-glow);
     }
-
-    .status-orb-wrapper.running .status-badge-circle {
-      background: var(--status-green-bg);
-    }
-
-    .status-orb-wrapper.running .status-dot-core {
-      background: var(--status-green);
-      box-shadow: 0 0 16px var(--status-green);
-    }
-
-    /* Micro Soundwave Equalizer Bars */
-    .hero-equalizer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      height: 16px;
-      margin-bottom: 12px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .hero-equalizer.active {
-      opacity: 1;
-    }
-
-    .eq-bar {
-      width: 3px;
-      height: 4px;
-      border-radius: var(--radius-full);
-      background: var(--status-green);
-      transition: height 0.15s ease;
-    }
-
-    .hero-equalizer.active .eq-bar:nth-child(1) { animation: eqBounce 0.8s ease-in-out infinite alternate; }
-    .hero-equalizer.active .eq-bar:nth-child(2) { animation: eqBounce 0.6s 0.15s ease-in-out infinite alternate; }
-    .hero-equalizer.active .eq-bar:nth-child(3) { animation: eqBounce 0.9s 0.3s ease-in-out infinite alternate; }
-    .hero-equalizer.active .eq-bar:nth-child(4) { animation: eqBounce 0.7s 0.2s ease-in-out infinite alternate; }
-    .hero-equalizer.active .eq-bar:nth-child(5) { animation: eqBounce 0.85s 0.1s ease-in-out infinite alternate; }
-
-    @keyframes eqBounce {
-      0%   { height: 4px; opacity: 0.4; }
-      100% { height: 16px; opacity: 1; }
+    .status-orb.active .status-orb-inner {
+      background: var(--emerald);
+      box-shadow: 0 0 12px var(--emerald);
     }
 
     .hero-title {
-      font-size: 21px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 800;
       letter-spacing: -0.02em;
-      margin-bottom: 6px;
     }
 
-    .hero-sub {
+    .hero-subtitle {
       font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
 
-    /* Ollama Solid Action Button */
-    .btn-action {
+    .hero-action-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    /* Stitch Pill Action Button */
+    .btn-pill-action {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 32px;
-      border-radius: var(--radius-sm);
+      padding: 10px 24px;
+      border-radius: var(--radius-pill);
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       border: none;
-      transition: all 0.2s ease;
-      background: var(--accent);
+      background: #ffffff;
       color: #000000;
-      min-width: 160px;
-      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.18);
+      transition: all 0.2s var(--spring-bounce);
     }
 
-    .btn-action:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
+    .btn-pill-action:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
     }
 
-    .btn-action:active {
+    .btn-pill-action:active {
       transform: scale(0.97);
     }
 
-    .btn-action.running {
-      background: #1c1c20;
+    .btn-pill-action.running {
+      background: #1e212d;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      border: 1px solid var(--border-hover);
       box-shadow: none;
     }
-
-    .btn-action.running:hover {
-      background: #25252b;
-      border-color: rgba(255, 255, 255, 0.22);
+    .btn-pill-action.running:hover {
+      background: #272a39;
     }
 
-    /* Enhanced Specs List with Mini Icons & Visual Indicators */
-    .specs-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+    /* Waveform Canvas Container in Hero */
+    .hero-spectrum-box {
+      width: 100%;
+      height: 110px;
+      background: rgba(12, 13, 18, 0.65);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      overflow: hidden;
-      margin-bottom: 16px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      position: relative;
     }
 
-    .spec-row {
+    #heroWaveCanvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .spectrum-label {
+      position: absolute;
+      bottom: 6px;
+      right: 10px;
+      font-size: 9.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+    }
+
+    /* --------------------------------------------------------------------------
+       BENTO GRID: 3 Modular Telemetry Cards
+       -------------------------------------------------------------------------- */
+    .bento-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .bento-tile {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 140px;
+      padding: 18px 20px;
+    }
+
+    .tile-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--card-border);
-      font-size: 13px;
-      transition: background 0.15s ease;
+      margin-bottom: 8px;
     }
 
-    .spec-row:last-child {
-      border-bottom: none;
-    }
-
-    .spec-row:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .spec-label-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .spec-icon {
-      width: 16px;
-      height: 16px;
-      color: var(--text-dim);
+    .tile-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
+      color: var(--text-secondary);
     }
 
-    .spec-value-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .spec-pill {
+    .tile-chip {
       font-size: 10.5px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 2px 8px;
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: var(--text);
+      border-radius: var(--radius-pill);
       font-family: 'JetBrains Mono', monospace;
     }
 
-    .pill-green {
-      background: var(--status-green-bg);
-      color: var(--status-green);
-      border-color: rgba(16, 185, 129, 0.25);
+    .chip-green { background: var(--emerald-bg); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.25); }
+    .chip-cyan  { background: var(--cyan-bg); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.25); }
+    .chip-muted { background: rgba(255, 255, 255, 0.06); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+
+    .tile-metric-value {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 2px;
+      color: var(--text-primary);
     }
 
-    .pill-cyan {
-      background: rgba(6, 182, 212, 0.1);
-      color: var(--cyan);
-      border-color: rgba(6, 182, 212, 0.25);
+    .tile-metric-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
     }
 
-    /* Mini Progress Bar for Host Load */
-    .mini-meter-bar {
-      width: 60px;
+    /* Segmented Mini Meter Bar */
+    .tile-meter-bar {
+      width: 100%;
       height: 4px;
-      border-radius: var(--radius-full);
+      border-radius: var(--radius-pill);
       background: rgba(255, 255, 255, 0.08);
+      margin-top: 10px;
       overflow: hidden;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 6px;
     }
 
-    .mini-meter-fill {
+    .tile-meter-fill {
       height: 100%;
-      background: var(--status-green);
+      background: linear-gradient(90deg, var(--emerald), var(--cyan));
       width: 0%;
+      border-radius: var(--radius-pill);
       transition: width 0.4s ease;
-      border-radius: var(--radius-full);
     }
 
-    /* Minimal Switch */
-    .mini-switch {
+    /* Tactile Stitch Mini Toggle */
+    .stitch-switch {
       position: relative;
       display: inline-block;
-      width: 34px;
-      height: 18px;
+      width: 38px;
+      height: 20px;
     }
 
-    .mini-switch input {
+    .stitch-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
 
-    .mini-slider {
+    .stitch-slider {
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background: #25252b;
-      border-radius: var(--radius-full);
-      transition: 0.2s ease;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-pill);
+      transition: all 0.25s var(--spring-smooth);
+      border: 1px solid var(--border-subtle);
     }
 
-    .mini-slider:before {
+    .stitch-slider::before {
       position: absolute;
       content: "";
-      height: 12px;
-      width: 12px;
+      height: 14px;
+      width: 14px;
       left: 2px;
       bottom: 2px;
-      background-color: #888888;
-      border-radius: var(--radius-full);
-      transition: 0.2s ease;
+      background-color: #cbd5e1;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transition: all 0.25s var(--spring-bounce);
     }
 
-    .mini-switch input:checked + .mini-slider {
-      background: var(--status-green);
-      border-color: var(--status-green);
-      box-shadow: 0 0 8px var(--status-green-glow);
+    .stitch-switch input:checked + .stitch-slider {
+      background: var(--emerald);
+      border-color: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald-glow);
     }
 
-    .mini-switch input:checked + .mini-slider:before {
+    .stitch-switch input:checked + .stitch-slider::before {
       background-color: #ffffff;
-      transform: translateX(16px);
+      transform: translateX(18px);
     }
 
-    /* Quick Badges Row (Latency / VAD / Matrix) */
-    .badges-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+    /* --------------------------------------------------------------------------
+       STRUCTURED BENTO LIST: Recent System Telemetry & Insights
+       -------------------------------------------------------------------------- */
+    .bento-list-card {
+      padding: 20px 24px;
       margin-bottom: 16px;
     }
 
-    .quick-chip {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 7px 10px;
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid var(--card-border);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .quick-chip-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: var(--radius-full);
-      background: var(--status-green);
-    }
-
-    /* Quick Tip Box */
-    .tip-box {
-      background: rgba(14, 14, 18, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      color: var(--text-dim);
+    .list-header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
-    .tip-box span {
+    .list-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .stitch-row-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
+      margin-bottom: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .stitch-row-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .stitch-row-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--border-subtle);
+    }
+
+    .row-leading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .row-icon-gem {
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .gem-sys { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
+    .gem-cog { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
+    .gem-vis { background: rgba(6, 182, 212, 0.12); color: #22d3ee; }
+
+    .row-text-primary {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .row-text-secondary {
+      font-size: 11px;
       color: var(--text-muted);
     }
 
     /* Emergency Halt Link */
-    .emergency-link-wrapper {
+    .emergency-footer {
       text-align: center;
-      margin-top: 10px;
+      padding-top: 4px;
     }
 
-    .emergency-link {
+    .btn-emergency-link {
       background: transparent;
       border: none;
       color: var(--text-dim);
@@ -643,36 +650,36 @@
       transition: color 0.15s ease;
     }
 
-    .emergency-link:hover {
-      color: var(--danger);
+    .btn-emergency-link:hover {
+      color: var(--crimson);
     }
 
     /* ==========================================================================
-       TAB 2: LOGS (Terminal with Category Color Badges)
+       TAB 2: ACTIVITY STREAM (Stitch Modern Monospace Ledger)
        ========================================================================== */
-    .terminal-container {
+    .log-ledger-container {
       background: #000000;
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-bento);
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 140px);
+      height: calc(100vh - 150px);
       overflow: hidden;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
-    .terminal-header {
+    .log-ledger-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 14px;
-      background: #111115;
-      border-bottom: 1px solid var(--card-border);
+      padding: 10px 18px;
+      background: #111218;
+      border-bottom: 1px solid var(--border-subtle);
       font-size: 12px;
       color: var(--text-muted);
     }
 
-    .terminal-live-beacon {
+    .live-stream-badge {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -681,26 +688,28 @@
       color: var(--cyan);
     }
 
-    .terminal-btn {
+    .btn-ghost-pill {
       background: transparent;
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border-subtle);
       color: var(--text-muted);
       cursor: pointer;
       font-size: 11px;
-      padding: 3px 10px;
-      border-radius: var(--radius-sm);
+      font-weight: 600;
+      padding: 3px 12px;
+      border-radius: var(--radius-pill);
       transition: all 0.15s ease;
     }
-    .terminal-btn:hover {
-      color: var(--text);
+
+    .btn-ghost-pill:hover {
+      color: var(--text-primary);
       background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+      border-color: var(--border-hover);
     }
 
-    .terminal-body {
+    .log-stream-body {
       flex: 1;
       overflow-y: auto;
-      padding: 14px;
+      padding: 14px 18px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       line-height: 1.6;
@@ -710,7 +719,7 @@
       gap: 3px;
     }
 
-    .terminal-line {
+    .ledger-row {
       display: flex;
       align-items: baseline;
       gap: 10px;
@@ -719,168 +728,149 @@
     .log-time {
       color: var(--text-dim);
       font-size: 11px;
-      user-select: none;
       white-space: nowrap;
     }
 
-    .log-badge {
-      font-size: 10px;
+    .log-tag-pill {
+      font-size: 9.5px;
       font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 3px;
+      padding: 1px 6px;
+      border-radius: 4px;
       text-transform: uppercase;
       white-space: nowrap;
     }
 
-    .log-badge-sys { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-    .log-badge-ipc { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .log-badge-vis { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
-    .log-badge-cog { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-    .log-badge-wrn { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-
-    .log-msg {
-      color: #e2e8f0;
-      word-break: break-all;
-    }
+    .pill-sys { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .pill-ipc { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .pill-vis { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+    .pill-cog { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+    .pill-wrn { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
 
     /* ==========================================================================
-       TAB 3: SETTINGS (Vertical Stack with Provider Glyphs)
+       TAB 3: SETTINGS (Stitch Form Cards & Tokens)
        ========================================================================== */
-    .settings-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 16px;
+    .settings-header-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 20px;
     }
 
-    .setting-group {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 16px 18px;
+    .settings-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .stitch-form-card {
+      background: var(--card-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-bento);
+      padding: 18px 22px;
       margin-bottom: 14px;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
       transition: border-color 0.2s ease;
     }
 
-    .setting-group:focus-within {
-      border-color: rgba(255, 255, 255, 0.25);
+    .stitch-form-card:focus-within {
+      border-color: var(--border-hover);
     }
 
-    .setting-header {
+    .form-header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 4px;
     }
 
-    .setting-label {
-      font-size: 13px;
-      font-weight: 600;
+    .form-label {
+      font-size: 13.5px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .setting-status-pill {
+    .form-status-tag {
       font-size: 10px;
       font-weight: 600;
-      padding: 1px 6px;
-      border-radius: var(--radius-full);
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-dim);
     }
 
-    .setting-status-pill.configured {
-      background: var(--status-green-bg);
-      color: var(--status-green);
+    .form-status-tag.active {
+      background: var(--emerald-bg);
+      color: var(--emerald);
     }
 
-    .setting-desc {
+    .form-desc {
       font-size: 12px;
       color: var(--text-muted);
       margin-bottom: 10px;
     }
 
-    .input-row {
+    .input-box-wrapper {
       position: relative;
       display: flex;
       align-items: center;
     }
 
-    .input-field {
+    .stitch-input {
       width: 100%;
-      padding: 8px 12px;
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
+      padding: 9px 14px;
+      background: rgba(10, 11, 15, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
       color: #ffffff;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       outline: none;
-      transition: border-color 0.15s ease;
+      transition: border-color 0.2s ease;
     }
 
-    .input-field:focus {
-      border-color: rgba(255, 255, 255, 0.35);
+    .stitch-input:focus {
+      border-color: var(--border-focus);
     }
 
-    .toggle-visibility-btn {
+    .btn-eye-toggle {
       position: absolute;
-      right: 8px;
+      right: 10px;
       background: transparent;
       border: none;
       color: var(--text-muted);
       cursor: pointer;
       font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 3px;
+      padding: 3px 6px;
+      border-radius: 4px;
     }
-    .toggle-visibility-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+    .btn-eye-toggle:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
 
-    .btn-save {
-      background: var(--accent);
-      color: #000000;
-      font-weight: 700;
-      border: none;
-      padding: 10px 24px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
-    }
-    .btn-save:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-    }
-    .btn-save:active {
-      transform: scale(0.98);
-    }
-
-    /* Minimal Toast */
-    .toast-box {
+    /* ==========================================================================
+       TOAST
+       ========================================================================== */
+    .stitch-toast {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #18181f;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 10px 16px;
-      border-radius: var(--radius-sm);
+      bottom: 24px;
+      right: 24px;
+      background: rgba(22, 25, 36, 0.95);
+      border: 1px solid var(--border-hover);
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
       font-size: 12.5px;
-      font-weight: 500;
+      font-weight: 600;
       color: #ffffff;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
       opacity: 0;
-      transform: translateY(8px);
-      transition: all 0.2s ease;
+      transform: translateY(10px);
+      transition: all 0.25s var(--spring-bounce);
       pointer-events: none;
       z-index: 1000;
     }
 
-    .toast-box.show {
+    .stitch-toast.show {
       opacity: 1;
       transform: translateY(0);
     }
@@ -889,10 +879,10 @@
 <body>
 
   <!-- Ambient Backdrop -->
-  <div class="ambient-glow" id="ambientGlow"></div>
+  <div class="stitch-ambient" id="stitchAmbient"></div>
 
-  <!-- Frameless Header Bar -->
-  <header class="header">
+  <!-- Top Floating Header -->
+  <header class="stitch-header">
     <div class="traffic-lights">
       <div class="traffic-dot dot-close" id="btnTrafficClose" title="Close">
         <svg viewBox="0 0 10 10"><path d="M1 1L9 9M9 1L1 9" stroke="#000" stroke-width="1.8"/></svg>
@@ -905,246 +895,268 @@
       </div>
     </div>
 
-    <div class="brand">
-      <div class="brand-icon-box">Z</div>
+    <!-- Center Brand Emblem -->
+    <div class="brand-group">
+      <div class="brand-symbol">Z</div>
       <span>Zenith</span>
-      <div class="brand-pulse-badge" id="brandBadge">
-        <span class="brand-pulse-dot" id="brandPulseDot"></span>
-        <span id="brandStatusText">STANDBY</span>
+      <div class="brand-live-pill" id="brandLivePill">
+        <span class="pulse-dot"></span>
+        <span id="brandLiveStatus">STANDBY</span>
       </div>
     </div>
 
-    <!-- Segmented Tab Controls (Ollama Style) -->
-    <div class="segmented-tabs">
-      <button class="tab-btn active" data-tab="tab-status">Status</button>
-      <button class="tab-btn" data-tab="tab-logs">Logs</button>
-      <button class="tab-btn" data-tab="tab-settings">Settings</button>
-    </div>
+    <!-- Stitch Segmented Navigation Pill -->
+    <nav class="stitch-nav-pill">
+      <button class="nav-btn active" data-tab="tab-overview">Overview</button>
+      <button class="nav-btn" data-tab="tab-activity">Activity</button>
+      <button class="nav-btn" data-tab="tab-settings">Settings</button>
+    </nav>
   </header>
 
-  <!-- Main Content -->
-  <main class="main-container">
+  <!-- Main Bento Canvas -->
+  <main class="stitch-canvas">
 
     <!-- ====================================================================
-         TAB 1: STATUS
+         TAB 1: OVERVIEW (Stitch Signature Bento Grid)
          ==================================================================== -->
-    <div class="tab-content active" id="tab-status">
+    <div class="tab-view active" id="tab-overview">
       
-      <!-- Minimalist Hero with Visualizer Aura -->
-      <div class="hero-status-card">
-        <div class="status-orb-wrapper" id="statusOrb">
-          <div class="status-ring-aura"></div>
-          <div class="status-badge-circle">
-            <div class="status-dot-core"></div>
-          </div>
-        </div>
-
-        <!-- 5-bar Equalizer Wave (Active on Voice) -->
-        <div class="hero-equalizer" id="heroEqualizer">
-          <div class="eq-bar"></div>
-          <div class="eq-bar"></div>
-          <div class="eq-bar"></div>
-          <div class="eq-bar"></div>
-          <div class="eq-bar"></div>
-        </div>
-
-        <h2 class="hero-title" id="heroStatusTitle">Zenith is stopped</h2>
-        <p class="hero-sub" id="heroStatusSub">Click Start to initialize voice loop and cognitive engine</p>
-        
-        <button class="btn-action" id="btnToggleZenith">
-          <span id="btnToggleText">Start Zenith</span>
-        </button>
-      </div>
-
-      <!-- Quick Status Badges Row -->
-      <div class="badges-row">
-        <div class="quick-chip">
-          <span class="quick-chip-dot"></span>
-          <span>Adaptive VAD Active</span>
-        </div>
-        <div class="quick-chip">
-          <span class="quick-chip-dot" style="background: var(--cyan);"></span>
-          <span>System 2 Matrix Armed</span>
-        </div>
-        <div class="quick-chip">
-          <span class="quick-chip-dot" style="background: #a855f7;"></span>
-          <span>SoM Grounding Ready</span>
-        </div>
-      </div>
-
-      <!-- Specs / System Card with Icons -->
-      <div class="specs-card">
-        
-        <div class="spec-row">
-          <div class="spec-label-group">
-            <span class="spec-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </span>
-            <span>Multimodal Model</span>
-          </div>
-          <div class="spec-value-group">
-            <span class="spec-pill pill-cyan">gemini-2.5-flash-preview</span>
-          </div>
-        </div>
-
-        <div class="spec-row">
-          <div class="spec-label-group">
-            <span class="spec-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-            </span>
-            <span>Screen Vision</span>
-          </div>
-          <div class="spec-value-group">
-            <span class="spec-pill" id="visionModeLabel">Smart On-Demand</span>
-            <label class="mini-switch">
-              <input type="checkbox" id="toggleScreenVision">
-              <span class="mini-slider"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="spec-row">
-          <div class="spec-label-group">
-            <span class="spec-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-            </span>
-            <span>Memory Database</span>
-          </div>
-          <div class="spec-value-group">
-            <span class="spec-pill pill-green" id="dbSpecVal">WAL Active (148 KB)</span>
-          </div>
-        </div>
-
-        <div class="spec-row">
-          <div class="spec-label-group">
-            <span class="spec-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-            </span>
-            <span>Host Load</span>
-          </div>
-          <div class="spec-value-group">
-            <span class="spec-pill" id="hostSpecVal">CPU: 0% • RAM: 0%</span>
-            <div class="mini-meter-bar" title="Host CPU Utilization">
-              <div class="mini-meter-fill" id="cpuMeterFill"></div>
+      <!-- Bento Hero: Assistant State + Dynamic Waveform -->
+      <section class="bento-card bento-hero">
+        <div class="hero-meta-block">
+          <div class="hero-header-row">
+            <div class="status-orb" id="statusOrb">
+              <div class="status-orb-inner"></div>
+            </div>
+            <div>
+              <h2 class="hero-title" id="heroTitle">Zenith is in Standby</h2>
+              <div class="hero-subtitle" id="heroSubtitle">Multimodal reasoning loop ready • Click Engage to start</div>
             </div>
           </div>
-        </div>
 
-      </div>
-
-      <!-- Quick Command / Usage Hint -->
-      <div class="tip-box">
-        <code># Voice: speak naturally or say "Hey Zenith"</code>
-        <span style="font-size: 10.5px; color: var(--cyan);">UDP 49152</span>
-      </div>
-
-      <!-- Subtle Emergency Link -->
-      <div class="emergency-link-wrapper">
-        <button class="emergency-link" id="btnEmergencyStop">Emergency Killswitch Disengage</button>
-      </div>
-
-    </div>
-
-    <!-- ====================================================================
-         TAB 2: LOGS
-         ==================================================================== -->
-    <div class="tab-content" id="tab-logs">
-      <div class="terminal-container">
-        <div class="terminal-header">
-          <div class="terminal-live-beacon">
-            <span class="brand-pulse-dot" style="background: var(--cyan); box-shadow: 0 0 6px var(--cyan);"></span>
-            <span>UDP 49152 TELEMETRY STREAM</span>
+          <div class="hero-action-row">
+            <button class="btn-pill-action" id="btnToggleZenith">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span id="btnToggleText">Engage Zenith</span>
+            </button>
+            <span style="font-size: 11.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;" id="engineBadge">
+              Gemini 2.5 Flash Live • 48 kHz
+            </span>
           </div>
-          <button class="terminal-btn" id="btnClearTerminal">Clear Logs</button>
         </div>
-        <div class="terminal-body" id="terminalBody">
-          <!-- Dynamically populated -->
+
+        <!-- Real-Time Acoustic Visualizer -->
+        <div class="hero-spectrum-box">
+          <canvas id="heroWaveCanvas"></canvas>
+          <span class="spectrum-label" id="spectrumStateLabel">ACOUSTIC IDLE</span>
+        </div>
+      </section>
+
+      <!-- Bento Grid (3 Pillars) -->
+      <section class="bento-grid-3">
+        
+        <!-- Bento Tile 1: Multimodal Screen Vision -->
+        <div class="bento-card bento-tile">
+          <div>
+            <div class="tile-header">
+              <div class="tile-icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+              <label class="stitch-switch">
+                <input type="checkbox" id="toggleScreenVision">
+                <span class="stitch-slider"></span>
+              </label>
+            </div>
+            <div class="tile-metric-value" id="visionModeText">On-Demand</div>
+            <div class="tile-metric-sub">Screen Grounding Mode</div>
+          </div>
+          <div class="tile-chip chip-cyan" id="visionChip">Smart Sampling</div>
+        </div>
+
+        <!-- Bento Tile 2: Sovereign Memory WAL -->
+        <div class="bento-card bento-tile">
+          <div>
+            <div class="tile-header">
+              <div class="tile-icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              </div>
+              <div class="tile-chip chip-green">WAL Active</div>
+            </div>
+            <div class="tile-metric-value" id="dbSizeText">148 KB</div>
+            <div class="tile-metric-sub">zenith_memory.db</div>
+          </div>
+          <div style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">PRAGMA Checkpoint OK</div>
+        </div>
+
+        <!-- Bento Tile 3: Host Telemetry -->
+        <div class="bento-card bento-tile">
+          <div>
+            <div class="tile-header">
+              <div class="tile-icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              </div>
+              <div class="tile-chip chip-muted" id="ramPill">RAM: 44%</div>
+            </div>
+            <div class="tile-metric-value" id="cpuMetricText">CPU: 0%</div>
+            <div class="tile-metric-sub">Host Compute Load</div>
+          </div>
+          <div class="tile-meter-bar">
+            <div class="tile-meter-fill" id="tileCpuMeterFill"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Bento Structured List: System Insights & Architecture -->
+      <section class="bento-card bento-list-card">
+        <div class="list-header-row">
+          <span class="list-title">Core Subsystems Status</span>
+          <span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">IPC Port 49152</span>
+        </div>
+
+        <div class="stitch-row-item">
+          <div class="row-leading">
+            <div class="row-icon-gem gem-cog">🧠</div>
+            <div>
+              <div class="row-text-primary">System 2 Deliberative Matrix</div>
+              <div class="row-text-secondary">Subconscious chain-of-thought verification for safety-critical execution</div>
+            </div>
+          </div>
+          <div class="tile-chip chip-green">Armed</div>
+        </div>
+
+        <div class="stitch-row-item">
+          <div class="row-leading">
+            <div class="row-icon-gem gem-sys">⚡</div>
+            <div>
+              <div class="row-text-primary">Procedural Neuroplasticity Engine</div>
+              <div class="row-text-secondary">Self-authoring playbooks indexed via local vector similarity</div>
+            </div>
+          </div>
+          <div class="tile-chip chip-cyan">Playbooks Indexed</div>
+        </div>
+
+        <div class="stitch-row-item">
+          <div class="row-leading">
+            <div class="row-icon-gem gem-vis">👁️</div>
+            <div>
+              <div class="row-text-primary">Set-of-Mark (SoM) Grounding</div>
+              <div class="row-text-secondary">OmniParser coordinate resolution over Windows UIAutomation trees</div>
+            </div>
+          </div>
+          <div class="tile-chip chip-muted">Calibrated</div>
+        </div>
+      </section>
+
+      <!-- Emergency Disengage Footer Link -->
+      <div class="emergency-footer">
+        <button class="btn-emergency-link" id="btnEmergencyStop">Emergency Motor Disengage Killswitch</button>
+      </div>
+
+    </div>
+
+    <!-- ====================================================================
+         TAB 2: ACTIVITY (Stitch Real-Time Ledger)
+         ==================================================================== -->
+    <div class="tab-view" id="tab-activity">
+      <div class="log-ledger-container">
+        <div class="log-ledger-header">
+          <div class="live-stream-badge">
+            <span class="pulse-dot" style="background: var(--cyan); box-shadow: 0 0 6px var(--cyan);"></span>
+            <span>REAL-TIME TELEMETRY LEDGER</span>
+          </div>
+          <button class="btn-ghost-pill" id="btnClearLogs">Clear Log</button>
+        </div>
+        <div class="log-stream-body" id="logStreamBody">
+          <!-- Dynamically populated rows -->
         </div>
       </div>
     </div>
 
     <!-- ====================================================================
-         TAB 3: SETTINGS
+         TAB 3: SETTINGS (Stitch Form Cards)
          ==================================================================== -->
-    <div class="tab-content" id="tab-settings">
-      <div class="settings-title">
-        <span>Configuration</span>
-        <button class="btn-save" id="btnSaveSettings">Save Settings</button>
+    <div class="tab-view" id="tab-settings">
+      <div class="settings-header-bar">
+        <span class="settings-title">Model Credentials & Peripherals</span>
+        <button class="btn-pill-action" id="btnSaveSettings">Save Changes</button>
       </div>
 
-      <div class="setting-group">
-        <div class="setting-header">
-          <div class="setting-label">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <div class="stitch-form-card">
+        <div class="form-header-row">
+          <div class="form-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             <span>Gemini API Key</span>
           </div>
-          <span class="setting-status-pill" id="geminiStatusPill">Not set</span>
+          <span class="form-status-tag" id="geminiTag">Not set</span>
         </div>
-        <div class="setting-desc">Required for multimodal reasoning and live audio loops.</div>
-        <div class="input-row">
-          <input type="password" class="input-field" id="inputGeminiKey" placeholder="AIzaSy...">
-          <button class="toggle-visibility-btn" data-target="inputGeminiKey">Show</button>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <div class="setting-header">
-          <div class="setting-label">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <span>Tavily Web Search Key</span>
-          </div>
-          <span class="setting-status-pill" id="tavilyStatusPill">Not set</span>
-        </div>
-        <div class="setting-desc">Enables real-time web research and fact retrieval.</div>
-        <div class="input-row">
-          <input type="password" class="input-field" id="inputTavilyKey" placeholder="tvly-...">
-          <button class="toggle-visibility-btn" data-target="inputTavilyKey">Show</button>
+        <div class="form-desc">Required for multimodal speech synthesis & reasoning loops.</div>
+        <div class="input-box-wrapper">
+          <input type="password" class="stitch-input" id="cfgGeminiKey" placeholder="AIzaSy...">
+          <button class="btn-eye-toggle" data-target="cfgGeminiKey">Show</button>
         </div>
       </div>
 
-      <div class="setting-group">
-        <div class="setting-header">
-          <div class="setting-label">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0M6 9a7 7 0 0 1 12 0M10 15a2 2 0 0 1 4 0"/></svg>
-            <span>Spotify Credentials</span>
+      <div class="stitch-form-card">
+        <div class="form-header-row">
+          <div class="form-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <span>Tavily Research API Key</span>
           </div>
-          <span class="setting-status-pill">Optional</span>
+          <span class="form-status-tag" id="tavilyTag">Not set</span>
         </div>
-        <div class="setting-desc">Enables Spotify playback automation and music recommendations.</div>
+        <div class="form-desc">Enables live web intelligence and fact-grounded search.</div>
+        <div class="input-box-wrapper">
+          <input type="password" class="stitch-input" id="cfgTavilyKey" placeholder="tvly-...">
+          <button class="btn-eye-toggle" data-target="cfgTavilyKey">Show</button>
+        </div>
+      </div>
+
+      <div class="stitch-form-card">
+        <div class="form-header-row">
+          <div class="form-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0M6 9a7 7 0 0 1 12 0M10 15a2 2 0 0 1 4 0"/></svg>
+            <span>Spotify Automation Credentials</span>
+          </div>
+          <span class="form-status-tag">Optional</span>
+        </div>
+        <div class="form-desc">Connects local playback controls to Spotify client automation.</div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <input type="password" class="input-field" id="inputSpotifyId" placeholder="Spotify Client ID">
-          <input type="password" class="input-field" id="inputSpotifySecret" placeholder="Spotify Client Secret">
+          <input type="password" class="stitch-input" id="cfgSpotifyId" placeholder="Spotify Client ID">
+          <input type="password" class="stitch-input" id="cfgSpotifySecret" placeholder="Spotify Client Secret">
         </div>
       </div>
 
-      <div class="setting-group">
-        <div class="setting-header">
-          <div class="setting-label">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-            <span>Microphone Audio Device</span>
+      <div class="stitch-form-card">
+        <div class="form-header-row">
+          <div class="form-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+            <span>Audio Microphone Input Peripheral</span>
           </div>
-          <span class="setting-status-pill">Default</span>
+          <span class="form-status-tag">Default Device</span>
         </div>
-        <div class="setting-desc">Leave blank to use the system default input peripheral.</div>
-        <input type="text" class="input-field" id="inputAudioDevice" placeholder="Default Windows Input Device">
+        <div class="form-desc">Specify exact audio peripheral name or leave blank for system default.</div>
+        <input type="text" class="stitch-input" id="cfgInputDevice" placeholder="System Default Audio Device">
       </div>
 
     </div>
 
   </main>
 
-  <!-- Minimal Toast -->
-  <div class="toast-box" id="toastBox"></div>
+  <!-- Stitch Toast Notification -->
+  <div class="stitch-toast" id="stitchToast"></div>
 
-  <!-- Client Script -->
+  <!-- Client Controller Script -->
   <script>
     (function () {
       'use strict';
 
       let isRunning = false;
       let logs = [];
+      let acousticAmplitude = 0.12;
+      let targetAcousticAmplitude = 0.12;
 
-      // Safe IPC
+      // Safe IPC Bindings
       const api = window.api || {
         readEnv: async () => ({}),
         saveEnv: async () => ({ status: 'success' }),
@@ -1162,16 +1174,16 @@
         onUIState: () => {}
       };
 
-      // Toast
-      const toastBox = document.getElementById('toastBox');
+      // Toast Engine
+      const toastEl = document.getElementById('stitchToast');
       function showToast(msg) {
-        if (!toastBox) return;
-        toastBox.textContent = msg;
-        toastBox.classList.add('show');
-        setTimeout(() => toastBox.classList.remove('show'), 2600);
+        if (!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        setTimeout(() => toastEl.classList.remove('show'), 2600);
       }
 
-      // Window controls
+      // Frameless Window Controls
       const btnTrafficClose = document.getElementById('btnTrafficClose');
       const btnTrafficMin = document.getElementById('btnTrafficMin');
       const btnTrafficMax = document.getElementById('btnTrafficMax');
@@ -1179,103 +1191,108 @@
       if (btnTrafficMin) btnTrafficMin.onclick = () => api.minimizeWindow();
       if (btnTrafficMax) btnTrafficMax.onclick = () => api.maximizeWindow();
 
-      // Tab switcher
-      const tabBtns = document.querySelectorAll('.tab-btn');
-      tabBtns.forEach(btn => {
+      // Stitch Nav Switching
+      const navButtons = document.querySelectorAll('.nav-btn');
+      navButtons.forEach(btn => {
         btn.onclick = () => {
-          tabBtns.forEach(b => b.classList.remove('active'));
+          navButtons.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
 
-          const targetTabId = btn.getAttribute('data-tab');
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          const targetEl = document.getElementById(targetTabId);
+          const targetId = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+          const targetEl = document.getElementById(targetId);
           if (targetEl) targetEl.classList.add('active');
         };
       });
 
       // Status UI Elements
-      const ambientGlow = document.getElementById('ambientGlow');
+      const stitchAmbient = document.getElementById('stitchAmbient');
       const statusOrb = document.getElementById('statusOrb');
-      const heroEqualizer = document.getElementById('heroEqualizer');
-      const heroStatusTitle = document.getElementById('heroStatusTitle');
-      const heroStatusSub = document.getElementById('heroStatusSub');
+      const heroTitle = document.getElementById('heroTitle');
+      const heroSubtitle = document.getElementById('heroSubtitle');
       const btnToggleZenith = document.getElementById('btnToggleZenith');
       const btnToggleText = document.getElementById('btnToggleText');
-      const brandBadge = document.getElementById('brandBadge');
-      const brandStatusText = document.getElementById('brandStatusText');
+      const brandLivePill = document.getElementById('brandLivePill');
+      const brandLiveStatus = document.getElementById('brandLiveStatus');
+      const spectrumStateLabel = document.getElementById('spectrumStateLabel');
 
       function updateStatusUI(running, stateText = '') {
         isRunning = running;
         if (running) {
-          if (ambientGlow) ambientGlow.classList.add('running');
-          if (statusOrb) statusOrb.classList.add('running');
-          if (heroEqualizer) heroEqualizer.classList.add('active');
-          if (heroStatusTitle) heroStatusTitle.textContent = stateText ? `Zenith is ${stateText}` : 'Zenith is running';
-          if (heroStatusSub) heroStatusSub.textContent = 'Listening on microphone • Multi-modal Gemini Live Engine';
-          if (btnToggleZenith) btnToggleZenith.className = 'btn-action running';
-          if (btnToggleText) btnToggleText.textContent = 'Stop Zenith';
-          if (brandBadge) brandBadge.classList.add('active');
-          if (brandStatusText) brandStatusText.textContent = stateText || 'ONLINE';
+          targetAcousticAmplitude = 0.55;
+          if (stitchAmbient) stitchAmbient.classList.add('active');
+          if (statusOrb) statusOrb.classList.add('active');
+          if (heroTitle) heroTitle.textContent = stateText ? `Zenith is ${stateText}` : 'Zenith is Active & Listening';
+          if (heroSubtitle) heroSubtitle.textContent = 'Multimodal Live Audio engaged • Responsive to voice and vision triggers';
+          if (btnToggleZenith) btnToggleZenith.className = 'btn-pill-action running';
+          if (btnToggleText) btnToggleText.textContent = 'Disengage';
+          if (brandLivePill) brandLivePill.classList.add('active');
+          if (brandLiveStatus) brandLiveStatus.textContent = stateText || 'ACTIVE';
+          if (spectrumStateLabel) spectrumStateLabel.textContent = 'LIVE SPECTRUM';
         } else {
-          if (ambientGlow) ambientGlow.classList.remove('running');
-          if (statusOrb) statusOrb.classList.remove('running');
-          if (heroEqualizer) heroEqualizer.classList.remove('active');
-          if (heroStatusTitle) heroStatusTitle.textContent = 'Zenith is stopped';
-          if (heroStatusSub) heroStatusSub.textContent = 'Click Start to initialize voice loop and cognitive engine';
-          if (btnToggleZenith) btnToggleZenith.className = 'btn-action';
-          if (btnToggleText) btnToggleText.textContent = 'Start Zenith';
-          if (brandBadge) brandBadge.classList.remove('active');
-          if (brandStatusText) brandStatusText.textContent = 'STANDBY';
+          targetAcousticAmplitude = 0.12;
+          if (stitchAmbient) stitchAmbient.classList.remove('active');
+          if (statusOrb) statusOrb.classList.remove('active');
+          if (heroTitle) heroTitle.textContent = 'Zenith is in Standby';
+          if (heroSubtitle) heroSubtitle.textContent = 'Multimodal reasoning loop ready • Click Engage to start';
+          if (btnToggleZenith) btnToggleZenith.className = 'btn-pill-action';
+          if (btnToggleText) btnToggleText.textContent = 'Engage Zenith';
+          if (brandLivePill) brandLivePill.classList.remove('active');
+          if (brandLiveStatus) brandLiveStatus.textContent = 'STANDBY';
+          if (spectrumStateLabel) spectrumStateLabel.textContent = 'ACOUSTIC IDLE';
         }
       }
 
-      // Toggle action
+      // Assistant Toggle
       if (btnToggleZenith) {
         btnToggleZenith.onclick = async () => {
           if (!isRunning) {
-            btnToggleText.textContent = 'Starting...';
+            btnToggleText.textContent = 'Initializing...';
             const res = await api.startZenith();
             if (res && res.status === 'success') {
               updateStatusUI(true);
-              appendLog('SYSTEM', 'Zenith daemon started.');
-              showToast('Zenith started');
+              appendLog('SYSTEM', 'Zenith daemon engaged in workspace.');
+              showToast('Zenith engaged');
             } else {
               updateStatusUI(false);
-              showToast(res && res.message ? res.message : 'Failed to start');
+              showToast(res && res.message ? res.message : 'Launch failed');
             }
           } else {
-            btnToggleText.textContent = 'Stopping...';
+            btnToggleText.textContent = 'Disengaging...';
             await api.stopZenith();
             updateStatusUI(false);
-            appendLog('SYSTEM', 'Zenith daemon stopped.');
-            showToast('Zenith stopped');
+            appendLog('SYSTEM', 'Zenith disengaged cleanly.');
+            showToast('Zenith disengaged');
           }
         };
       }
 
-      // Emergency stop
+      // Emergency Disengage
       const btnEmergencyStop = document.getElementById('btnEmergencyStop');
       if (btnEmergencyStop) {
         btnEmergencyStop.onclick = async () => {
           await api.emergencyKill();
           updateStatusUI(false);
-          appendLog('WARN', 'Emergency kill disengaged all persistent shell loops.');
-          showToast('Emergency kill triggered');
+          appendLog('WARN', 'Emergency motor disengagement triggered.');
+          showToast('Emergency Killswitch Disengaged');
         };
       }
 
       // Screen Vision Toggle
       const toggleScreenVision = document.getElementById('toggleScreenVision');
-      const visionModeLabel = document.getElementById('visionModeLabel');
+      const visionModeText = document.getElementById('visionModeText');
+      const visionChip = document.getElementById('visionChip');
+
       if (toggleScreenVision) {
         toggleScreenVision.onchange = async (e) => {
           const enable = e.target.checked;
           await api.toggleScreenVision(enable);
-          if (visionModeLabel) {
-            visionModeLabel.textContent = enable ? 'Continuous 30 FPS' : 'Smart On-Demand';
-            visionModeLabel.className = enable ? 'spec-pill pill-cyan' : 'spec-pill';
+          if (visionModeText) visionModeText.textContent = enable ? 'Continuous' : 'On-Demand';
+          if (visionChip) {
+            visionChip.textContent = enable ? '30 FPS Stream' : 'Smart Sampling';
+            visionChip.className = enable ? 'tile-chip chip-cyan' : 'tile-chip chip-muted';
           }
-          appendLog('VISION', `Screen streaming: ${enable ? 'Continuous (30 FPS)' : 'Smart On-Demand'}`);
+          appendLog('VISION', `Screen streaming -> ${enable ? 'Continuous (30 FPS)' : 'Smart On-Demand'}`);
           showToast(`Vision: ${enable ? '30 FPS Stream' : 'Smart On-Demand'}`);
         };
       }
@@ -1283,90 +1300,152 @@
       api.getScreenVisionStatus().then(status => {
         if (status && status.active) {
           if (toggleScreenVision) toggleScreenVision.checked = true;
-          if (visionModeLabel) {
-            visionModeLabel.textContent = 'Continuous 30 FPS';
-            visionModeLabel.className = 'spec-pill pill-cyan';
+          if (visionModeText) visionModeText.textContent = 'Continuous';
+          if (visionChip) {
+            visionChip.textContent = '30 FPS Stream';
+            visionChip.className = 'tile-chip chip-cyan';
           }
         }
       });
 
-      // Telemetry
-      const hostSpecVal = document.getElementById('hostSpecVal');
-      const dbSpecVal = document.getElementById('dbSpecVal');
-      const cpuMeterFill = document.getElementById('cpuMeterFill');
+      // Host Telemetry Polling
+      const cpuMetricText = document.getElementById('cpuMetricText');
+      const tileCpuMeterFill = document.getElementById('tileCpuMeterFill');
+      const ramPill = document.getElementById('ramPill');
+      const dbSizeText = document.getElementById('dbSizeText');
 
-      async function pollStats() {
+      async function pollTelemetry() {
         try {
           const telem = await api.getSystemTelemetry();
           if (telem) {
-            if (hostSpecVal) hostSpecVal.textContent = `CPU: ${telem.cpuPercent}% • RAM: ${telem.memPercent}%`;
-            if (cpuMeterFill) cpuMeterFill.style.width = `${Math.min(100, telem.cpuPercent)}%`;
+            if (cpuMetricText) cpuMetricText.textContent = `CPU: ${telem.cpuPercent}%`;
+            if (tileCpuMeterFill) tileCpuMeterFill.style.width = `${Math.min(100, telem.cpuPercent)}%`;
+            if (ramPill) ramPill.textContent = `RAM: ${telem.memPercent}%`;
           }
           const cog = await api.getCognitiveStats();
-          if (cog && cog.dbSizeKB && dbSpecVal) {
-            dbSpecVal.textContent = `WAL Active (${cog.dbSizeKB} KB)`;
+          if (cog && cog.dbSizeKB && dbSizeText) {
+            dbSizeText.textContent = `${cog.dbSizeKB} KB`;
           }
         } catch (e) {}
       }
-      setInterval(pollStats, 3000);
-      pollStats();
+      setInterval(pollTelemetry, 3000);
+      pollTelemetry();
 
-      // Check status on start
       api.checkZenithStatus().then(status => updateStatusUI(!!status));
 
-      // Terminal logs
-      const terminalBody = document.getElementById('terminalBody');
-      const btnClearTerminal = document.getElementById('btnClearTerminal');
+      // ------------------------------------------------------------------------
+      // HERO SPECTRUM WAVE CANVAS (60FPS Real-Time Stitch Visualizer)
+      // ------------------------------------------------------------------------
+      const waveCanvas = document.getElementById('heroWaveCanvas');
+      const wCtx = waveCanvas ? waveCanvas.getContext('2d') : null;
+      let ww = 0, wh = 0;
+
+      function resizeWave() {
+        if (!waveCanvas) return;
+        ww = waveCanvas.width = waveCanvas.parentElement.clientWidth;
+        wh = waveCanvas.height = waveCanvas.parentElement.clientHeight;
+      }
+      window.addEventListener('resize', resizeWave);
+      setTimeout(resizeWave, 100);
+
+      let wavePhase = 0;
+      function renderWave() {
+        if (!wCtx || !ww || !wh) {
+          requestAnimationFrame(renderWave);
+          return;
+        }
+        wCtx.clearRect(0, 0, ww, wh);
+
+        acousticAmplitude += (targetAcousticAmplitude - acousticAmplitude) * 0.08;
+        wavePhase += 0.04 + acousticAmplitude * 0.05;
+
+        const cy = wh / 2;
+        const wavesCount = 3;
+
+        for (let i = 0; i < wavesCount; i++) {
+          wCtx.beginPath();
+          const alpha = 0.2 + (i / wavesCount) * 0.6;
+          const strokeGrad = wCtx.createLinearGradient(0, 0, ww, 0);
+          strokeGrad.addColorStop(0, `rgba(16, 185, 129, ${alpha * 0.3})`);
+          strokeGrad.addColorStop(0.5, `rgba(6, 182, 212, ${alpha})`);
+          strokeGrad.addColorStop(1, `rgba(99, 102, 241, ${alpha * 0.3})`);
+
+          wCtx.strokeStyle = strokeGrad;
+          wCtx.lineWidth = 2.2;
+          wCtx.lineCap = 'round';
+
+          for (let x = 0; x < ww; x += 4) {
+            const normX = (x / ww) * Math.PI * 2;
+            const envelope = Math.sin((x / ww) * Math.PI);
+            const yOffset = Math.sin(normX * 2.2 + wavePhase + i) * (wh * 0.32 * acousticAmplitude * envelope)
+                          + Math.cos(normX * 3.8 - wavePhase) * (wh * 0.14 * acousticAmplitude * envelope);
+            const y = cy + yOffset;
+            if (x === 0) wCtx.moveTo(x, y);
+            else wCtx.lineTo(x, y);
+          }
+          wCtx.stroke();
+        }
+
+        requestAnimationFrame(renderWave);
+      }
+      requestAnimationFrame(renderWave);
+
+      // Activity Logs
+      const logStreamBody = document.getElementById('logStreamBody');
+      const btnClearLogs = document.getElementById('btnClearLogs');
 
       function appendLog(tag, msg) {
         const time = new Date().toTimeString().split(' ')[0];
         logs.push({ time, tag, msg });
-        if (!terminalBody) return;
+        if (!logStreamBody) return;
 
-        let badgeClass = 'log-badge-sys';
-        if (tag === 'IPC') badgeClass = 'log-badge-ipc';
-        if (tag === 'VISION') badgeClass = 'log-badge-vis';
-        if (tag === 'COG') badgeClass = 'log-badge-cog';
-        if (tag === 'WARN') badgeClass = 'log-badge-wrn';
+        let tagClass = 'pill-sys';
+        if (tag === 'IPC') tagClass = 'pill-ipc';
+        if (tag === 'VISION') tagClass = 'pill-vis';
+        if (tag === 'COG') tagClass = 'pill-cog';
+        if (tag === 'WARN') tagClass = 'pill-wrn';
 
-        const line = document.createElement('div');
-        line.className = 'terminal-line';
-        line.innerHTML = `
+        const row = document.createElement('div');
+        row.className = 'ledger-row';
+        row.innerHTML = `
           <span class="log-time">${time}</span>
-          <span class="log-badge ${badgeClass}">${tag}</span>
-          <span class="log-msg">${msg}</span>
+          <span class="log-tag-pill ${tagClass}">${tag}</span>
+          <span>${msg}</span>
         `;
-        terminalBody.appendChild(line);
-        terminalBody.scrollTop = terminalBody.scrollHeight;
+        logStreamBody.appendChild(row);
+        logStreamBody.scrollTop = logStreamBody.scrollHeight;
       }
 
-      if (btnClearTerminal) {
-        btnClearTerminal.onclick = () => {
+      if (btnClearLogs) {
+        btnClearLogs.onclick = () => {
           logs = [];
-          if (terminalBody) terminalBody.innerHTML = '';
+          if (logStreamBody) logStreamBody.innerHTML = '';
           showToast('Logs cleared');
         };
       }
 
       api.onUIState((state) => {
+        targetAcousticAmplitude = 0.8;
+        setTimeout(() => { if (isRunning) targetAcousticAmplitude = 0.45; }, 1200);
         updateStatusUI(true, state.toUpperCase());
-        appendLog('IPC', `State transit -> [${state}]`);
+        appendLog('IPC', `Assistant state -> [${state}]`);
       });
 
-      appendLog('SYSTEM', 'Zenith studio initialized.');
-      appendLog('SYSTEM', 'Multi-modal reasoning loop armed.');
+      appendLog('SYSTEM', 'Zenith Stitch Engine initialized.');
+      appendLog('COG', 'Procedural playbooks indexed: git_detached_head, sqlite_vacuum.');
+      appendLog('VISION', 'Set-of-Mark locator armed.');
 
-      // Settings
-      const inputGeminiKey = document.getElementById('inputGeminiKey');
-      const inputTavilyKey = document.getElementById('inputTavilyKey');
-      const inputSpotifyId = document.getElementById('inputSpotifyId');
-      const inputSpotifySecret = document.getElementById('inputSpotifySecret');
-      const inputAudioDevice = document.getElementById('inputAudioDevice');
+      // Settings Configuration
+      const cfgGeminiKey = document.getElementById('cfgGeminiKey');
+      const cfgTavilyKey = document.getElementById('cfgTavilyKey');
+      const cfgSpotifyId = document.getElementById('cfgSpotifyId');
+      const cfgSpotifySecret = document.getElementById('cfgSpotifySecret');
+      const cfgInputDevice = document.getElementById('cfgInputDevice');
       const btnSaveSettings = document.getElementById('btnSaveSettings');
-      const geminiStatusPill = document.getElementById('geminiStatusPill');
-      const tavilyStatusPill = document.getElementById('tavilyStatusPill');
+      const geminiTag = document.getElementById('geminiTag');
+      const tavilyTag = document.getElementById('tavilyTag');
 
-      document.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
+      document.querySelectorAll('.btn-eye-toggle').forEach(btn => {
         btn.onclick = () => {
           const target = document.getElementById(btn.getAttribute('data-target'));
           if (target) {
@@ -1379,47 +1458,47 @@
 
       api.readEnv().then(env => {
         if (!env) return;
-        if (inputGeminiKey && env.GEMINI_API_KEY) {
-          inputGeminiKey.value = env.GEMINI_API_KEY;
-          if (geminiStatusPill) {
-            geminiStatusPill.textContent = 'Configured';
-            geminiStatusPill.className = 'setting-status-pill configured';
+        if (cfgGeminiKey && env.GEMINI_API_KEY) {
+          cfgGeminiKey.value = env.GEMINI_API_KEY;
+          if (geminiTag) {
+            geminiTag.textContent = 'Configured';
+            geminiTag.className = 'form-status-tag active';
           }
         }
-        if (inputTavilyKey && env.TAVILY_API_KEY) {
-          inputTavilyKey.value = env.TAVILY_API_KEY;
-          if (tavilyStatusPill) {
-            tavilyStatusPill.textContent = 'Configured';
-            tavilyStatusPill.className = 'setting-status-pill configured';
+        if (cfgTavilyKey && env.TAVILY_API_KEY) {
+          cfgTavilyKey.value = env.TAVILY_API_KEY;
+          if (tavilyTag) {
+            tavilyTag.textContent = 'Configured';
+            tavilyTag.className = 'form-status-tag active';
           }
         }
-        if (inputSpotifyId && env.SPOTIFY_CLIENT_ID) inputSpotifyId.value = env.SPOTIFY_CLIENT_ID;
-        if (inputSpotifySecret && env.SPOTIFY_CLIENT_SECRET) inputSpotifySecret.value = env.SPOTIFY_CLIENT_SECRET;
-        if (inputAudioDevice && env.ZENITH_INPUT_DEVICE) inputAudioDevice.value = env.ZENITH_INPUT_DEVICE;
+        if (cfgSpotifyId && env.SPOTIFY_CLIENT_ID) cfgSpotifyId.value = env.SPOTIFY_CLIENT_ID;
+        if (cfgSpotifySecret && env.SPOTIFY_CLIENT_SECRET) cfgSpotifySecret.value = env.SPOTIFY_CLIENT_SECRET;
+        if (cfgInputDevice && env.ZENITH_INPUT_DEVICE) cfgInputDevice.value = env.ZENITH_INPUT_DEVICE;
       });
 
       if (btnSaveSettings) {
         btnSaveSettings.onclick = async () => {
           const payload = {
-            GEMINI_API_KEY: inputGeminiKey ? inputGeminiKey.value.trim() : '',
-            TAVILY_API_KEY: inputTavilyKey ? inputTavilyKey.value.trim() : '',
-            SPOTIFY_CLIENT_ID: inputSpotifyId ? inputSpotifyId.value.trim() : '',
-            SPOTIFY_CLIENT_SECRET: inputSpotifySecret ? inputSpotifySecret.value.trim() : '',
-            ZENITH_INPUT_DEVICE: inputAudioDevice ? inputAudioDevice.value.trim() : ''
+            GEMINI_API_KEY: cfgGeminiKey ? cfgGeminiKey.value.trim() : '',
+            TAVILY_API_KEY: cfgTavilyKey ? cfgTavilyKey.value.trim() : '',
+            SPOTIFY_CLIENT_ID: cfgSpotifyId ? cfgSpotifyId.value.trim() : '',
+            SPOTIFY_CLIENT_SECRET: cfgSpotifySecret ? cfgSpotifySecret.value.trim() : '',
+            ZENITH_INPUT_DEVICE: cfgInputDevice ? cfgInputDevice.value.trim() : ''
           };
           const res = await api.saveEnv(payload);
           if (res && res.status === 'success') {
             showToast('Settings saved');
-            appendLog('SYSTEM', 'Settings updated.');
-            if (geminiStatusPill) {
+            appendLog('SYSTEM', 'Saved environment tokens to local workspace.');
+            if (geminiTag) {
               const hasKey = !!payload.GEMINI_API_KEY;
-              geminiStatusPill.textContent = hasKey ? 'Configured' : 'Not set';
-              geminiStatusPill.className = hasKey ? 'setting-status-pill configured' : 'setting-status-pill';
+              geminiTag.textContent = hasKey ? 'Configured' : 'Not set';
+              geminiTag.className = hasKey ? 'form-status-tag active' : 'form-status-tag';
             }
-            if (tavilyStatusPill) {
+            if (tavilyTag) {
               const hasKey = !!payload.TAVILY_API_KEY;
-              tavilyStatusPill.textContent = hasKey ? 'Configured' : 'Not set';
-              tavilyStatusPill.className = hasKey ? 'setting-status-pill configured' : 'setting-status-pill';
+              tavilyTag.textContent = hasKey ? 'Configured' : 'Not set';
+              tavilyTag.className = hasKey ? 'form-status-tag active' : 'form-status-tag';
             }
           } else {
             showToast('Failed to save settings');
