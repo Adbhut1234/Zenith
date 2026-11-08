@@ -164,9 +164,9 @@ Zenith requires only **two** free services:
 
 ## 📜 License
 
-Copyright (c) 2026 Enc0deX. **All Rights Reserved.** 
+Distributed under the **Apache 2.0 License**. See [LICENSE](LICENSE) for more information.
 
-You may not copy, modify, distribute, or use this software for commercial purposes without explicit written permission.
+Copyright (c) 2026 Enc0deX.
 
 ---
 
