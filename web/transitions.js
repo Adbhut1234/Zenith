@@ -2,6 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbarScroll();
+  initSmoothScroll();
   fetchLatestRelease();
   initHeroTypewriter();
   init3DTiltCards();
@@ -181,13 +182,86 @@ function init3DTiltCards() {
   });
 }
 
+// ── 2.5. Buttery Smooth Momentum Inertia Scrolling Engine (Linear / Raycast Feel) ──
+function initSmoothScroll() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+
+  // Ensure native smooth scrolling doesn't lag the frame-by-frame lerp loop
+  document.documentElement.style.scrollBehavior = 'auto';
+
+  let currentY = window.pageYOffset;
+  let targetY = window.pageYOffset;
+  let isScrolling = false;
+  let animationId = null;
+  const damping = 0.085; // Silky fluid momentum damping factor
+
+  function update() {
+    const diff = targetY - currentY;
+    currentY += diff * damping;
+
+    if (Math.abs(diff) < 0.4) {
+      currentY = targetY;
+      window.scrollTo(0, currentY);
+      isScrolling = false;
+      return;
+    }
+
+    window.scrollTo(0, currentY);
+    animationId = requestAnimationFrame(update);
+  }
+
+  window.addEventListener('wheel', (e) => {
+    if (e.target && typeof e.target.closest === 'function' && e.target.closest('input, textarea, select')) return;
+
+    e.preventDefault();
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const delta = e.deltaY * 0.9;
+    targetY = Math.max(0, Math.min(maxScroll, targetY + delta));
+
+    if (!isScrolling) {
+      isScrolling = true;
+      animationId = requestAnimationFrame(update);
+    }
+  }, { passive: false });
+
+  // Handle internal anchor links with the same smooth glide
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', (e) => {
+      const href = anchor.getAttribute('href');
+      if (href === '#' || !href) return;
+      const target = document.querySelector(href);
+      if (!target) return;
+
+      e.preventDefault();
+      const rect = target.getBoundingClientRect();
+      const offsetTop = rect.top + window.pageYOffset - 72; // Header offset
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      targetY = Math.max(0, Math.min(maxScroll, offsetTop));
+
+      if (!isScrolling) {
+        isScrolling = true;
+        animationId = requestAnimationFrame(update);
+      }
+    });
+  });
+
+  // Keep target in sync if user drags native scrollbar thumb
+  window.addEventListener('scroll', () => {
+    if (!isScrolling) {
+      currentY = window.pageYOffset;
+      targetY = window.pageYOffset;
+    }
+  }, { passive: true });
+}
+
 // ── 3. Scroll Reveal System (Staggered 3D Cascade) ──
 function initScrollReveals() {
   const revealElements = document.querySelectorAll('.reveal-item');
   if (!revealElements.length) return;
 
   revealElements.forEach((el, idx) => {
-    const delay = (idx % 4) * 0.12;
+    const delay = (idx % 3) * 0.1;
     el.style.transitionDelay = `${delay}s`;
     const rect = el.getBoundingClientRect();
     if (rect.top > window.innerHeight) {
@@ -201,10 +275,11 @@ function initScrollReveals() {
         if (entry.isIntersecting) {
           entry.target.classList.remove('reveal-pending');
           entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
         }
       });
     },
-    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    { threshold: 0.08, rootMargin: '0px 0px -60px 0px' }
   );
 
   revealElements.forEach((el) => observer.observe(el));
