@@ -32,6 +32,9 @@ async function fetchLatestRelease() {
   const directFallback = 'https://github.com/Adbhut1234/Zenith/releases/latest/download/Zenith-Windows-Installer.exe';
 
   function applyDownloadUrl(url) {
+    if (typeof url !== 'string' || !url.startsWith('https://github.com/Adbhut1234/Zenith/')) {
+      return;
+    }
     downloadBtns.forEach((btn) => {
       btn.setAttribute('href', url);
     });
