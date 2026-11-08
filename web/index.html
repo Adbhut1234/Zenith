@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenith — Sovereign Voice &amp; Screen AI Agent for Windows</title>
+  <meta name="description" content="Zenith is a sovereign, voice-first Windows desktop AI agent with sub-200ms latency, active screen automation, and 100% private local SQLite memory.">
+  <meta name="theme-color" content="#0c0d10">
+  
+  <!-- Open Graph / Facebook / Discord -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Zenith — Sovereign Voice &amp; Screen AI Agent for Windows">
+  <meta property="og:description" content="An AI assistant that actually lives on your PC. Sees your screen, automates apps, speaks in English &amp; Hinglish with sub-200ms latency, and remembers everything in a 100% private local SQLite database.">
+  <meta property="og:image" content="zenith_bmc_cover.png">
+  
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Zenith — Sovereign Desktop AI">
+  <meta name="twitter:description" content="Sub-200ms duplex voice, active screen automation, and 100% private local SQLite memory for Windows.">
+  <meta name="twitter:image" content="zenith_bmc_cover.png">
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="app.css">
+  <script src="three.min.js"></script>
+</head>
+<body>
+
+  <!-- ── 1. Professional Minimalist Preloader (Linear Style) ── -->
+  <div id="loader-overlay">
+    <div class="loader-box">
+      <div class="loader-logo-wrap">
+        <img src="logo.png" alt="Zenith" class="loader-logo" onerror="this.src='zenith_logo.svg'">
+      </div>
+      <div class="loader-track">
+        <div id="loader-bar" class="loader-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2. Floating Glass Capsule Navigation (Linear / Raycast Style) ── -->
+  <header class="navbar">
+    <div class="nav-wrap">
+      <a href="#" class="nav-brand tilt-card">
+        <img src="logo.png" alt="Zenith Logo" onerror="this.src='zenith_logo.svg'">
+        <span>Zenith</span>
+      </a>
+
+      <nav class="nav-menu">
+        <a href="#hero" class="nav-link tilt-card">Mind Core</a>
+        <a href="#voice" class="nav-link tilt-card">Voice-First</a>
+        <a href="#capabilities" class="nav-link tilt-card">Capabilities</a>
+        <a href="#comparison" class="nav-link tilt-card">Compare</a>
+        <a href="https://github.com/Adbhut1234/Zenith" target="_blank" rel="noopener noreferrer" class="nav-link nav-link-gh tilt-card">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub</span>
+        </a>
+      </nav>
+
+      <a href="https://github.com/Adbhut1234/Zenith/releases/latest/download/Zenith-Windows-Installer.exe" target="_blank" rel="noopener noreferrer" class="btn-nav tilt-card">
+        <span>Download</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- ── 3. Main Site Content ── -->
+  <main>
+
+    <!-- ── Hero Section ── -->
+    <section class="hero" id="hero">
+      <div class="hero-announcement tilt-card">
+        <span class="announcement-text">Latest release of Zenith <span id="latest-version-tag" class="announcement-ver">v1.0.2</span></span>
+      </div>
+
+      <h1 class="hero-title" aria-label="An AI assistant that actually lives on your PC.">
+        <span class="type-line type-line-1"><span id="type-line-1">An AI assistant that actually</span><span class="type-cursor" id="type-cursor"></span></span>
+        <span class="type-line type-line-2"><span id="type-line-2" class="title-gradient">lives on your PC.</span></span>
+      </h1>
+
+      <p class="hero-subline">
+        Zenith sees your active screen, automates apps, speaks in English &amp; Hinglish with sub-200ms latency, and remembers everything in a 100% private local SQLite database.
+      </p>
+
+      <div class="hero-actions">
+        <a href="https://github.com/Adbhut1234/Zenith/releases/latest/download/Zenith-Windows-Installer.exe" target="_blank" rel="noopener noreferrer" class="btn-primary tilt-card">
+          <span>Download for Windows (64-bit)</span>
+        </a>
+        <a href="https://github.com/Adbhut1234/Zenith" target="_blank" rel="noopener noreferrer" class="btn-ghost tilt-card">
+          <span>View Source on GitHub ↗</span>
+        </a>
+      </div>
+
+      <!-- 3D Zenith Core Chamber (Interactive 3D Stage) -->
+      <div class="stage-3d-box tilt-card">
+        <div class="stage-top-hud">
+          <div class="stage-dots">
+            <span class="stage-dot dot-red"></span>
+            <span class="stage-dot dot-yellow"></span>
+            <span class="stage-dot dot-green"></span>
+          </div>
+          <div class="stage-title">
+            Zenith Neural Core
+          </div>
+        </div>
+
+        <!-- 3D Canvas Viewport -->
+        <div id="zenith-3d-viewport" class="canvas-viewport" title="Drag to tilt the 3D Mind Core">
+          <!-- Floating Ambient Chips -->
+          <div class="floating-chip chip-1">
+            <span class="chip-check">✓</span>
+            <span>Hinglish &amp; Hindi Native</span>
+          </div>
+          <div class="floating-chip chip-2">
+            <span class="chip-check">✓</span>
+            <span>100% Local SQLite Memory</span>
+          </div>
+          <div class="floating-chip chip-3">
+            <span class="chip-check">✓</span>
+            <span>Sub-240ms Latency</span>
+          </div>
+          <div class="floating-chip chip-4">
+            <span class="chip-check">✓</span>
+            <span>&lt; 5ms Killswitch</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 4. Voice-First Experience ── -->
+    <section class="voice-section" id="voice">
+      <div class="glass-card tilt-card reveal-item">
+        <div class="section-label">Voice Intelligence</div>
+        <h2 class="section-h2">Zero Push-to-Talk. Natural Full-Duplex Speech.</h2>
+        <p class="section-p">
+          Direct streaming audio powered by LiveKit WebRTC and Gemini Multimodal Live. Interrupt Zenith mid-sentence naturally without delay or robotic pauses.
+        </p>
+
+        <div class="voice-grid">
+          <div class="voice-stat tilt-card reveal-item">
+            <div class="voice-stat-val">184ms</div>
+            <div class="voice-stat-lbl">Round-Trip Latency</div>
+          </div>
+          <div class="voice-stat tilt-card reveal-item">
+            <div class="voice-stat-val">Full-Duplex</div>
+            <div class="voice-stat-lbl">Mid-Sentence Interrupt</div>
+          </div>
+          <div class="voice-stat tilt-card reveal-item">
+            <div class="voice-stat-val">Hinglish Native</div>
+            <div class="voice-stat-lbl">Bilingual Speech</div>
+          </div>
+          <div class="voice-stat tilt-card reveal-item">
+            <div class="voice-stat-val">Silero VAD</div>
+            <div class="voice-stat-lbl">Neural Noise Filtering</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 5. Capabilities (The 7 Pillars) ── -->
+    <section class="capabilities-section" id="capabilities">
+      <div style="text-align: center; margin-bottom: 48px;" class="reveal-item">
+        <div class="section-label">Capabilities</div>
+        <h2 class="section-h2">Everything you need, running locally.</h2>
+        <p class="section-p" style="margin: 0 auto;">
+          Built for on-device privacy, fast desktop execution, and complete software autonomy.
+        </p>
+      </div>
+
+      <div class="cap-grid">
+        <!-- 01 -->
+        <div class="cap-card tilt-card reveal-item">
+          <div class="cap-cat">Deliberative Reasoning</div>
+          <h3 class="cap-title">Subconscious Deep Thinker</h3>
+          <p class="cap-desc">
+            When faced with complex bugs or multi-step tasks, Zenith engages its deliberative subconscious matrix to simulate failure modes, evaluate counterfactuals, and formulate optimal plans before acting.
+          </p>
+          <div class="cap-tags">
+            <span class="cap-tag">Deep Reasoning Matrix</span>
+            <span class="cap-tag">Counterfactual Simulation</span>
+          </div>
+        </div>
+
+        <!-- 02 -->
+        <div class="cap-card tilt-card reveal-item">
+          <div class="cap-cat">Consensus Matrix</div>
+          <h3 class="cap-title">The Council of Overlays</h3>
+          <p class="cap-desc">
+            Inspired by Vision’s multi-layered mind. When evaluating architectural trade-offs, Zenith convenes The Architect, The Skeptic, and The Pragmatist to debate trade-offs and synthesize unified consensus.
+          </p>
+          <div class="cap-tags">
+            <span class="cap-tag">The Architect</span>
+            <span class="cap-tag">The Skeptic</span>
+            <span class="cap-tag">The Pragmatist</span>
+          </div>
+        </div>
+
+        <!-- 03 -->
+        <div class="cap-card tilt-card reveal-item">
+          <div class="cap-cat">On-Device Storage</div>
+          <h3 class="cap-title">Sovereign Local Memory</h3>
+          <p class="cap-desc">
+            Zero cloud memory locks. Zenith stores episodic facts, vector embeddings, and procedural playbooks in an embedded SQLite database on your machine with "The Ship of Theseus" belief reconciliation.
+          </p>
+          <div class="cap-tags">
+            <span class="cap-tag">zenith_memory.db</span>
+            <span class="cap-tag">Vector RAG</span>
+            <span class="cap-tag">Ship of Theseus</span>
+          </div>
+        </div>
+
+        <!-- 04 -->
+        <div class="cap-card tilt-card reveal-item">
+          <div class="cap-cat">Screen Vision &amp; Control</div>
+          <h3 class="cap-title">UI Automation &amp; Set-of-Marks</h3>
+          <p class="cap-desc">
+            Zenith observes your active screen, tags interactive controls with numbered visual bounding boxes [1] [2] [3], and operates native Windows software, browsers, and terminal processes accurately.
+          </p>
+          <div class="cap-tags">
+            <span class="cap-tag">Zero-Copy GDI Mirroring</span>
+            <span class="cap-tag">Windows UIAutomation</span>
+          </div>
+        </div>
+
+        <!-- 05 -->
+        <div class="cap-card tilt-card reveal-item">
+          <div class="cap-cat">Autonomous Recovery</div>
+          <h3 class="cap-title">Neuroplastic Self-Healing</h3>
+          <p class="cap-desc">
+            Whenever a shell command or UI click encounters an error, Zenith diagnoses the root cause and writes a permanent procedural playbook into SQLite so it never repeats the same mistake twice.
+          </p>
+          <div class="cap-tags">
+            <span class="cap-tag">Procedural Memory</span>
+            <span class="cap-tag">Self-Healing Playbooks</span>
+          </div>
+        </div>
+
+        <!-- 06 -->
+        <div class="cap-card tilt-card reveal-item">
+          <div class="cap-cat">Proactive Background Synthesis</div>
+          <h3 class="cap-title">The Dream Cycle</h3>
+          <p class="cap-desc">
+            While you work, Zenith’s background idle synthesis quietly reconciles unresolved ambient signals (copied compiler errors, completed processes) and pre-computes fixes before you even ask.
+          </p>
+          <div class="cap-tags">
+            <span class="cap-tag">Background Idle Daemon</span>
+            <span class="cap-tag">Pre-computation</span>
+          </div>
+        </div>
+
+        <!-- 07 (Span 2 Columns) -->
+        <div class="cap-card tilt-card reveal-item" style="grid-column: 1 / -1;">
+          <div class="cap-cat">Zero-Token Code Traversal</div>
+          <h3 class="cap-title">Code Phasing &amp; Molecular Inspection</h3>
+          <p class="cap-desc">
+            Inspired by Vision’s phasing abilities. Uses native Python AST parsing to dissect and map classes, functions, signatures, and docstrings across entire codebases in milliseconds with <strong>zero API token cost</strong>.
+          </p>
+          <div class="cap-tags">
+            <span class="cap-tag">Native AST Traversal</span>
+            <span class="cap-tag">Zero Token Cost</span>
+            <span class="cap-tag">Sub-10ms Parse</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 6. Comparison Matrix: Zenith vs. Microsoft Copilot & Cloud Chatbots ── -->
+    <section class="compare-section" id="comparison">
+      <div style="text-align: center; max-width: 820px; margin: 0 auto 52px;">
+        <div class="section-label reveal-item">Direct Comparison</div>
+        <h2 class="section-h2 reveal-item">The Autonomous Edge.</h2>
+        <p class="section-p reveal-item" style="margin: 0 auto;">
+          Compare Zenith’s local multimodal voice agent against Microsoft Copilot and cloud-locked assistants.
+        </p>
+      </div>
+
+      <div class="compare-card glass-card tilt-card reveal-item">
+        <div class="compare-table-wrapper">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th class="col-dim">Architecture &amp; Capabilities</th>
+                <th class="col-zenith">
+                  <div class="col-header-wrap">
+                    <span class="brand-zenith">Zenith</span>
+                    <span class="badge-zenith-pill">Sovereign Agent</span>
+                  </div>
+                </th>
+                <th class="col-other">Microsoft Copilot</th>
+                <th class="col-other">ChatGPT / Claude</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="dim-label">
+                  <strong>Memory Sovereignty</strong>
+                  <span>Where long-term facts &amp; context live</span>
+                </td>
+                <td class="zenith-cell">
+                  <span class="badge-check">✓ 100% Local SQLite WAL</span>
+                  <span class="cell-sub">Private on-device vector RAG • Zero cloud locks</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Cloud-Locked</span>
+                  <span class="cell-sub">Microsoft Azure telemetry &amp; cloud retention</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Cloud Memory</span>
+                  <span class="cell-sub">Server-side vector storage &amp; sync</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="dim-label">
+                  <strong>PC &amp; Desktop Control</strong>
+                  <span>Computer Use &amp; UI execution</span>
+                </td>
+                <td class="zenith-cell">
+                  <span class="badge-check">✓ Full Win32 Automation</span>
+                  <span class="cell-sub">Set-of-Marks visual badges, GDI, Terminal &amp; Apps</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Edge / Windows Toggles</span>
+                  <span class="cell-sub">Cannot operate third-party desktop apps</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Text Only</span>
+                  <span class="cell-sub">No desktop automation engine</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="dim-label">
+                  <strong>Voice Latency &amp; Stream</strong>
+                  <span>Conversational speech roundtrip</span>
+                </td>
+                <td class="zenith-cell">
+                  <span class="badge-check">✓ &lt; 184ms Full-Duplex</span>
+                  <span class="cell-sub">LiveKit WebRTC + Silero VAD mid-sentence interrupt</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ ~1,200ms Turn-Based</span>
+                  <span class="cell-sub">Push-to-talk transcription lag</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ ~600ms Cloud Voice</span>
+                  <span class="cell-sub">Server roundtrip, monthly session caps</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="dim-label">
+                  <strong>Multilingual &amp; Hinglish</strong>
+                  <span>Indian bilingual vernacular flow</span>
+                </td>
+                <td class="zenith-cell">
+                  <span class="badge-check">✓ Native Hinglish &amp; Hindi</span>
+                  <span class="cell-sub">Seamless code-switching in real-time speech</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Rigid Monolingual</span>
+                  <span class="cell-sub">Fails mixed-language dialect switches</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Generic Multilingual</span>
+                  <span class="cell-sub">Stiff tone, robotic inflection</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="dim-label">
+                  <strong>Codebase Inspection Cost</strong>
+                  <span>AST traversal &amp; refactoring</span>
+                </td>
+                <td class="zenith-cell">
+                  <span class="badge-check">✓ Zero API Token Cost</span>
+                  <span class="cell-sub">Molecular AST Python traversal in &lt; 10ms</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Consumes Context Tokens</span>
+                  <span class="cell-sub">Strict file upload size caps</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Token-Gated</span>
+                  <span class="cell-sub">Subject to context limits</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="dim-label">
+                  <strong>Autonomous Self-Healing</strong>
+                  <span>Fixes repeated runtime failures</span>
+                </td>
+                <td class="zenith-cell">
+                  <span class="badge-check">✓ Neuroplastic Playbooks</span>
+                  <span class="cell-sub">Diagnoses errors &amp; stores post-mortems</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Stateless Sessions</span>
+                  <span class="cell-sub">Repeats the same failure</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ Stateless Sessions</span>
+                  <span class="cell-sub">No procedural learning</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="dim-label">
+                  <strong>Licensing &amp; Pricing</strong>
+                  <span>Monthly subscriptions vs freedom</span>
+                </td>
+                <td class="zenith-cell">
+                  <span class="badge-check">✓ 100% Free &amp; Open Source</span>
+                  <span class="cell-sub">Apache 2.0 • Bring Your Own Keys</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ $20 – $30 / mo / user</span>
+                  <span class="cell-sub">Proprietary enterprise lock-in</span>
+                </td>
+                <td class="other-cell">
+                  <span class="badge-cross">✕ $20 / mo Pro Tier</span>
+                  <span class="cell-sub">Proprietary cloud model</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 10. FAQ & Support Section ── -->
+    <section class="faq-section" id="faq">
+      <div class="section-label reveal-item" style="text-align: center;">Support &amp; Help</div>
+      <h2 class="section-h2 reveal-item" style="text-align: center; margin-bottom: 14px;">
+        Frequently Asked Questions
+      </h2>
+      <p class="section-p reveal-item" style="text-align: center; max-width: 620px; margin: 0 auto 52px;">
+        Everything you need to know about setting up, running, and securing your sovereign Zenith desktop agent.
+      </p>
+
+      <div class="faq-list reveal-item">
+        <details class="faq-item" open>
+          <summary class="faq-question">
+            <span>Do I need to pay for API keys or monthly subscriptions?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            No. Zenith utilizes Google Gemini Multimodal Live and LiveKit Cloud through their generous 100% free developer tiers. No credit card or monthly plan is required to get started with full real-time voice and vision capabilities.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>Does any voice, screen, or memory data get stored in the cloud?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Never. All user facts, semantic memory matrices, and automation routines are stored exclusively inside a local SQLite database (<code>zenith_memory.db</code>) residing directly on your local SSD. No personal thoughts or activity logs ever leave your machine.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>What are the system and hardware requirements?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Zenith is engineered natively for 64-bit Windows 10 and Windows 11. It requires a working microphone for duplex speech and an active internet connection for the LiveKit WebRTC audio transport. Because neural reasoning runs via Google's high-speed cloud edge, you do not need an expensive local GPU.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>What should I do if Zenith cannot click or automate an application?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Some Windows utilities (such as Task Manager, Command Prompt as Admin, or software installers) run with elevated security permissions. Run Zenith as Administrator (right-click &gt; <em>Run as administrator</em>) so that the Windows UI Automation (UIA) driver can interact with elevated desktop windows without restrictions.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>Where can I report a bug or request technical support?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Encountered an issue or have a feature suggestion? File an issue in our <a href="https://github.com/Adbhut1234/Zenith/issues/new" target="_blank" rel="noopener noreferrer">Issue Tracker</a> or start a thread on <a href="https://github.com/Adbhut1234/Zenith/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a>. Developer feedback is reviewed daily.
+          </div>
+        </details>
+      </div>
+
+      <!-- Support / Buy Me a Coffee Banner -->
+      <div class="support-coffee-banner reveal-item">
+        <div class="coffee-badge">
+          <span class="coffee-icon">☕</span>
+          <span>Support Sovereign AI</span>
+        </div>
+        <div class="coffee-text-block">
+          <h3 class="coffee-title">Enjoying Zenith? Fuel the Project</h3>
+          <p class="coffee-desc">
+            Zenith is an independent, 100% free open project engineered by <strong>Enc0deX</strong>. If Zenith saves you hours, powers your desktop workflow, or inspires your projects, consider buying a coffee to keep continuous updates rolling.
+          </p>
+        </div>
+        <a href="https://buymeacoffee.com/enc0dex" target="_blank" rel="noopener noreferrer" class="btn-coffee tilt-card">
+          <span class="coffee-btn-icon">☕</span>
+          <span>Buy Me a Coffee</span>
+          <span class="coffee-btn-arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ── 11. Final CTA ── -->
+    <section class="cta-section">
+      <div class="section-label reveal-item">Get Started</div>
+      <h2 class="section-h2 reveal-item" style="font-size: clamp(38px, 6vw, 68px);">
+        Ready to run Zenith locally?
+      </h2>
+      <p class="section-p reveal-item" style="margin: 0 auto 36px;">
+        100% sovereign. Zero cloud memory dependencies. Native Windows voice &amp; screen autonomy.
+      </p>
+
+      <div class="hero-actions reveal-item">
+        <a href="https://github.com/Adbhut1234/Zenith/releases/latest/download/Zenith-Windows-Installer.exe" target="_blank" rel="noopener noreferrer" class="btn-primary tilt-card" style="font-size: 16px; padding: 18px 42px;">
+          <span>Download for Windows (64-bit)</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </a>
+        <a href="https://github.com/Adbhut1234/Zenith" target="_blank" rel="noopener noreferrer" class="btn-ghost tilt-card" style="font-size: 16px; padding: 18px 36px;">
+          <span>View on GitHub ↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── 11. Footer ── -->
+  <footer class="footer">
+    <div class="footer-wordmark">ZENITH</div>
+
+    <nav class="footer-nav">
+      <a href="#faq" class="footer-link">Support &amp; Help</a>
+      <a href="https://buymeacoffee.com/enc0dex" target="_blank" rel="noopener noreferrer" class="footer-link">Buy Me a Coffee ☕</a>
+      <a href="https://github.com/Adbhut1234/Zenith/issues/new" target="_blank" rel="noopener noreferrer" class="footer-link">Report a Bug</a>
+      <a href="https://github.com/Adbhut1234/Zenith/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="footer-link">Copyright License</a>
+    </nav>
+
+    <p class="footer-copy">
+      © 2026 Zenith. Built by Enc0deX. All rights reserved.
+    </p>
+  </footer>
+
+  <!-- ── Professional Minimalist Preloader Script ── -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const loader = document.getElementById('loader-overlay');
+      const bar = document.getElementById('loader-bar');
+      if (!loader) return;
+
+      const startTime = performance.now();
+      const duration = 750;
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 2.5);
+
+        if (bar) bar.style.width = (eased * 100) + '%';
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          loader.classList.add('fade-out');
+          document.body.classList.add('hero-loaded');
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 400);
+        }
+      }
+
+      requestAnimationFrame(step);
+    });
+  </script>
+
+  <!-- ── 3D Core Scene Engine ── -->
+  <script src="zenith_scene.js"></script>
+
+  <!-- ── Heavy Transitions & Interaction Engine ── -->
+  <script src="transitions.js"></script>
+</body>
+</html>

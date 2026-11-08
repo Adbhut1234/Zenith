@@ -1,0 +1,66 @@
+/* ── Custom Zenith Overrides for Antigravity Clone ── */
+
+/* Constrain hero height so it takes exactly one standard viewport without expanding infinitely */
+.welcome-wrapper:where(.astro-lcdefpme),
+.welcome-wrapper {
+  min-height: 750px !important;
+  max-height: 880px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  position: relative !important;
+  padding: 80px 24px 60px !important;
+}
+
+/* Ensure hero CTA button & logo are 100% visible immediately without waiting for Google GSAP */
+.welcome-cta:where(.astro-lcdefpme),
+.welcome-cta,
+.logo-container:where(.astro-lcdefpme),
+.logo-container,
+.hero-video-container:where(.astro-lcdefpme),
+.hero-video-container {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* Ensure all feature items, images, and copy are 100% visible */
+.feature-item,
+.feature-copy,
+.feature-media,
+.feature-image,
+.feature-title,
+.feature-description,
+.slide-image,
+.solution-section,
+.download-section {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Antigravity Micro-Particles Canvas */
+#antigravityCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-video-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.welcome-section {
+  position: relative;
+  z-index: 2;
+}
+
+/* Equalizer Visualizer & Studio Mockup */
+.interactive-tilt {
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}

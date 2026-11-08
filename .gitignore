@@ -40,7 +40,6 @@ log*.txt
 node_modules/
 dist/
 build/
-web/
 *.zip
 *.db
 zenith_mem_db/
