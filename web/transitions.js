@@ -121,12 +121,13 @@ function init3DTiltCards() {
     card.addEventListener('mouseenter', () => {
       isHovered = true;
       card.style.animation = 'none';
+      card.style.transition = 'none';
       rect = card.getBoundingClientRect();
       if (!rafId) rafId = requestAnimationFrame(animateTilt);
     });
 
     card.addEventListener('mousemove', (e) => {
-      if (!rect) rect = card.getBoundingClientRect();
+      rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       const centerX = rect.width / 2;
@@ -173,6 +174,7 @@ function init3DTiltCards() {
 
       if (!isHovered && Math.abs(currentX) < 0.04 && Math.abs(currentY) < 0.04 && Math.abs(currentLift) < 0.05 && Math.abs(currentScale - 1) < 0.001) {
         card.style.transform = `perspective(${perspectiveVal}px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1)`;
+        card.style.transition = '';
         rafId = null;
         return;
       }
