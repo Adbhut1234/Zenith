@@ -170,6 +170,8 @@ You may not copy, modify, distribute, or use this software for commercial purpos
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Author & Support
 
 Built and maintained by **Enc0deX**.
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/enc0dex)
