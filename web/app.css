@@ -1210,6 +1210,188 @@ body {
   line-height: 1.4;
 }
 
+/* ── FAQ & Support Section ── */
+.faq-section {
+  max-width: 860px;
+  margin: 120px auto 40px;
+  padding: 0 24px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faq-item {
+  background: rgba(18, 19, 24, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.faq-item:hover {
+  border-color: rgba(100, 210, 177, 0.3);
+  background: rgba(22, 24, 30, 0.8);
+}
+
+.faq-item[open] {
+  border-color: rgba(100, 210, 177, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 24px rgba(100, 210, 177, 0.08);
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.faq-item[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  padding: 0 28px 24px;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.faq-answer code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+}
+
+.faq-answer a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.faq-answer a:hover {
+  color: #8be4cb;
+}
+
+/* ── Support & Buy Me a Coffee Banner ── */
+.support-coffee-banner {
+  margin-top: 36px;
+  padding: 32px 36px;
+  border-radius: var(--radius-card);
+  background: radial-gradient(ellipse at 15% 50%, rgba(255, 193, 7, 0.08) 0%, rgba(20, 21, 28, 0.75) 70%), #0f1015;
+  border: 1px solid rgba(255, 193, 7, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.support-coffee-banner:hover {
+  border-color: rgba(255, 193, 7, 0.45);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 28px rgba(255, 193, 7, 0.12);
+}
+
+.coffee-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.25);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  width: fit-content;
+}
+
+.coffee-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.coffee-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 680px;
+}
+
+.coffee-desc strong {
+  color: #ffffff;
+}
+
+.btn-coffee {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  align-self: flex-start;
+  padding: 12px 24px;
+  margin-top: 4px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, #FFDD00 0%, #FFB703 100%);
+  color: #111216;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 18px rgba(255, 193, 7, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-coffee:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 193, 7, 0.55);
+  filter: brightness(1.06);
+}
+
+.coffee-btn-icon {
+  font-size: 16px;
+}
+
+.coffee-btn-arrow {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
 /* ── Final CTA ── */
 .cta-section {
   max-width: 980px;

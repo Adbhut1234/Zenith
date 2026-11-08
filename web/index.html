@@ -407,7 +407,99 @@
       </div>
     </section>
 
-    <!-- ── 10. Final CTA ── -->
+    <!-- ── 10. FAQ & Support Section ── -->
+    <section class="faq-section" id="faq">
+      <div class="section-label reveal-item" style="text-align: center;">Support &amp; Help</div>
+      <h2 class="section-h2 reveal-item" style="text-align: center; margin-bottom: 14px;">
+        Frequently Asked Questions
+      </h2>
+      <p class="section-p reveal-item" style="text-align: center; max-width: 620px; margin: 0 auto 52px;">
+        Everything you need to know about setting up, running, and securing your sovereign Zenith desktop agent.
+      </p>
+
+      <div class="faq-list reveal-item">
+        <details class="faq-item" open>
+          <summary class="faq-question">
+            <span>Do I need to pay for API keys or monthly subscriptions?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            No. Zenith utilizes Google Gemini Multimodal Live and LiveKit Cloud through their generous 100% free developer tiers. No credit card or monthly plan is required to get started with full real-time voice and vision capabilities.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>Does any voice, screen, or memory data get stored in the cloud?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Never. All user facts, semantic memory matrices, and automation routines are stored exclusively inside a local SQLite database (<code>zenith_memory.db</code>) residing directly on your local SSD. No personal thoughts or activity logs ever leave your machine.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>What are the system and hardware requirements?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Zenith is engineered natively for 64-bit Windows 10 and Windows 11. It requires a working microphone for duplex speech and an active internet connection for the LiveKit WebRTC audio transport. Because neural reasoning runs via Google's high-speed cloud edge, you do not need an expensive local GPU.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>What should I do if Zenith cannot click or automate an application?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Some Windows utilities (such as Task Manager, Command Prompt as Admin, or software installers) run with elevated security permissions. Run Zenith as Administrator (right-click &gt; <em>Run as administrator</em>) so that the Windows UI Automation (UIA) driver can interact with elevated desktop windows without restrictions.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>Where can I report a bug or request technical support?</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            Encountered an issue or have a feature suggestion? File an issue in our <a href="https://github.com/Adbhut1234/Zenith/issues/new" target="_blank" rel="noopener noreferrer">Issue Tracker</a> or start a thread on <a href="https://github.com/Adbhut1234/Zenith/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a>. Developer feedback is reviewed daily.
+          </div>
+        </details>
+      </div>
+
+      <!-- Support / Buy Me a Coffee Banner -->
+      <div class="support-coffee-banner reveal-item">
+        <div class="coffee-badge">
+          <span class="coffee-icon">☕</span>
+          <span>Support Sovereign AI</span>
+        </div>
+        <div class="coffee-text-block">
+          <h3 class="coffee-title">Enjoying Zenith? Fuel the Project</h3>
+          <p class="coffee-desc">
+            Zenith is an independent, 100% free open project engineered by <strong>Enc0deX</strong>. If Zenith saves you hours, powers your desktop workflow, or inspires your projects, consider buying a coffee to keep continuous updates rolling.
+          </p>
+        </div>
+        <a href="https://buymeacoffee.com/encodex" target="_blank" rel="noopener noreferrer" class="btn-coffee tilt-card">
+          <span class="coffee-btn-icon">☕</span>
+          <span>Buy Me a Coffee</span>
+          <span class="coffee-btn-arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ── 11. Final CTA ── -->
     <section class="cta-section">
       <div class="section-label reveal-item">Get Started</div>
       <h2 class="section-h2 reveal-item" style="font-size: clamp(38px, 6vw, 68px);">
@@ -434,7 +526,8 @@
     <div class="footer-wordmark">ZENITH</div>
 
     <nav class="footer-nav">
-      <a href="https://github.com/Adbhut1234/Zenith/issues" target="_blank" rel="noopener noreferrer" class="footer-link">Support &amp; Help</a>
+      <a href="#faq" class="footer-link">Support &amp; Help</a>
+      <a href="https://buymeacoffee.com/encodex" target="_blank" rel="noopener noreferrer" class="footer-link">Buy Me a Coffee ☕</a>
       <a href="https://github.com/Adbhut1234/Zenith/issues/new" target="_blank" rel="noopener noreferrer" class="footer-link">Report a Bug</a>
       <a href="https://github.com/Adbhut1234/Zenith/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="footer-link">Copyright License</a>
     </nav>
