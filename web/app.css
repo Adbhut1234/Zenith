@@ -74,7 +74,7 @@
 
 /* ── Sleek Minimalist Stealth Black Scrollbar ── */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   background-color: var(--bg-dark);
   scrollbar-width: thin;
   scrollbar-color: #262830 #000000;
@@ -867,19 +867,23 @@ body {
 .reveal-item {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal-pending {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(32px) scale(0.985);
+  pointer-events: none;
 }
 
 .reveal-item.revealed {
   opacity: 1;
-  transform: none;
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ── Voice-First Section ── */
