@@ -139,11 +139,12 @@ function init3DTiltCards() {
       // Smaller cards (.cap-card, .voice-stat) get rich tactile ±10.5° tilt, 14px 3D lift, and subtle scale
       // Compact pill badges (.hero-announcement) get dynamic ±14.0° tilt, 12px lift, and 1.03 scale
       // Large layout cards (.compare-card, .stage-3d-box) get stable ±3.5° tilt and 6px lift
-      const isLargeCard = rect.width > 750;
+      const isBanner = card.classList.contains('support-coffee-banner');
+      const isLargeCard = rect.width > 750 && !isBanner;
       const isPill = (rect.width < 340 && !isNav) || isButton;
-      const maxTilt = isButton ? 12.5 : (isNav ? 11.0 : (isLargeCard ? 3.5 : (isPill ? 14.0 : 10.5)));
-      const maxLift = isButton ? 13.0 : (isNav ? 8.0 : (isLargeCard ? 6.0 : (isPill ? 12.0 : 14.0)));
-      const maxScale = isButton ? 1.026 : (isNav ? 1.04 : (isLargeCard ? 1.004 : (isPill ? 1.03 : 1.018)));
+      const maxTilt = isButton ? 12.5 : (isNav ? 11.0 : (isBanner ? 5.5 : (isLargeCard ? 3.5 : (isPill ? 14.0 : 10.5))));
+      const maxLift = isButton ? 13.0 : (isNav ? 8.0 : (isBanner ? 10.0 : (isLargeCard ? 6.0 : (isPill ? 12.0 : 14.0))));
+      const maxScale = isButton ? 1.026 : (isNav ? 1.04 : (isBanner ? 1.012 : (isLargeCard ? 1.004 : (isPill ? 1.03 : 1.018))));
 
       targetX = ((y - centerY) / centerY) * -maxTilt;
       targetY = ((x - centerX) / centerX) * maxTilt;

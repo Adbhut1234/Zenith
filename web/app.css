@@ -1323,7 +1323,7 @@ body {
 /* ── Support & Buy Me a Coffee Banner ── */
 .support-coffee-banner {
   margin-top: 36px;
-  padding: 32px 36px;
+  padding: 36px 40px;
   border-radius: var(--radius-card);
   background: radial-gradient(ellipse at 15% 50%, rgba(255, 193, 7, 0.08) 0%, rgba(20, 21, 28, 0.75) 70%), #0f1015;
   border: 1px solid rgba(255, 193, 7, 0.22);
@@ -1333,10 +1333,68 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transform-style: preserve-3d;
+  perspective: 1100px;
 }
 
-.support-coffee-banner:hover {
+.support-coffee-banner.tilt-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(
+    circle 480px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 193, 7, 0.24),
+    rgba(255, 152, 0, 0.08) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.support-coffee-banner.tilt-card:hover::before {
+  opacity: 1;
+}
+
+.support-coffee-banner.tilt-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2) 20%, rgba(255, 193, 7, 0.5) 50%, rgba(255, 255, 255, 0.2) 80%, transparent);
+  opacity: 0.35;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.support-coffee-banner.tilt-card:hover::after {
+  opacity: 1;
+}
+
+/* 3D Depth parallax for coffee banner contents */
+.support-coffee-banner.tilt-card .coffee-badge {
+  transform: translateZ(16px);
+  position: relative;
+  z-index: 3;
+}
+
+.support-coffee-banner.tilt-card .coffee-text-block {
+  transform: translateZ(12px);
+  position: relative;
+  z-index: 3;
+}
+
+.support-coffee-banner.tilt-card .btn-coffee {
+  transform: translateZ(20px);
+  position: relative;
+  z-index: 4;
+}
+
+.support-coffee-banner.tilt-card:hover {
   border-color: rgba(255, 193, 7, 0.45);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 28px rgba(255, 193, 7, 0.12);
 }
