@@ -603,7 +603,7 @@ async def control_browser(
     """
     Control Google Chrome directly: search, play YouTube videos, click top results, control video playback, tabs, and navigation.
     Supported actions:
-    - 'play_youtube' | 'play_video' | 'play_song': Search YouTube AND immediately play top video on the watch player (query='song or video name')
+    - 'play_youtube' | 'play_video': Search YouTube AND immediately play top video on the watch player in Chrome (for songs/music, use play_music instead)
     - 'search_youtube': Search YouTube for query (query='topic')
     - 'search_amazon': Search Amazon for products (query='item')
     - 'search_flipkart': Search Flipkart for products (query='item')
@@ -643,7 +643,11 @@ async def control_browser(
     act = action.lower().strip()
     ui_state.set_text(f"🌐 Browser | {act.replace('_', ' ').title()}")
     try:
-        if act in ["play_youtube", "play_video", "play_song", "play_music"]:
+        if act in ["play_song", "play_music"]:
+            from agent_tools.music import play_music
+            return await play_music(context, song_name=query.strip())
+
+        elif act in ["play_youtube", "play_video"]:
             q = query.strip()
             if q:
                 # Fast direct video resolution so we open the actual video player and play immediately

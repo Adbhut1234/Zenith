@@ -1,1611 +1,4991 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Zenith Studio</title>
 
-  <!-- Google Stitch Fonts: Plus Jakarta Sans & JetBrains Mono -->
+
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
+
+
 
   <style>
-    /* ==========================================================================
-       GOOGLE STITCH DESIGN SYSTEM (Bento Grids, Soft Modernism, Pill Hierarchy)
-       ========================================================================== */
+
+    /* ====================================================================
+
+       ZENITH STUDIO — macOS-Inspired Premium Dashboard
+
+       ==================================================================== */
+
+
+
     :root {
-      --bg-canvas: #0c0d12;
-      --card-surface: rgba(22, 24, 34, 0.78);
-      --card-surface-elevated: rgba(28, 32, 46, 0.85);
-      --card-surface-hover: rgba(36, 40, 58, 0.85);
 
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.18);
-      --border-focus: #38bdf8;
+      /* Surface hierarchy — macOS Dark Mode (Obsidian / Space Gray) */
 
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --text-dim: #475569;
+      --bg-base: #111216;
 
-      /* Stitch Semantic Accents */
-      --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.25);
-      --emerald-bg: rgba(16, 185, 129, 0.12);
+      --bg-sidebar: #0c0d10;
 
-      --cyan: #06b6d4;
-      --cyan-glow: rgba(6, 182, 212, 0.25);
-      --cyan-bg: rgba(6, 182, 212, 0.12);
+      --bg-card: rgba(255, 255, 255, 0.035);
 
-      --indigo: #6366f1;
-      --indigo-glow: rgba(99, 102, 241, 0.25);
-      --indigo-bg: rgba(99, 102, 241, 0.12);
+      --bg-card-hover: rgba(255, 255, 255, 0.055);
 
-      --crimson: #ef4444;
+      --bg-card-active: rgba(255, 255, 255, 0.075);
+
+      --bg-input: rgba(0, 0, 0, 0.35);
+
+      --bg-elevated: rgba(255, 255, 255, 0.05);
+
+
+
+      /* Borders */
+
+      --border-subtle: rgba(255, 255, 255, 0.065);
+
+      --border-medium: rgba(255, 255, 255, 0.1);
+
+      --border-focus: rgba(100, 210, 177, 0.45);
+
+
+
+      /* Text hierarchy */
+
+      --text-primary: #f5f5f7;
+
+      --text-secondary: #a1a1a6;
+
+      --text-tertiary: #6e6e73;
+
+      --text-quaternary: #48484a;
+
+
+
+      /* Accent palette — warm teal + soft blue, not neon */
+
+      --accent: #64d2b1;
+
+      --accent-soft: rgba(100, 210, 177, 0.15);
+
+      --accent-glow: rgba(100, 210, 177, 0.08);
+
+      --accent-blue: #6eb5ff;
+
+      --accent-blue-soft: rgba(110, 181, 255, 0.12);
+
+      --accent-amber: #ffb84d;
+
+      --accent-amber-soft: rgba(255, 184, 77, 0.12);
+
+      --accent-red: #ff6b6b;
+
+      --accent-red-soft: rgba(255, 107, 107, 0.12);
+
+      --accent-purple: #a78bfa;
+
+      --accent-purple-soft: rgba(167, 139, 250, 0.12);
+
+
+
+      /* Radii */
+
+      --radius-xs: 6px;
 
       --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-bento: 20px;
+
+      --radius-md: 12px;
+
+      --radius-lg: 16px;
+
+      --radius-xl: 20px;
+
       --radius-pill: 9999px;
 
-      --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-      --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+
+      /* Motion */
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+
+
+      /* Sidebar width */
+
+      --sidebar-w: 220px;
+
     }
+
+
 
     * {
+
       box-sizing: border-box;
+
       margin: 0;
+
       padding: 0;
-      user-select: none;
+
       -webkit-font-smoothing: antialiased;
+
+      -moz-osx-font-smoothing: grayscale;
+
     }
+
+
+
+    ::selection {
+
+      background: rgba(100, 210, 177, 0.3);
+
+      color: #fff;
+
+    }
+
+
 
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-canvas);
+
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+
+      background: var(--bg-base);
+
       color: var(--text-primary);
+
       width: 100vw;
+
       height: 100vh;
+
       display: flex;
-      flex-direction: column;
+
       overflow: hidden;
+
+      user-select: none;
+
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+      transform-origin: center center;
+
+    }
+
+
+
+    body.window-closing {
+
+      opacity: 0 !important;
+
+      transform: scale(0.96) translateY(14px) !important;
+
+      filter: blur(8px) brightness(0.7) !important;
+
+      pointer-events: none !important;
+
+    }
+
+
+
+    /* ====================================================================
+
+       SIDEBAR — macOS Finder-style navigation
+
+       ==================================================================== */
+
+    .sidebar {
+
+      width: var(--sidebar-w);
+
+      min-width: var(--sidebar-w);
+
+      height: 100vh;
+
+      background: var(--bg-sidebar);
+
+      border-right: 1px solid var(--border-subtle);
+
+      display: flex;
+
+      flex-direction: column;
+
+      -webkit-app-region: drag;
+
       position: relative;
+
+      z-index: 10;
+
     }
 
-    /* Ambient Soft Mesh Gradient (Stitch Atmosphere) */
-    .stitch-ambient {
+
+
+    .sidebar-header {
+
+      padding: 16px 16px 20px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 20px;
+
+    }
+
+
+
+    .traffic-lights {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      -webkit-app-region: no-drag;
+
+      padding-top: 4px;
+
+    }
+
+
+
+    .traffic-dot {
+
+      width: 12px;
+
+      height: 12px;
+
+      border-radius: 50%;
+
+      cursor: pointer;
+
+      position: relative;
+
+      transition: filter 0.15s ease, transform 0.12s ease;
+
+    }
+
+    .traffic-dot:hover { filter: brightness(1.2); transform: scale(1.15); }
+
+    .traffic-dot:active { transform: scale(0.88); }
+
+    .dot-close { background: #ff5f57; }
+
+    .dot-min   { background: #febc2e; }
+
+    .dot-max   { background: #28c840; }
+
+
+
+    .traffic-dot svg {
+
       position: absolute;
-      top: -70px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 540px;
-      height: 250px;
-      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.06), transparent 70%);
-      filter: blur(55px);
-      pointer-events: none;
-      z-index: 0;
-      transition: all 0.5s ease;
+
+      top: 50%; left: 50%;
+
+      transform: translate(-50%, -50%);
+
+      width: 6px; height: 6px;
+
+      opacity: 0;
+
+      transition: opacity 0.12s ease;
+
     }
 
-    .stitch-ambient.active {
-      background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.22), rgba(6, 182, 212, 0.12), transparent 70%);
-      transform: translateX(-50%) scale(1.1);
+    .traffic-dot svg path, .traffic-dot svg line {
+
+      stroke: rgba(0,0,0,0.55);
+
+      stroke-width: 1.8;
+
+      fill: none;
+
+      stroke-linecap: round;
+
     }
 
-    /* ==========================================================================
-       TOP BAR (macOS Traffic Lights + 3-Pill Switch)
-       ========================================================================== */
-    .stitch-header {
-      height: 52px;
-      min-height: 52px;
+    .traffic-lights:hover .traffic-dot svg { opacity: 1; }
+
+
+
+    /* Brand block */
+
+    .sidebar-brand {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      padding: 2px 2px;
+
+    }
+
+
+
+    .brand-icon {
+
+      width: 42px;
+
+      height: 42px;
+
+      border-radius: 11px;
+
+      display: block;
+
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+      border: 1px solid rgba(255, 255, 255, 0.14);
+
+      flex-shrink: 0;
+
+      object-fit: cover;
+
+    }
+
+
+
+    .brand-text {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 1px;
+
+    }
+
+
+
+    .brand-name {
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+      color: var(--text-primary);
+
+      letter-spacing: -0.02em;
+
+    }
+
+
+
+    .brand-status {
+
+      font-size: 10px;
+
+      font-weight: 500;
+
+      color: var(--text-tertiary);
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 5px;
+
+      transition: color 0.3s ease;
+
+    }
+
+
+
+    .status-indicator {
+
+      width: 6px;
+
+      height: 6px;
+
+      border-radius: 50%;
+
+      background: var(--text-quaternary);
+
+      transition: all 0.3s ease;
+
+    }
+
+
+
+    .brand-status.active { color: var(--accent); }
+
+    .brand-status.active .status-indicator {
+
+      background: var(--accent);
+
+      box-shadow: none;
+
+    }
+
+
+
+    /* Navigation items */
+
+    .sidebar-nav {
+
+      flex: 1;
+
+      padding: 0 10px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 2px;
+
+      -webkit-app-region: no-drag;
+
+    }
+
+
+
+    .nav-section-label {
+
+      font-size: 10px;
+
+      font-weight: 600;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.06em;
+
+      color: var(--text-quaternary);
+
+      padding: 16px 8px 6px;
+
+    }
+
+
+
+    .nav-item {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      padding: 8px 10px;
+
+      border-radius: var(--radius-sm);
+
+      font-size: 13px;
+
+      font-weight: 500;
+
+      color: var(--text-secondary);
+
+      cursor: pointer;
+
+      transition: all 0.18s var(--ease-out);
+
+      border: none;
+
+      background: transparent;
+
+      width: 100%;
+
+      text-align: left;
+
+      position: relative;
+
+    }
+
+
+
+    .nav-item:hover {
+
+      background: var(--bg-card);
+
+      color: var(--text-primary);
+
+    }
+
+
+
+    .nav-item.active {
+
+      background: var(--bg-card-active);
+
+      color: var(--text-primary);
+
+    }
+
+
+
+    .nav-item.active::before {
+
+      content: '';
+
+      position: absolute;
+
+      left: 0;
+
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      width: 3px;
+
+      height: 16px;
+
+      background: var(--accent);
+
+      border-radius: var(--radius-pill);
+
+    }
+
+
+
+    .nav-icon {
+
+      width: 18px;
+
+      height: 18px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: inherit;
+
+      opacity: 0.7;
+
+      flex-shrink: 0;
+
+    }
+
+
+
+    .nav-item.active .nav-icon { opacity: 1; color: var(--accent); }
+
+
+
+    .sidebar-footer {
+
+      padding: 12px 12px 16px;
+
+      -webkit-app-region: no-drag;
+
+    }
+
+
+
+    .sidebar-version {
+
+      font-size: 10px;
+
+      color: var(--text-quaternary);
+
+      text-align: center;
+
+      font-family: 'JetBrains Mono', monospace;
+
+    }
+
+
+
+    /* ====================================================================
+
+       MAIN CONTENT AREA
+
+       ==================================================================== */
+
+    .main-area {
+
+      flex: 1;
+
+      display: flex;
+
+      flex-direction: column;
+
+      overflow: hidden;
+
+      position: relative;
+
+    }
+
+
+
+    .main-drag-bar {
+
+      height: 40px;
+
+      min-height: 40px;
+
+      -webkit-app-region: drag;
+
+    }
+
+
+
+    .content-scroll {
+
+      flex: 1;
+
+      overflow-y: auto;
+
+      overflow-x: hidden;
+
+      padding: 0 32px 40px;
+
+    }
+
+
+
+    .content-scroll::-webkit-scrollbar { width: 6px; }
+
+    .content-scroll::-webkit-scrollbar-track { background: transparent; }
+
+    .content-scroll::-webkit-scrollbar-thumb {
+
+      background: rgba(255,255,255,0.08);
+
+      border-radius: var(--radius-pill);
+
+    }
+
+    .content-scroll::-webkit-scrollbar-thumb:hover {
+
+      background: rgba(255,255,255,0.14);
+
+    }
+
+
+
+    .page-view {
+
+      display: none;
+
+      animation: pageIn 0.35s var(--ease-spring) forwards;
+
+      max-width: 640px;
+
+      width: 100%;
+
+      margin: 0 auto;
+
+    }
+
+    .page-view.active { display: block; }
+
+
+
+    @keyframes pageIn {
+
+      from { opacity: 0; transform: translateY(8px); }
+
+      to   { opacity: 1; transform: translateY(0); }
+
+    }
+
+
+
+    .page-header {
+
+      margin-bottom: 24px;
+
+    }
+
+
+
+    .page-title {
+
+      font-size: 22px;
+
+      font-weight: 700;
+
+      letter-spacing: -0.025em;
+
+      color: var(--text-primary);
+
+    }
+
+
+
+    .page-subtitle {
+
+      font-size: 13px;
+
+      color: var(--text-tertiary);
+
+      margin-top: 4px;
+
+    }
+
+
+
+    /* ====================================================================
+
+       WIDGET CARDS
+
+       ==================================================================== */
+
+    .widget {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.075);
+      border-radius: 14px;
+      padding: 22px;
+      transition: all 0.25s var(--ease-out);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 20px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(16px);
+    }
+
+    .widget:hover {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.025) 100%);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .widget + .widget { margin-top: 14px; }
+
+    .widget-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 680px) {
+      .widget-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .widget-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
-      background: rgba(12, 13, 18, 0.88);
-      backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--border-subtle);
-      -webkit-app-region: drag;
-      z-index: 50;
+      margin-bottom: 14px;
     }
 
-    .traffic-lights {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      -webkit-app-region: no-drag;
-      width: 80px;
-    }
-
-    .traffic-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: var(--radius-pill);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s ease, filter 0.15s ease;
-    }
-    .traffic-dot:hover { transform: scale(1.12); filter: brightness(1.15); }
-    .traffic-dot:active { transform: scale(0.92); }
-    .dot-close { background: #ff5f56; }
-    .dot-min   { background: #ffbd2e; }
-    .dot-max   { background: #27c93f; }
-    
-    .traffic-dot svg {
-      opacity: 0;
-      width: 6px;
-      height: 6px;
-      fill: rgba(0, 0, 0, 0.7);
-      transition: opacity 0.15s ease;
-    }
-    .traffic-lights:hover .traffic-dot svg { opacity: 1; }
-
-    /* Center Brand Emblem */
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 13.5px;
-      letter-spacing: -0.01em;
-      -webkit-app-region: drag;
-    }
-
-    .brand-symbol {
-      width: 22px;
-      height: 22px;
-      background: linear-gradient(135deg, #ffffff, #cbd5e1);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #000000;
-      font-weight: 800;
+    .widget-label {
       font-size: 11px;
-      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
     }
 
-    .brand-live-pill {
+    .widget-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2.5px 8px;
+      border-radius: var(--radius-pill);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-neutral { background: rgba(255, 255, 255, 0.06); color: #9499a6; border: 1px solid rgba(255, 255, 255, 0.09); }
+    .badge-teal { background: rgba(100, 210, 177, 0.12); color: #64d2b1; border: 1px solid rgba(100, 210, 177, 0.25); }
+    .badge-blue { background: rgba(110, 181, 255, 0.12); color: #7abaff; border: 1px solid rgba(110, 181, 255, 0.25); }
+    .badge-amber { background: rgba(255, 184, 77, 0.12); color: #ffb84d; border: 1px solid rgba(255, 184, 77, 0.25); }
+    .badge-red { background: rgba(255, 107, 107, 0.12); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.25); }
+
+    /* ====================================================================
+       HERO CONTROL WIDGET
+       ==================================================================== */
+    .hero-widget {
+      padding: 24px 26px;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .hero-info { flex: 1; }
+
+    .hero-state-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9499a6;
+      margin-bottom: 10px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--text-muted);
+      gap: 7px;
+      padding: 3.5px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-state-dot {
+      width: 6.5px;
+      height: 6.5px;
+      border-radius: 50%;
+      background: #52525b;
       transition: all 0.3s ease;
     }
 
-    .pulse-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: var(--radius-pill);
-      background: var(--text-muted);
-      transition: all 0.3s ease;
+    .hero-state-dot.active {
+      background: #10b981;
     }
 
-    .brand-live-pill.active {
-      background: var(--emerald-bg);
-      border-color: rgba(16, 185, 129, 0.3);
-      color: var(--emerald);
-    }
-    .brand-live-pill.active .pulse-dot {
-      background: var(--emerald);
-      box-shadow: 0 0 8px var(--emerald);
-    }
-
-    /* Segmented Navigation Capsule */
-    .stitch-nav-pill {
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-pill);
-      padding: 3px;
-      -webkit-app-region: no-drag;
-    }
-
-    .nav-btn {
-      padding: 5px 15px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: transparent;
-      border: none;
-      border-radius: var(--radius-pill);
-      cursor: pointer;
-      transition: all 0.2s var(--spring-smooth);
-    }
-
-    .nav-btn:hover {
-      color: var(--text-primary);
-    }
-
-    .nav-btn.active {
-      background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-
-    /* ==========================================================================
-       MAIN SCROLLABLE CANVAS
-       ========================================================================== */
-    .stitch-canvas {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 28px 28px 28px;
-      max-width: 780px;
-      width: 100%;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .stitch-canvas::-webkit-scrollbar {
-      width: 5px;
-    }
-    .stitch-canvas::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-pill);
-    }
-
-    .tab-view {
-      display: none;
-      animation: tabEnter 0.22s var(--spring-smooth) forwards;
-    }
-
-    .tab-view.active {
-      display: block;
-    }
-
-    @keyframes tabEnter {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ==========================================================================
-       BENTO CARD ARCHITECTURE
-       ========================================================================== */
-    .bento-card {
-      background: var(--card-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-bento);
-      padding: 22px 24px;
-      backdrop-filter: blur(20px);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 30px rgba(0, 0, 0, 0.35);
-      transition: all 0.25s var(--spring-smooth);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .bento-card:hover {
-      border-color: var(--border-hover);
-    }
-
-    /* --------------------------------------------------------------------------
-       BENTO HERO: Assistant State & Dynamic Waveform
-       -------------------------------------------------------------------------- */
-    .bento-hero {
-      display: grid;
-      grid-template-columns: 1fr 220px;
-      gap: 24px;
-      margin-bottom: 18px;
-      align-items: center;
-    }
-
-    .hero-meta-block {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .hero-header-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-    }
-
-    .status-orb {
-      position: relative;
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .status-orb-inner {
-      width: 14px;
-      height: 14px;
-      border-radius: var(--radius-pill);
-      background: var(--text-muted);
-      transition: all 0.3s ease;
-    }
-
-    .status-orb.active {
-      background: var(--emerald-bg);
-      border-color: rgba(16, 185, 129, 0.35);
-      box-shadow: 0 0 20px var(--emerald-glow);
-    }
-    .status-orb.active .status-orb-inner {
-      background: var(--emerald);
-      box-shadow: 0 0 12px var(--emerald);
+    
+      50% { box-shadow: 0 0 16px rgba(16, 185, 129, 0.95); opacity: 1; }
     }
 
     .hero-title {
       font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      color: #ffffff;
     }
 
     .hero-subtitle {
       font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .hero-action-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .btn-pill-action {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 26px;
-      border-radius: var(--radius-pill);
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      background: #ffffff;
-      color: #000000;
-      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.18);
-      transition: all 0.2s var(--spring-bounce);
-    }
-
-    .btn-pill-action:hover {
-      background: #e2e8f0;
-      transform: translateY(-1px) scale(1.02);
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
-    }
-
-    .btn-pill-action:active {
-      transform: scale(0.97);
-    }
-
-    .btn-pill-action.running {
-      background: #1e212d;
-      color: #ffffff;
-      border: 1px solid var(--border-hover);
-      box-shadow: none;
-    }
-    .btn-pill-action.running:hover {
-      background: #272a39;
-    }
-
-    .hero-spectrum-box {
-      width: 100%;
-      height: 110px;
-      background: rgba(12, 13, 18, 0.65);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-      position: relative;
-    }
-
-    #heroWaveCanvas {
-      width: 100%;
-      height: 100%;
-    }
-
-    .spectrum-label {
-      position: absolute;
-      bottom: 6px;
-      right: 10px;
-      font-size: 9.5px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-dim);
-    }
-
-    /* --------------------------------------------------------------------------
-       FOCUSED 2-TILE GRID: Screen Vision & Active Reasoning Model
-       -------------------------------------------------------------------------- */
-    .bento-grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .bento-tile {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 135px;
-      padding: 18px 20px;
-    }
-
-    .tile-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .tile-icon-box {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-    }
-
-    .tile-chip {
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .chip-green { background: var(--emerald-bg); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.25); }
-    .chip-cyan  { background: var(--cyan-bg); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.25); }
-    .chip-indigo{ background: var(--indigo-bg); color: var(--indigo); border: 1px solid rgba(99, 102, 241, 0.25); }
-
-    .tile-metric-value {
-      font-size: 17.5px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      margin-bottom: 2px;
-      color: var(--text-primary);
-    }
-
-    .tile-metric-sub {
-      font-size: 11.5px;
-      color: var(--text-muted);
-    }
-
-    /* Tactile Stitch Mini Toggle */
-    .stitch-switch {
-      position: relative;
-      display: inline-block;
-      width: 38px;
-      height: 20px;
-    }
-
-    .stitch-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .stitch-slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-pill);
-      transition: all 0.25s var(--spring-smooth);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .stitch-slider::before {
-      position: absolute;
-      content: "";
-      height: 14px;
-      width: 14px;
-      left: 2px;
-      bottom: 2px;
-      background-color: #cbd5e1;
-      border-radius: var(--radius-pill);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      transition: all 0.25s var(--spring-bounce);
-    }
-
-    .stitch-switch input:checked + .stitch-slider {
-      background: var(--emerald);
-      border-color: var(--emerald);
-      box-shadow: 0 0 10px var(--emerald-glow);
-    }
-
-    .stitch-switch input:checked + .stitch-slider::before {
-      background-color: #ffffff;
-      transform: translateX(18px);
-    }
-
-    /* Emergency Halt Link */
-    .emergency-footer {
-      text-align: center;
-      padding-top: 6px;
-    }
-
-    .btn-emergency-link {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      font-size: 11.5px;
-      cursor: pointer;
-      text-decoration: underline;
-      transition: color 0.15s ease;
-    }
-
-    .btn-emergency-link:hover {
-      color: var(--crimson);
-    }
-
-    /* ==========================================================================
-       TAB 2: SETTINGS (Aligned with Zenith Codebase Structure)
-       ========================================================================== */
-    .section-title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-    }
-
-    .stitch-settings-group {
-      margin-bottom: 22px;
-    }
-
-    .group-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .stitch-form-card {
-      background: var(--card-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 16px 18px;
-      margin-bottom: 10px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      transition: border-color 0.2s ease;
-    }
-
-    .stitch-form-card:focus-within {
-      border-color: var(--border-hover);
-    }
-
-    .form-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-
-    .form-label {
-      font-size: 13px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .form-status-tag {
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-dim);
-    }
-
-    .form-status-tag.active {
-      background: var(--emerald-bg);
-      color: var(--emerald);
-    }
-
-    .form-desc {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .input-box-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .stitch-input {
-      width: 100%;
-      padding: 8px 12px;
-      background: rgba(10, 11, 15, 0.7);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      color: #ffffff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    .stitch-input:focus {
-      border-color: var(--border-focus);
-    }
-
-    .stitch-select {
-      width: 100%;
-      padding: 8px 12px;
-      background: rgba(10, 11, 15, 0.7);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      color: #ffffff;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 12.5px;
-      font-weight: 500;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .btn-eye-toggle {
-      position: absolute;
-      right: 10px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 11px;
-      padding: 3px 6px;
-      border-radius: 4px;
-    }
-    .btn-eye-toggle:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
-
-    /* ==========================================================================
-       TAB 3: ABOUT (Zenith Info, Updates, GitHub Creator & Bug Reporting)
-       ========================================================================== */
-    .about-hero-card {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 24px;
-      margin-bottom: 18px;
-    }
-
-    .about-logo-box {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, #ffffff, #94a3b8);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      font-weight: 800;
-      color: #000000;
-      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
-    }
-
-    .about-hero-meta h3 {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .about-version-tag {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      background: var(--cyan-bg);
-      color: var(--cyan);
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .about-hero-meta p {
-      font-size: 12.5px;
-      color: var(--text-secondary);
+      color: #9499a6;
       line-height: 1.5;
+      max-width: 540px;
     }
 
-    /* Creator Card (GitHub Profile with Avatar) */
-    .creator-card {
+    .power-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.035);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      margin-bottom: 18px;
-      background: linear-gradient(135deg, rgba(22, 24, 34, 0.8), rgba(28, 32, 48, 0.85));
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      color: #9ca3af;
+      outline: none;
     }
 
-    .creator-profile {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    .power-btn:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffffff;
+      transform: scale(1.02);
     }
 
-    .creator-avatar-wrap {
+    .power-btn:active {
+      transform: scale(0.97);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .power-btn.active {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.16);
+      color: #10b981;
+    }
+
+    .power-btn.active svg {
+      stroke: #10b981;
+    }
+
+    .power-btn.active:hover {
+      border-color: #34d399;
+      background: rgba(16, 185, 129, 0.26);
+      color: #34d399;
+    }
+
+    .power-btn.active:hover svg {
+      stroke: #34d399;
+    }
+
+    .hero-wave-container {
+      margin-top: 20px;
+      height: 70px;
+      background: rgba(0, 0, 0, 0.26);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
       position: relative;
-      width: 52px;
-      height: 52px;
-      border-radius: var(--radius-pill);
-      padding: 2px;
-      background: linear-gradient(135deg, var(--emerald), var(--cyan));
-      box-shadow: 0 4px 16px var(--emerald-glow);
+      overflow: hidden;
     }
 
-    .creator-avatar-img {
+    .hero-wave-container canvas {
       width: 100%;
       height: 100%;
-      border-radius: var(--radius-pill);
-      object-fit: cover;
-      background: #181920;
       display: block;
     }
 
-    .creator-info h4 {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 2px;
-    }
-
-    .creator-info p {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .btn-github-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border-hover);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s var(--spring-smooth);
-    }
-
-    .btn-github-link:hover {
-      background: rgba(255, 255, 255, 0.16);
-      transform: translateY(-1px);
-    }
-
-    /* Updates & Bug Reports Grid */
-    .about-actions-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .action-box {
+    /* ====================================================================
+       METRIC TILES
+       ==================================================================== */
+    .metric-tile {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 18px 20px;
       min-height: 120px;
+      padding: 18px 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.065);
+      border-radius: 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 10px rgba(0, 0, 0, 0.18);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .action-box h5 {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 4px;
+    .metric-tile:hover {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border-color: rgba(255, 255, 255, 0.11);
+      transform: translateY(-2px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 16px rgba(0, 0, 0, 0.28);
     }
 
-    .action-box p {
+    .metric-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .metric-icon.teal {
+      background: linear-gradient(135deg, rgba(100, 210, 177, 0.18) 0%, rgba(100, 210, 177, 0.06) 100%);
+      color: #64d2b1;
+      border-color: rgba(100, 210, 177, 0.25);
+    }
+    .metric-icon.blue {
+      background: linear-gradient(135deg, rgba(110, 181, 255, 0.18) 0%, rgba(110, 181, 255, 0.06) 100%);
+      color: #7abaff;
+      border-color: rgba(110, 181, 255, 0.25);
+    }
+    .metric-icon.amber {
+      background: linear-gradient(135deg, rgba(255, 184, 77, 0.18) 0%, rgba(255, 184, 77, 0.06) 100%);
+      color: #ffb84d;
+      border-color: rgba(255, 184, 77, 0.25);
+    }
+
+    .metric-value {
+      font-size: 15.5px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      margin-bottom: 3px;
+      color: #f1f3f7;
+      line-height: 1.3;
+    }
+
+    .metric-label {
       font-size: 11.5px;
-      color: var(--text-muted);
+      font-weight: 400;
+      color: #8b909a;
+      letter-spacing: 0.01em;
+    }
+
+    /* macOS Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      width: 14px;
+      height: 14px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toggle-switch input:checked + .toggle-track {
+      background: #64d2b1;
+      border-color: #64d2b1;
+      box-shadow: none;
+    }
+
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(16px);
+      background: #090a0f;
+    }
+
+
+
+    /* ====================================================================
+
+       API KEYS & GUIDES
+
+       ==================================================================== */
+
+    .guide-box {
+
+      background: rgba(0, 0, 0, 0.22);
+
+      border: 1px solid var(--border-subtle);
+
+      border-radius: var(--radius-sm);
+
+      padding: 10px 14px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 7px;
+
+    }
+
+
+
+    .guide-step {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      font-size: 12px;
+
+      color: var(--text-secondary);
+
+      line-height: 1.4;
+
+    }
+
+
+
+    .guide-step strong {
+
+      color: var(--text-primary);
+
+    }
+
+
+
+    .step-num {
+
+      width: 18px;
+
+      height: 18px;
+
+      border-radius: 50%;
+
+      background: var(--bg-card-hover);
+
+      border: 1px solid var(--border-subtle);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-size: 10px;
+
+      font-weight: 700;
+
+      color: var(--accent);
+
+      flex-shrink: 0;
+
+      font-family: 'JetBrains Mono', monospace;
+
+    }
+
+
+
+    /* Settings list without descriptions */
+
+    .settings-group {
+
+      margin-bottom: 24px;
+
+    }
+
+
+
+    .settings-group-label {
+
+      font-size: 10px;
+
+      font-weight: 600;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.06em;
+
+      color: var(--text-quaternary);
+
+      padding: 0 4px;
+
+      margin-bottom: 8px;
+
+    }
+
+
+
+    .setting-item {
+
+      background: var(--bg-card);
+
+      border: 1px solid var(--border-subtle);
+
+      padding: 14px 16px;
+
+      transition: all 0.2s var(--ease-out);
+
+    }
+
+
+
+    .setting-item:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+
+    .setting-item:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+
+    .setting-item:only-child { border-radius: var(--radius-md); }
+
+    .setting-item + .setting-item { border-top: none; }
+
+
+
+    .setting-item:hover {
+
+      background: var(--bg-card-hover);
+
+    }
+
+
+
+    .setting-item:focus-within {
+
+      background: var(--bg-card-hover);
+
+      border-color: var(--border-medium);
+
+      z-index: 1;
+
+      position: relative;
+
+    }
+
+
+
+    .setting-name {
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      color: var(--text-primary);
+
+      margin-bottom: 4px;
+
+    }
+
+
+
+    .setting-input {
+
+      width: 100%;
+
+      padding: 8px 10px;
+
+      background: var(--bg-input);
+
+      border: 1px solid var(--border-subtle);
+
+      border-radius: var(--radius-xs);
+
+      color: var(--text-primary);
+
+      font-family: 'JetBrains Mono', monospace;
+
+      font-size: 12px;
+
+      outline: none;
+
+      transition: border-color 0.2s ease;
+
+      margin-top: 6px;
+
+    }
+
+
+
+    .setting-input:focus { border-color: var(--border-focus); }
+
+
+
+    .setting-select {
+
+      width: 100%;
+
+      padding: 8px 10px;
+
+      background: var(--bg-input);
+
+      border: 1px solid var(--border-subtle);
+
+      border-radius: var(--radius-xs);
+
+      color: var(--text-primary);
+
+      font-family: 'Inter', sans-serif;
+
+      font-size: 12px;
+
+      outline: none;
+
+      cursor: pointer;
+
+      margin-top: 6px;
+
+      -webkit-appearance: none;
+
+      appearance: none;
+
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+      background-repeat: no-repeat;
+
+      background-position: right 10px center;
+
+      padding-right: 28px;
+
+    }
+
+
+
+    .setting-select:focus { border-color: var(--border-focus); }
+
+
+
+    .input-with-toggle {
+
+      position: relative;
+
+      display: flex;
+
+      align-items: center;
+
+    }
+
+
+
+    .input-with-toggle .setting-input {
+
+      padding-right: 52px;
+
+    }
+
+
+
+    .btn-reveal {
+
+      position: absolute;
+
+      right: 1px;
+
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      margin-top: 3px;
+
+      background: transparent;
+
+      border: none;
+
+      color: var(--text-tertiary);
+
+      cursor: pointer;
+
+      font-size: 11px;
+
+      font-weight: 500;
+
+      padding: 4px 8px;
+
+      border-radius: var(--radius-xs);
+
+      transition: all 0.15s ease;
+
+    }
+
+    .btn-reveal:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+
+
+
+    .setting-status {
+
+      font-size: 10px;
+
+      font-weight: 600;
+
+      padding: 2px 7px;
+
+      border-radius: var(--radius-pill);
+
+      background: rgba(255,255,255,0.05);
+
+      color: var(--text-quaternary);
+
+      font-family: 'JetBrains Mono', monospace;
+
+      flex-shrink: 0;
+
+    }
+
+    .setting-status.configured { background: var(--accent-soft); color: var(--accent); }
+
+
+
+    /* Buttons */
+
+    .btn-primary {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 6px;
+
+      padding: 8px 18px;
+
+      border-radius: var(--radius-pill);
+
+      font-size: 12.5px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      border: none;
+
+      background: var(--accent);
+
+      color: #0f1912;
+
+      transition: all 0.2s var(--ease-out);
+
+    }
+
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    .btn-primary:active { transform: scale(0.97); }
+
+
+
+    .btn-secondary {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 6px;
+
+      padding: 6px 14px;
+
+      border-radius: var(--radius-pill);
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      border: 1px solid var(--border-medium);
+
+      background: var(--bg-card);
+
+      color: var(--text-primary);
+
+      transition: all 0.2s var(--ease-out);
+
+    }
+
+    .btn-secondary:hover { background: var(--bg-card-hover); border-color: var(--border-medium); transform: translateY(-1px); }
+
+    .btn-secondary:active { transform: scale(0.97); }
+
+
+
+    .btn-ghost {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      padding: 6px 12px;
+
+      border-radius: var(--radius-sm);
+
+      font-size: 12px;
+
+      font-weight: 500;
+
+      cursor: pointer;
+
+      border: none;
+
+      background: transparent;
+
+      color: var(--text-secondary);
+
+      transition: all 0.15s ease;
+
+    }
+
+    .btn-ghost:hover { background: var(--bg-card); color: var(--text-primary); }
+
+
+
+    /* About section */
+
+    .about-hero {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 20px;
+
+      padding: 24px;
+
+    }
+
+
+
+    .about-icon-box {
+
+      width: 76px;
+
+      height: 76px;
+
+      border-radius: 18px;
+
+      display: block;
+
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+      border: 1px solid rgba(255, 255, 255, 0.16);
+
+      flex-shrink: 0;
+
+      object-fit: cover;
+
+    }
+
+
+
+    .about-meta h3 {
+
+      font-size: 20px;
+
+      font-weight: 700;
+
+      letter-spacing: -0.015em;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      margin-bottom: 6px;
+
+    }
+
+
+
+    .about-meta p {
+
+      font-size: 12px;
+
+      color: var(--text-secondary);
+
+      line-height: 1.5;
+
+    }
+
+
+
+    /* About Section Updates Card */
+
+    .update-card {
+      display: flex;
+      flex-direction: column;
+      padding: 18px 20px;
+      gap: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.065);
+      border-radius: 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 10px rgba(0, 0, 0, 0.18);
+    }
+
+
+
+    .update-card-content {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 14px;
+
+    }
+
+
+
+    .update-icon-ring {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      color: #d1d1d6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+
+
+    .update-title-row {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+    }
+
+
+
+    .update-card-title {
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      color: var(--text-primary);
+
+    }
+
+
+
+    /* Update Download Progress Bars */
+
+    .update-progress-container {
+
+      width: 100%;
+
+      margin-top: 10px;
+
+    }
+
+
+
+    .update-progress-track {
+
+      width: 100%;
+
+      height: 6px;
+
+      background: rgba(255, 255, 255, 0.08);
+
+      border-radius: var(--radius-pill);
+
+      overflow: hidden;
+
+      border: 1px solid rgba(255, 255, 255, 0.05);
+
+    }
+
+
+
+    .update-progress-fill {
+
+      height: 100%;
+
+      width: 0%;
+
+      background: linear-gradient(90deg, #64d2b1 0%, #6eb5ff 100%);
+
+      border-radius: var(--radius-pill);
+
+      transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+      box-shadow: none;
+
+    }
+
+
+
+    .update-card-status {
+
+      font-size: 11.5px;
+
+      color: var(--text-secondary);
+
+      margin-top: 2px;
+
+    }
+
+
+
+    .creator-card {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      padding: 18px 20px;
+
+      background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+
+    }
+
+
+
+    .creator-left {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 14px;
+
+    }
+
+
+
+    .creator-avatar-ring {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      padding: 1px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+
+
+
+    .creator-avatar-ring img {
+
+      width: 100%;
+
+      height: 100%;
+
+      border-radius: 50%;
+
+      object-fit: cover;
+
+      display: block;
+
+      background: var(--bg-sidebar);
+
+    }
+
+
+
+    .creator-name {
+
+      font-size: 14px;
+
+      font-weight: 600;
+
+    }
+
+
+
+    .creator-role {
+
+      font-size: 11px;
+
+      color: var(--text-tertiary);
+
+    }
+
+
+
+    .toast {
+
+      position: fixed;
+
+      bottom: 20px;
+
+      left: 50%;
+
+      transform: translateX(-50%) translateY(12px);
+
+      background: rgba(30, 30, 34, 0.95);
+
+      border: 1px solid var(--border-medium);
+
+      padding: 10px 20px;
+
+      border-radius: var(--radius-pill);
+
+      font-size: 12.5px;
+
+      font-weight: 500;
+
+      color: var(--text-primary);
+
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+      backdrop-filter: blur(20px);
+
+      opacity: 0;
+
+      transition: all 0.3s var(--ease-spring);
+
+      pointer-events: none;
+
+      z-index: 9999;
+
+      white-space: nowrap;
+
+    }
+
+
+
+    .toast.show {
+
+      opacity: 1;
+
+      transform: translateX(-50%) translateY(0);
+
+    }
+
+
+
+    .mt-12 { margin-top: 12px; }
+
+
+
+    /* Custom Music Player Selector */
+
+    .music-picker {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 7px;
+
+      margin-top: 10px;
+
+    }
+
+
+
+    .music-opt-item {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      padding: 10px 14px;
+
+      background: var(--bg-input);
+
+      border: 1px solid var(--border-subtle);
+
+      border-radius: var(--radius-sm);
+
+      cursor: pointer;
+
+      transition: all 0.2s var(--ease-out);
+
+    }
+
+
+
+    .music-opt-item:hover {
+
+      background: var(--bg-card-hover);
+
+      border-color: var(--border-medium);
+
+    }
+
+
+
+    .music-opt-item.active {
+
+      background: rgba(100, 210, 177, 0.08);
+
+      border-color: var(--accent);
+
+      box-shadow: 0 0 16px rgba(100, 210, 177, 0.12);
+
+    }
+
+
+
+    .music-opt-left {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+    }
+
+
+
+    .music-opt-icon {
+
+      width: 30px;
+
+      height: 30px;
+
+      border-radius: var(--radius-xs);
+
+      background: rgba(255, 255, 255, 0.04);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: var(--text-tertiary);
+
+      transition: all 0.2s ease;
+
+    }
+
+
+
+    .music-opt-item.active .music-opt-icon {
+
+      background: var(--accent-soft);
+
+      color: var(--accent);
+
+    }
+
+
+
+    .music-opt-title {
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      color: var(--text-secondary);
+
+      transition: color 0.2s ease;
+
+    }
+
+
+
+    .music-opt-item.active .music-opt-title {
+
+      color: var(--text-primary);
+
+    }
+
+
+
+    .music-opt-radio {
+
+      width: 18px;
+
+      height: 18px;
+
+      border-radius: 50%;
+
+      border: 1.5px solid var(--border-subtle);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      transition: all 0.2s var(--ease-bounce);
+
+    }
+
+
+
+    .music-opt-item.active .music-opt-radio {
+
+      border-color: var(--accent);
+
+      background: var(--accent);
+
+    }
+
+
+
+    .music-opt-radio svg {
+
+      opacity: 0;
+
+      stroke: #0f1912;
+
+      stroke-width: 3;
+
+      stroke-linecap: round;
+
+      stroke-linejoin: round;
+
+      transition: opacity 0.15s ease;
+
+    }
+
+
+
+    .music-opt-item.active .music-opt-radio svg {
+
+      opacity: 1;
+
+    }
+
+
+
+        /* ── First-Time Setup Wizard Overlay (Premium macOS / Obsidian) ── */
+    .setup-wizard-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0d0e12;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .setup-wizard-overlay.hidden {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      transform: scale(1.02) !important;
+      pointer-events: none !important;
+    }
+
+    .setup-wizard-overlay.closing {
+      opacity: 0 !important;
+      transform: scale(0.97) translateY(-12px) !important;
+      filter: blur(8px) !important;
+      pointer-events: none !important;
+    }
+
+    .setup-titlebar {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      -webkit-app-region: drag;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-sidebar);
+      flex-shrink: 0;
+    }
+
+    .setup-window-drag {
+      flex: 1;
+      height: 100%;
+    }
+
+    .setup-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 540px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 20px 20px;
+      overflow: hidden;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* Prevent any scrollbar appearance */
+    .setup-wizard-overlay, .setup-container {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .setup-wizard-overlay::-webkit-scrollbar, .setup-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Stepper */
+    .setup-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .setup-step-dot {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      transition: all 0.28s var(--ease-out);
+    }
+
+    .setup-step-dot .step-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-medium);
+      font-size: 11px;
+      color: var(--text-tertiary);
+      transition: all 0.28s var(--ease-out);
+    }
+
+    .setup-step-dot.active {
+      color: var(--text-primary);
+    }
+
+    .setup-step-dot.active .step-circle {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0c0d10;
+      font-weight: 700;
+      box-shadow: 0 0 14px rgba(100, 210, 177, 0.4);
+      transform: scale(1.08);
+    }
+
+    .setup-step-dot.completed .step-circle {
+      background: rgba(100, 210, 177, 0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .setup-step-line {
+      width: 32px;
+      height: 2px;
+      background: var(--border-subtle);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .setup-step-line::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(100, 210, 177, 0.5);
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .setup-step-line.filled::after {
+      width: 100%;
+    }
+
+    /* Step Views with Slide Animations */
+    .setup-step-view {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .setup-step-view.active {
+      display: flex;
+      animation: stepSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes stepSlideIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .setup-hero {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .setup-hero-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      margin: 0 auto 16px;
+      box-shadow: 0 14px 36px rgba(100, 210, 177, 0.28);
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .setup-hero-icon:hover {
+      transform: scale(1.05) rotate(2deg);
+    }
+
+    .setup-hero-title {
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    .setup-hero-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Premium Identity Card */
+    .identity-card-premium {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .identity-card-premium:focus-within {
+      border-color: var(--border-focus);
+      background: var(--bg-card-hover);
+    }
+
+    .identity-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 12px;
     }
 
-    /* Toast */
-    .stitch-toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: rgba(22, 25, 36, 0.95);
-      border: 1px solid var(--border-hover);
-      padding: 10px 18px;
-      border-radius: var(--radius-pill);
-      font-size: 12.5px;
+    .identity-icon-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
       font-weight: 600;
-      color: #ffffff;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(20px);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.25s var(--spring-bounce);
-      pointer-events: none;
-      z-index: 1000;
+      color: var(--text-primary);
     }
 
-    .stitch-toast.show {
-      opacity: 1;
-      transform: translateY(0);
+    .identity-icon-pill svg {
+      color: var(--accent);
     }
+
+    .required-tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .identity-input-field {
+      width: 100%;
+      height: 44px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .identity-input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 18px rgba(100, 210, 177, 0.25);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Validation & Error Styles */
+    @keyframes inputShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .input-error {
+      animation: inputShake 0.4s ease-in-out !important;
+      border-color: #ff6b6b !important;
+      box-shadow: 0 0 16px rgba(255, 107, 107, 0.35) !important;
+    }
+
+    .field-error-msg {
+      font-size: 11.5px;
+      color: #ff6b6b;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.22s var(--ease-out);
+      margin-top: 0;
+    }
+
+    .field-error-msg.visible {
+      max-height: 32px;
+      opacity: 1;
+      margin-top: 8px;
+    }
+
+    /* Action Buttons */
+    .setup-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: auto;
+    }
+
+    .setup-btn-next {
+      background: var(--accent);
+      color: #0c0d10;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 11px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.22s ease;
+      box-shadow: 0 4px 16px rgba(100, 210, 177, 0.28);
+    }
+
+    .setup-btn-next:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(100, 210, 177, 0.4);
+    }
+
+    .setup-btn-next:active {
+      transform: scale(0.97);
+    }
+
+    .setup-btn-back {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      border-radius: var(--radius-md);
+      padding: 11px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .setup-btn-back:hover {
+      color: var(--text-primary);
+      background: var(--bg-card-hover);
+    }
+
+
+    /* ── Centered Wizard Steps ── */
+    #setupStep1, #setupStep2, #setupStep3, #setupStep4 {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6px 0 16px;
+      margin: auto 0;
+      width: 100%;
+    }
+
+    #setupStep1.active, #setupStep2.active, #setupStep3.active, #setupStep4.active {
+      display: flex;
+    }
+
+    .setup-hero-centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .setup-hero-centered .setup-hero-icon {
+      width: 82px;
+      height: 82px;
+      border-radius: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 16px 48px rgba(100, 210, 177, 0.32), 0 0 1px rgba(255, 255, 255, 0.4);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+
+    .setup-hero-centered .setup-hero-icon:hover {
+      transform: scale(1.06) translateY(-2px);
+      box-shadow: 0 20px 56px rgba(100, 210, 177, 0.45);
+    }
+
+    .setup-hero-centered .setup-hero-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .setup-hero-centered .setup-hero-sub {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      max-width: 440px;
+      line-height: 1.6;
+      margin: 0 auto;
+    }
+
+    /* Identity Capsule Container */
+    .identity-capsule-wrapper {
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto 30px;
+    }
+
+    .identity-capsule {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 20px;
+      padding: 10px 14px 10px 12px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .identity-capsule:focus-within {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--accent);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55), 0 0 24px rgba(100, 210, 177, 0.28);
+      transform: translateY(-2px);
+    }
+
+    .identity-capsule-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(100, 210, 177, 0.25), rgba(110, 181, 255, 0.15));
+      border: 1px solid rgba(100, 210, 177, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      box-shadow: 0 4px 14px rgba(100, 210, 177, 0.2);
+    }
+
+    .identity-capsule-status {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #0d0e12;
+      box-shadow: 0 0 8px rgba(100, 210, 177, 0.8);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    .identity-capsule-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
+    }
+
+    .identity-capsule-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .identity-capsule-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .identity-capsule-badge {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(100, 210, 177, 0.12);
+      padding: 1px 6px;
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .identity-capsule-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      padding: 0;
+    }
+
+    .identity-capsule-input::placeholder {
+      color: var(--text-quaternary);
+      font-weight: 400;
+    }
+
+    .identity-capsule-hint {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .identity-capsule:focus-within .identity-capsule-hint {
+      background: var(--accent);
+      color: #0c0d10;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(100, 210, 177, 0.4);
+    }
+
+/* Standalone Minimal Identity Input */
+    .minimal-identity-input {
+      width: 100%;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      outline: none;
+      transition: all 0.25s var(--ease-out);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .minimal-identity-input:focus {
+      border-color: var(--accent);
+      background: rgba(0, 0, 0, 0.65);
+      box-shadow: 0 0 20px rgba(100, 210, 177, 0.28);
+    }
+
+    .minimal-identity-input::placeholder {
+      color: var(--text-tertiary);
+      font-weight: 400;
+    }
+
+    
+    /* Left-Right Music Setup Cards */
+    .music-card-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto 28px;
+    }
+
+    .music-setup-card {
+      flex: 1;
+      height: 136px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s var(--ease-out);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      user-select: none;
+    }
+
+    .music-setup-card:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .music-setup-card.active {
+      border-color: var(--accent);
+      background: rgba(100, 210, 177, 0.08);
+      box-shadow: 0 0 24px rgba(100, 210, 177, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .music-card-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+      transition: transform 0.25s ease;
+    }
+
+    .music-setup-card:hover .music-card-logo {
+      transform: scale(1.08);
+    }
+
+    .music-card-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .music-card-check {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .music-setup-card.active .music-card-check {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0c0d10;
+      box-shadow: 0 0 10px rgba(100, 210, 177, 0.4);
+    }
+
   </style>
+
 </head>
+
 <body>
 
-  <!-- Ambient Backdrop -->
-  <div class="stitch-ambient" id="stitchAmbient"></div>
 
-  <!-- Top Floating Header -->
-  <header class="stitch-header">
-    <div class="traffic-lights">
-      <div class="traffic-dot dot-close" id="btnTrafficClose" title="Close">
-        <svg viewBox="0 0 10 10"><path d="M1 1L9 9M9 1L1 9" stroke="#000" stroke-width="1.8"/></svg>
+
+  <!-- ================================================================
+
+       SIDEBAR
+
+       ================================================================ -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-header">
+
+      <div class="traffic-lights">
+
+        <div class="traffic-dot dot-close" id="btnClose" title="Close">
+
+          <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
+
+        </div>
+
+        <div class="traffic-dot dot-min" id="btnMin" title="Minimize">
+
+          <svg viewBox="0 0 10 10"><line x1="2" y1="5" x2="8" y2="5"/></svg>
+
+        </div>
+
+        <div class="traffic-dot dot-max" id="btnMax" title="Maximize">
+
+          <svg viewBox="0 0 10 10"><path d="M2.5 6.5V2.5h4M7.5 3.5v4h-4"/></svg>
+
+        </div>
+
       </div>
-      <div class="traffic-dot dot-min" id="btnTrafficMin" title="Minimize">
-        <svg viewBox="0 0 10 10"><path d="M1 5H9" stroke="#000" stroke-width="2"/></svg>
+
+
+
+      <div class="sidebar-brand">
+
+        <img class="brand-icon" src="icon.png" alt="Zenith Logo">
+
+        <div class="brand-text">
+
+          <div class="brand-name">Zenith</div>
+
+          <div class="brand-status" id="sidebarStatus">
+
+            <span class="status-indicator"></span>
+
+            <span id="sidebarStatusText">Standby</span>
+
+          </div>
+
+        </div>
+
       </div>
-      <div class="traffic-dot dot-max" id="btnTrafficMax" title="Maximize">
-        <svg viewBox="0 0 10 10"><path d="M1 5H9M5 1V9" stroke="#000" stroke-width="2"/></svg>
-      </div>
+
     </div>
 
-    <!-- Center Brand Emblem -->
-    <div class="brand-group">
-      <div class="brand-symbol">Z</div>
-      <span>Zenith</span>
-      <div class="brand-live-pill" id="brandLivePill">
-        <span class="pulse-dot"></span>
-        <span id="brandLiveStatus">STANDBY</span>
-      </div>
-    </div>
 
-    <!-- Segmented Navigation Capsule: Dashboard, Settings, About -->
-    <nav class="stitch-nav-pill">
-      <button class="nav-btn active" data-tab="tab-overview">Dashboard</button>
-      <button class="nav-btn" data-tab="tab-settings">Settings</button>
-      <button class="nav-btn" data-tab="tab-about">About</button>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section-label">General</div>
+
+
+
+      <button class="nav-item active" data-page="page-dashboard">
+
+        <span class="nav-icon">
+
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+
+        </span>
+
+        Dashboard
+
+      </button>
+
+
+
+      <button class="nav-item" data-page="page-apikeys">
+
+        <span class="nav-icon">
+
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 2l-2 2m-1.5 1.5L14 9l-3 3-2 2-3 3-2 2H2v-2l2-2 3-3 2-2 3-3 3.5-3.5M19 5l-2-2m-3 3l-2-2"/><circle cx="17.5" cy="6.5" r="2.5"/></svg>
+
+        </span>
+
+        API Keys
+
+      </button>
+
+
+
+      <div class="nav-section-label">System</div>
+
+
+
+      <button class="nav-item" data-page="page-settings">
+
+        <span class="nav-icon">
+
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+
+        </span>
+
+        Settings
+
+      </button>
+
+
+
+      <button class="nav-item" data-page="page-about">
+
+        <span class="nav-icon">
+
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+
+        </span>
+
+        About
+
+      </button>
+
     </nav>
-  </header>
 
-  <!-- Main Bento Canvas -->
-  <main class="stitch-canvas">
 
-    <!-- ====================================================================
-         TAB 1: DASHBOARD
-         ==================================================================== -->
-    <div class="tab-view active" id="tab-overview">
-      
-      <!-- Bento Hero: Assistant State + Dynamic Waveform -->
-      <section class="bento-card bento-hero">
-        <div class="hero-meta-block">
-          <div class="hero-header-row">
-            <div class="status-orb" id="statusOrb">
-              <div class="status-orb-inner"></div>
+
+    <div class="sidebar-footer">
+
+      <div class="sidebar-version">v1.0.2</div>
+
+    </div>
+
+  </aside>
+
+
+
+  <!-- ================================================================
+
+       MAIN CONTENT
+
+       ================================================================ -->
+
+  <div class="main-area">
+
+    <div class="main-drag-bar"></div>
+
+    <div class="content-scroll">
+
+
+
+      <!-- ============================================================
+
+           PAGE: DASHBOARD
+
+           ============================================================ -->
+
+      <div class="page-view active" id="page-dashboard">
+
+        <div class="page-header">
+
+          <div class="page-title">Dashboard</div>
+
+          <div class="page-subtitle">Control center for Zenith</div>
+
+        </div>
+
+
+
+        <!-- Hero Control -->
+
+        <div class="widget hero-widget">
+
+          <div class="hero-top">
+
+            <div class="hero-info">
+
+              <div class="hero-state-label">
+
+                <span class="hero-state-dot" id="heroDot"></span>
+
+                <span id="heroStateText">System Status</span>
+
+              </div>
+
+              <div class="hero-title" id="heroTitle">Zenith is in Standby</div>
+
+              <div class="hero-subtitle" id="heroSubtitle">Multimodal reasoning loop ready. Press the power button to engage.</div>
+
             </div>
-            <div>
-              <h2 class="hero-title" id="heroTitle">Zenith is in Standby</h2>
-              <div class="hero-subtitle" id="heroSubtitle">Multimodal reasoning loop ready • Click Engage to start</div>
-            </div>
-          </div>
 
-          <div class="hero-action-row">
-            <button class="btn-pill-action" id="btnToggleZenith">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              <span id="btnToggleText">Engage Zenith</span>
+            <button class="power-btn" id="btnPower" title="Toggle Zenith">
+
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+
+                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+
+                <line x1="12" y1="2" x2="12" y2="12"/>
+
+              </svg>
+
             </button>
-            <span style="font-size: 11.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;" id="engineBadge">
-              48 kHz PCM • Multimodal Live
-            </span>
+
           </div>
+
+
+
+          <div class="hero-wave-container">
+
+            <canvas id="waveCanvas"></canvas>
+
+          </div>
+
         </div>
 
-        <!-- Real-Time Acoustic Visualizer -->
-        <div class="hero-spectrum-box">
-          <canvas id="heroWaveCanvas"></canvas>
-          <span class="spectrum-label" id="spectrumStateLabel">ACOUSTIC IDLE</span>
-        </div>
-      </section>
 
-      <!-- 2-Tile Grid: Screen Vision & Active Reasoning Model -->
-      <section class="bento-grid-2">
-        
-        <!-- Tile 1: Multimodal Screen Vision -->
-        <div class="bento-card bento-tile">
-          <div>
-            <div class="tile-header">
-              <div class="tile-icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+
+        <!-- Metric tiles: 3 Cards Row -->
+
+        <div class="widget-grid-2">
+
+          <!-- Card 1: Screen Vision -->
+
+          <div class="widget metric-tile">
+
+            <div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+
+                <div class="metric-icon blue">
+
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+
+                </div>
+
+                <label class="toggle-switch">
+
+                  <input type="checkbox" id="toggleVision">
+
+                  <span class="toggle-track"></span>
+
+                </label>
+
               </div>
-              <label class="stitch-switch">
-                <input type="checkbox" id="toggleScreenVision">
-                <span class="stitch-slider"></span>
-              </label>
-            </div>
-            <div class="tile-metric-value" id="visionModeText">On-Demand</div>
-            <div class="tile-metric-sub">Screen Grounding Mode</div>
-          </div>
-          <div class="tile-chip chip-cyan" id="visionChip">Smart Sampling</div>
-        </div>
 
-        <!-- Tile 2: Multimodal Reasoning Model -->
-        <div class="bento-card bento-tile">
-          <div>
-            <div class="tile-header">
-              <div class="tile-icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <div class="metric-value" id="visionModeText">On-Demand</div>
+
+              <div class="metric-label">Screen Vision</div>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- Card 2: Active Reasoning Model -->
+
+          <div class="widget metric-tile">
+
+            <div>
+
+              <div class="metric-icon teal" style="margin-bottom: 12px;">
+
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+
               </div>
-              <div class="tile-chip chip-green" id="modelPillBadge">Live Active</div>
+
+              <div class="metric-value" id="modelName">Gemini 3.8 Live</div>
+
+              <div class="metric-label" id="modelDetail">Multimodal Audio Stream</div>
+
             </div>
-            <div class="tile-metric-value" id="modelDisplayName">gemini-3.8-live</div>
-            <div class="tile-metric-sub" id="modelDetailText">Voice: Fenrir • Memory: 148 KB WAL</div>
-          </div>
-          <div style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;" id="modelSubsystemStatus">
-            System 2 Matrix Armed
+
           </div>
         </div>
 
-      </section>
-
-      <!-- Emergency Disengage Footer Link -->
-      <div class="emergency-footer">
-        <button class="btn-emergency-link" id="btnEmergencyStop">Emergency Motor Disengage Killswitch</button>
       </div>
+
+
+
+      <!-- ============================================================<!-- ============================================================
+
+           PAGE: API KEYS
+
+           ============================================================ -->
+
+      <div class="page-view" id="page-apikeys">
+
+        <div class="page-header" style="display: flex; align-items: center; justify-content: space-between;">
+
+          <div>
+
+            <div class="page-title">API Keys</div>
+
+            <div class="page-subtitle">Configure model access and gateway credentials</div>
+
+          </div>
+
+          <button class="btn-primary" id="btnSaveApiKeys">
+
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+
+            Save Keys
+
+          </button>
+
+        </div>
+
+
+
+        <!-- Google Gemini Card -->
+
+        <div class="widget" style="padding: 20px;">
+
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+
+              <span class="widget-label" style="font-size: 13px; font-weight: 700; color: var(--text-primary); text-transform: none; letter-spacing: normal;">Google Gemini API</span>
+
+              <span class="setting-status" id="googleKeyStatus">Not set</span>
+
+            </div>
+
+            <button class="btn-secondary" id="btnOpenGeminiStudio">
+
+              Get API Key ↗
+
+            </button>
+
+          </div>
+
+
+
+          <div class="guide-box">
+
+            <div class="guide-step">
+
+              <span class="step-num">1</span>
+
+              <span>Open <strong>Google AI Studio</strong> in your browser.</span>
+
+            </div>
+
+            <div class="guide-step">
+
+              <span class="step-num">2</span>
+
+              <span>Click <strong>Get API key</strong> and generate or copy your free key.</span>
+
+            </div>
+
+            <div class="guide-step">
+
+              <span class="step-num">3</span>
+
+              <span>Paste it below to unlock live speech, vision, and reasoning.</span>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="input-with-toggle" style="margin-top: 14px;">
+
+            <input type="password" class="setting-input" id="cfgGoogleApiKey" placeholder="AIzaSy..." autocomplete="off">
+
+            <button class="btn-reveal" data-target="cfgGoogleApiKey">Show</button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- LiveKit Cloud Card -->
+
+        <div class="widget mt-12" style="padding: 20px;">
+
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+
+              <span class="widget-label" style="font-size: 13px; font-weight: 700; color: var(--text-primary); text-transform: none; letter-spacing: normal;">LiveKit Cloud</span>
+
+              <span class="setting-status" id="livekitStatus">Gateway</span>
+
+            </div>
+
+            <button class="btn-secondary" id="btnOpenLiveKit">
+
+              Get LiveKit Keys ↗
+
+            </button>
+
+          </div>
+
+
+
+          <div class="guide-box">
+
+            <div class="guide-step">
+
+              <span class="step-num">1</span>
+
+              <span>Visit the <strong>LiveKit Cloud Console</strong> and create a free project.</span>
+
+            </div>
+
+            <div class="guide-step">
+
+              <span class="step-num">2</span>
+
+              <span>In <strong>Project Settings → Keys</strong>, copy your Server URL, API Key, and Secret.</span>
+
+            </div>
+
+            <div class="guide-step">
+
+              <span class="step-num">3</span>
+
+              <span>Paste them below to connect Zenith's real-time WebRTC audio room.</span>
+
+            </div>
+
+          </div>
+
+
+
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+
+            <div>
+
+              <label class="setting-name" style="font-size: 11.5px; color: var(--text-tertiary); display: block; margin-bottom: 4px;">Server WebSocket URL</label>
+
+              <input type="text" class="setting-input" id="cfgLivekitUrl" placeholder="wss://your-project.livekit.cloud" style="margin-top: 0;">
+
+            </div>
+
+
+
+            <div>
+
+              <label class="setting-name" style="font-size: 11.5px; color: var(--text-tertiary); display: block; margin-bottom: 4px;">API Key</label>
+
+              <input type="text" class="setting-input" id="cfgLivekitKey" placeholder="LIVEKIT_API_KEY" style="margin-top: 0;">
+
+            </div>
+
+
+
+            <div>
+
+              <label class="setting-name" style="font-size: 11.5px; color: var(--text-tertiary); display: block; margin-bottom: 4px;">API Secret</label>
+
+              <div class="input-with-toggle">
+
+                <input type="password" class="setting-input" id="cfgLivekitSecret" placeholder="LIVEKIT_API_SECRET" autocomplete="off" style="margin-top: 0;">
+
+                <button class="btn-reveal" data-target="cfgLivekitSecret">Show</button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ============================================================
+
+           PAGE: SETTINGS
+
+           ============================================================ -->
+
+      <div class="page-view" id="page-settings">
+
+        <div class="page-header" style="display: flex; align-items: center; justify-content: space-between;">
+
+          <div>
+
+            <div class="page-title">Settings</div>
+
+            <div class="page-subtitle">Preferences and identity</div>
+
+          </div>
+
+          <button class="btn-primary" id="btnSave">
+
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+
+            Save
+
+          </button>
+
+        </div>
+
+
+
+        <div class="settings-group">
+
+          <div class="settings-group-label">Preferences</div>
+
+
+
+          <div class="setting-item" style="border-radius: var(--radius-md) var(--radius-md) 0 0;">
+
+            <div class="setting-name">User Identifier</div>
+
+            <input type="text" class="setting-input" id="cfgUserId" placeholder="Admin">
+
+          </div>
+
+
+
+          <div class="setting-item" style="border-radius: 0 0 var(--radius-md) var(--radius-md); border-top: none;">
+
+            <div class="setting-name">Preferred Music Player</div>
+
+            <input type="hidden" id="cfgMusic" value="youtube_music">
+
+
+
+            <div class="music-picker" id="musicPicker">
+
+              <!-- Option 1: Zenith In-Built Music Player -->
+
+              <div class="music-opt-item active" data-value="youtube_music">
+
+                <div class="music-opt-left">
+
+                  <div class="music-opt-icon">
+
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/></svg>
+
+                  </div>
+
+                  <div class="music-opt-title">Zenith In-Built Music Player</div>
+
+                </div>
+
+                <div class="music-opt-radio">
+
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Option 2: Web Browser (YouTube) -->
+
+              <div class="music-opt-item" data-value="browser">
+
+                <div class="music-opt-left">
+
+                  <div class="music-opt-icon">
+
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+
+                  </div>
+
+                  <div class="music-opt-title">Web Browser (YouTube)</div>
+
+                </div>
+
+                <div class="music-opt-radio">
+
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Option 3: Spotify Desktop -->
+
+              <div class="music-opt-item" data-value="spotify">
+
+                <div class="music-opt-left">
+
+                  <div class="music-opt-icon">
+
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 11.5c3-1 6-0.5 8 1"/><path d="M7 14.5c4-1 8-0.5 10 1"/><path d="M9 8.5c3-1 6.5-0.5 8.5 1"/></svg>
+
+                  </div>
+
+                  <div class="music-opt-title">Spotify Desktop</div>
+
+                </div>
+
+                <div class="music-opt-radio">
+
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ============================================================
+
+           PAGE: ABOUT
+
+           ============================================================ -->
+
+      <div class="page-view" id="page-about">
+
+        <div class="page-header">
+
+          <div class="page-title">About</div>
+
+          <div class="page-subtitle">Zenith Desktop Superintelligence</div>
+
+        </div>
+
+
+
+        <div class="widget about-hero">
+
+          <img class="about-icon-box" src="icon.png" alt="Zenith Logo">
+
+          <div class="about-meta">
+
+            <h3>
+
+              Zenith
+              <span class="widget-badge badge-neutral">v1.0.2</span>
+
+            </h3>
+
+            <p>Autonomous multimodal voice & vision operating system. Built with Google Gemini Live, sovereign neural memory, Set-of-Mark visual grounding, and high-fidelity native audio streaming.</p>
+
+          </div>
+
+        </div>
+
+                <!-- Software Updates Card (Separate) -->
+        <div class="widget update-card mt-12" id="aboutUpdateCard">
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div class="update-card-content">
+              <div class="update-icon-ring">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+              </div>
+              <div class="update-text-block">
+                <div class="update-card-title">Software Updates</div>
+                <div class="update-card-status" id="aboutUpdateStatus">Zenith is up to date • Checked recently</div>
+              </div>
+            </div>
+            <button class="btn-secondary" id="btnCheckUpdateAbout">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+              Check for Updates
+            </button>
+          </div>
+
+          <!-- Live Download Progress Bar (About) -->
+          <div class="update-progress-container" id="aboutUpdateProgressWrap" style="display: none; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.06); width: 100%;">
+            <div class="update-progress-track">
+              <div class="update-progress-fill" id="aboutUpdateProgressBar" style="width: 0%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-top: 6px;">
+              <span id="aboutUpdateProgressSub">Downloading update payload...</span>
+              <span id="aboutUpdateProgressPct" style="font-weight: 600; color: #f5f5f7;">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="widget creator-card mt-12">
+
+          <div class="creator-left">
+
+            <div class="creator-avatar-ring">
+
+              <img src="https://github.com/Adbhut1234.png" alt="Enc0deX" onerror="this.style.background='var(--bg-card)'">
+
+            </div>
+
+            <div>
+
+              <div class="creator-name">Enc0deX</div>
+
+              <div class="creator-role">Creator & Lead Architect</div>
+
+            </div>
+
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-secondary" id="btnReportBug" title="Report an issue or bug on GitHub">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m8 2 1.88 1.88"/>
+                <path d="M14.12 3.88 16 2"/>
+                <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/>
+                <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/>
+                <path d="M12 20v-9"/>
+                <path d="M6 13H2"/>
+                <path d="M3 21c0-2.1 1.7-3.9 3.8-4"/>
+                <path d="M22 13h-4"/>
+                <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/>
+              </svg>
+              Report a Bug ↗
+            </button>
+
+            <button class="btn-secondary" id="btnGitProfile">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              GitHub ↗
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+
 
     </div>
 
-    <!-- ====================================================================
-         TAB 2: SETTINGS (Aligned directly with Zenith project files)
-         ==================================================================== -->
-    <div class="tab-view" id="tab-settings">
-      <div class="section-title-row">
-        <span class="section-title">Environment & Peripherals</span>
-        <button class="btn-pill-action" id="btnSaveSettings">Save Changes</button>
+  </div>
+
+
+
+  <!-- Toast -->
+
+  <div class="toast" id="toast"></div>
+
+
+
+    <!-- ================================================================
+       FIRST-TIME SETUP WIZARD (Shown only for clean / first-time installs)
+       ================================================================ -->
+  <div id="firstTimeSetup" class="setup-wizard-overlay hidden">
+    <!-- Drag Titlebar & Traffic Lights -->
+    <div class="setup-titlebar">
+      <div class="traffic-lights">
+        <div class="traffic-dot dot-close" id="btnSetupClose" title="Close">
+          <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
+        </div>
+        <div class="traffic-dot dot-min" id="btnSetupMin" title="Minimize">
+          <svg viewBox="0 0 10 10"><line x1="2" y1="5" x2="8" y2="5"/></svg>
+        </div>
       </div>
+      <div class="setup-window-drag"></div>
+    </div>
 
-      <!-- Group 1: Google Gemini AI Credentials -->
-      <div class="stitch-settings-group">
-        <div class="group-label">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          <span>Gemini AI Engine</span>
+    <div class="setup-container">
+      <!-- Stepper Indicator with dynamic progress line -->
+      <div class="setup-stepper">
+        <div class="setup-step-dot active" id="setupStepDot1">
+          <span class="step-circle">1</span>
+          <span>Welcome</span>
         </div>
-
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">Google API Key (GOOGLE_API_KEY)</span>
-            <span class="form-status-tag" id="googleKeyTag">Not set</span>
-          </div>
-          <div class="form-desc">Primary token powering multimodal live speech, SoM computer vision, and cognitive RAG.</div>
-          <div class="input-box-wrapper">
-            <input type="password" class="stitch-input" id="cfgGoogleApiKey" placeholder="AIzaSy...">
-            <button class="btn-eye-toggle" data-target="cfgGoogleApiKey">Show</button>
-          </div>
+        <div class="setup-step-line" id="stepLine1"></div>
+        <div class="setup-step-dot" id="setupStepDot2">
+          <span class="step-circle">2</span>
+          <span>Engine</span>
         </div>
-
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">Live Reasoning Model (GEMINI_LIVE_MODEL)</span>
-            <span class="form-status-tag active">Selected</span>
-          </div>
-          <div class="form-desc">Target multimodal model ID for the WebSocket audio stream.</div>
-          <select class="stitch-select" id="cfgLiveModel">
-            <option value="gemini-3.8-live">gemini-3.8-live (Recommended / Ultra Fast)</option>
-            <option value="gemini-2.5-flash-preview">gemini-2.5-flash-preview</option>
-            <option value="gemini-2.5-pro">gemini-2.5-pro (Deliberative Deep Reasoning)</option>
-          </select>
+        <div class="setup-step-line" id="stepLine2"></div>
+        <div class="setup-step-dot" id="setupStepDot3">
+          <span class="step-circle">3</span>
+          <span>LiveKit</span>
         </div>
-
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">Voice Persona (ZENITH_VOICE)</span>
-            <span class="form-status-tag active">Native PCM</span>
-          </div>
-          <div class="form-desc">Voice timbre and acoustic persona synthesized by Gemini Live.</div>
-          <select class="stitch-select" id="cfgVoiceChoice">
-            <option value="Fenrir">Fenrir (Authoritative / Clear Default)</option>
-            <option value="Puck">Puck (Energetic & Friendly)</option>
-            <option value="Charon">Charon (Deep & Measured)</option>
-            <option value="Kore">Kore (Warm & Expressive)</option>
-            <option value="Aoede">Aoede (Brisk & Analytical)</option>
-          </select>
+        <div class="setup-step-line" id="stepLine3"></div>
+        <div class="setup-step-dot" id="setupStepDot4">
+          <span class="step-circle">4</span>
+          <span>Preferences</span>
         </div>
       </div>
 
-      <!-- Group 2: LiveKit Cloud Infrastructure -->
-      <div class="stitch-settings-group">
-        <div class="group-label">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
-          <span>LiveKit Gateway</span>
+      <!-- Step 1: Welcome & User Identity -->
+      <div class="setup-step-view active" id="setupStep1">
+        <div class="setup-hero-centered">
+          <img src="icon.png" alt="Zenith Logo" class="setup-hero-icon">
+          <div class="setup-hero-title">Welcome to Zenith</div>
+          <div class="setup-hero-sub">Your autonomous multimodal voice & vision operating system. Let's configure your AI core and workspace preferences in under a minute.</div>
         </div>
 
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">Server URL (LIVEKIT_URL)</span>
+        <!-- Compact Slim Input Box -->
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin: 0 auto 22px;">
+          <input type="text" id="setupUserIdInput" class="minimal-identity-input" value="Enc0deX" placeholder="Your name..." autocomplete="off" spellcheck="false" style="width: 190px; max-width: 190px; height: 38px; font-size: 13.5px;">
+          <div class="field-error-msg" id="userIdError" style="justify-content: center; font-size: 11.5px; white-space: nowrap;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            User identity is required.
           </div>
-          <div class="form-desc">Websocket endpoint for LiveKit room orchestration.</div>
-          <input type="text" class="stitch-input" id="cfgLivekitUrl" placeholder="wss://your-project.livekit.cloud">
         </div>
 
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">API Key & Secret</span>
+        <div class="setup-actions" style="border-top: none; padding-top: 0; justify-content: center; width: 100%; margin-top: 0;">
+          <button class="setup-btn-next" id="btnSetupStep1Next" style="padding: 12px 34px; font-size: 13.5px; border-radius: 14px;">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Google Gemini AI API -->
+      <div class="setup-step-view" id="setupStep2">
+        <div class="setup-hero-centered" style="margin-bottom: 24px;">
+          <div class="setup-hero-title">Connect Gemini AI Core</div>
+          <div class="setup-hero-sub">Enter your Google Gemini API key to activate voice synthesis, vision perception, and real-time reasoning.</div>
+        </div>
+
+        <div style="width: 100%; max-width: 380px; margin: 0 auto 24px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 4px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 12.5px; font-weight: 600; color: var(--text-secondary);">Google API Key</span>
+              <span class="setting-status" id="setupKeyBadge">Required</span>
+            </div>
+            <button class="btn-secondary" id="btnSetupOpenAiStudio" style="font-size: 11.5px; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+              <span>Get API Key</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </button>
           </div>
-          <div class="form-desc">LiveKit room authentication credentials.</div>
+
+          <div class="input-with-toggle" style="width: 100%; margin-bottom: 8px; position: relative;">
+            <input type="password" class="minimal-identity-input" id="setupGoogleKeyInput" placeholder="Paste key (AIzaSy...)" autocomplete="off" spellcheck="false" style="text-align: center; font-size: 13.5px; padding: 0 46px;">
+            <button class="btn-reveal" data-target="setupGoogleKeyInput" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);">Show</button>
+          </div>
+
+          <div class="field-error-msg" id="googleKeyError" style="justify-content: center; text-align: center;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            A valid Google Gemini API Key is required to operate Zenith.
+          </div>
+        </div>
+
+        <div class="setup-actions" style="border-top: none; padding-top: 0; justify-content: center; gap: 14px; width: 100%; margin-top: 0;">
+          <button class="setup-btn-back" id="btnSetupStep2Back" style="padding: 12px 24px; font-size: 13.5px; border-radius: 14px;">
+            ← Back
+          </button>
+          <button class="setup-btn-next" id="btnSetupStep2Next" style="padding: 12px 28px; font-size: 13.5px; border-radius: 14px;">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      
+
+      <!-- Step 3: LiveKit Cloud Gateway -->
+      <div class="setup-step-view" id="setupStep3">
+        <div class="setup-hero-centered" style="margin-bottom: 18px;">
+          <div class="setup-hero-title">LiveKit Gateway</div>
+          <div class="setup-hero-sub">Real-time WebRTC audio room and low-latency voice pipeline.</div>
+        </div>
+
+        <div style="width: 100%; max-width: 380px; margin: 0 auto 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 0 4px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">WebRTC Gateway</span>
+              <span class="setting-status configured" id="setupLivekitBadge">Gateway Ready</span>
+            </div>
+            <button class="btn-secondary" id="btnSetupOpenLivekit" style="font-size: 11px; padding: 2px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+              <span>Cloud Console</span>
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </button>
+          </div>
+
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <input type="text" class="stitch-input" id="cfgLivekitKey" placeholder="LIVEKIT_API_KEY">
-            <div class="input-box-wrapper">
-              <input type="password" class="stitch-input" id="cfgLivekitSecret" placeholder="LIVEKIT_API_SECRET">
-              <button class="btn-eye-toggle" data-target="cfgLivekitSecret">Show</button>
+            <input type="text" class="minimal-identity-input" id="setupLivekitUrl" value="wss://project-j-a-r-v-i-s-h4h7md2b.livekit.cloud" placeholder="wss://your-project.livekit.cloud" autocomplete="off" spellcheck="false" style="height: 36px; font-size: 12px; padding: 0 12px; text-align: left;">
+            <input type="text" class="minimal-identity-input" id="setupLivekitKey" value="APIL5vhX9g9nt2W" placeholder="LiveKit API Key" autocomplete="off" spellcheck="false" style="height: 36px; font-size: 12px; padding: 0 12px; text-align: left;">
+            <div class="input-with-toggle" style="width: 100%; position: relative;">
+              <input type="password" class="minimal-identity-input" id="setupLivekitSecret" value="FJD6DOm6O4Qem7tEB8UkOEARKlK0UZC2GwfPXb1Jj60" placeholder="LiveKit API Secret" autocomplete="off" spellcheck="false" style="height: 36px; font-size: 12px; padding: 0 46px 0 12px; text-align: left;">
+              <button class="btn-reveal" data-target="setupLivekitSecret" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px;">Show</button>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Group 3: Identity & Safety Constraints -->
-      <div class="stitch-settings-group">
-        <div class="group-label">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Identity & System Safety</span>
-        </div>
-
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">User Identifier (Zenith_USER_ID)</span>
-          </div>
-          <div class="form-desc">User name used by the Ship of Theseus episodic memory evolution engine.</div>
-          <input type="text" class="stitch-input" id="cfgUserId" placeholder="Admin">
-        </div>
-
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">Command Safety Confirmation</span>
-            <label class="stitch-switch">
-              <input type="checkbox" id="cfgRequireConfirm">
-              <span class="stitch-slider"></span>
-            </label>
-          </div>
-          <div class="form-desc">Prompt for explicit confirmation before executing terminal shell commands.</div>
-        </div>
-
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">Preferred Music Player (PREFERRED_MUSIC_APP)</span>
-          </div>
-          <div class="form-desc">Player targeted by agent_tools/music.py for soundtrack playback.</div>
-          <select class="stitch-select" id="cfgMusicApp">
-            <option value="youtube_music">YouTube Music (Web Browser)</option>
-            <option value="spotify">Spotify Desktop Client</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Group 4: Hardware Audio -->
-      <div class="stitch-settings-group">
-        <div class="group-label">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
-          <span>Hardware Peripherals</span>
-        </div>
-
-        <div class="stitch-form-card">
-          <div class="form-header-row">
-            <span class="form-label">Microphone Audio Device (ZENITH_INPUT_DEVICE)</span>
-          </div>
-          <div class="form-desc">Exact Windows audio capture peripheral string or leave blank for default.</div>
-          <input type="text" class="stitch-input" id="cfgInputDevice" placeholder="Default Windows Input Device">
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ====================================================================
-         TAB 3: ABOUT (Zenith Info, Creator GitHub, Updates, Bug Reporting)
-         ==================================================================== -->
-    <div class="tab-view" id="tab-about">
-      <div class="section-title-row">
-        <span class="section-title">About Zenith Studio</span>
-      </div>
-
-      <!-- Hero About Card -->
-      <section class="bento-card about-hero-card">
-        <div class="about-logo-box">Z</div>
-        <div class="about-hero-meta">
-          <h3>
-            <span>Zenith Desktop Assistant</span>
-            <span class="about-version-tag">v1.6.0</span>
-          </h3>
-          <p>Autonomous multimodal voice and vision operating system. Engineered with Google Gemini Live audio streams, local-first SQLite WAL memory evolution, and Set-of-Mark (SoM) screen grounding.</p>
-        </div>
-      </section>
-
-      <!-- Creator Card (Made by Adbhut1234 with Profile Pic & External Redirect) -->
-      <section class="bento-card creator-card">
-        <div class="creator-profile">
-          <div class="creator-avatar-wrap">
-            <img class="creator-avatar-img" src="https://github.com/Adbhut1234.png" alt="Adbhut1234" onerror="this.src='icon.png'">
-          </div>
-          <div class="creator-info">
-            <h4>Adbhut1234</h4>
-            <p>Creator & Lead Architect of Zenith</p>
+          <div class="field-error-msg" id="livekitError" style="justify-content: center; text-align: center; font-size: 11px; margin-top: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            LiveKit URL and credentials are required.
           </div>
         </div>
 
-        <button class="btn-github-link" id="btnCreatorProfile" title="Open GitHub Profile in Browser">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          <span>GitHub Profile ↗</span>
-        </button>
-      </section>
-
-      <!-- Updates & Bug Reporting Actions -->
-      <section class="about-actions-grid">
-        
-        <!-- Check for Updates Card -->
-        <div class="bento-card action-box">
-          <div>
-            <h5>Software Updates</h5>
-            <p id="updateStatusText">Check for the latest features and security updates.</p>
-          </div>
-          <button class="btn-pill-action" id="btnCheckUpdates" style="padding: 8px 18px; font-size: 12px; align-self: flex-start;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
-            <span id="btnCheckUpdatesText">Check for Updates</span>
+        <div class="setup-actions" style="border-top: none; padding-top: 0; justify-content: center; gap: 14px; width: 100%; margin-top: 0;">
+          <button class="setup-btn-back" id="btnSetupStep3Back" style="padding: 12px 24px; font-size: 13.5px; border-radius: 14px;">
+            ← Back
+          </button>
+          <button class="setup-btn-next" id="btnSetupStep3Next" style="padding: 12px 28px; font-size: 13.5px; border-radius: 14px;">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
+      </div>
 
-        <!-- Report a Bug Card -->
-        <div class="bento-card action-box">
-          <div>
-            <h5>Bug Reporting & Issues</h5>
-            <p>Encountered an anomaly or need a new capability?</p>
+      <!-- Step 4: Preferences & Ready -->
+      <div class="setup-step-view" id="setupStep4">
+        <div class="setup-hero-centered" style="margin-bottom: 24px;">
+          <div class="setup-hero-title">Preferences</div>
+          <div class="setup-hero-sub">Select your primary media streaming service for playback.</div>
+        </div>
+
+        <div class="music-card-row">
+          <!-- YouTube Music Card -->
+          <div class="music-setup-card active" data-setup-music="youtube_music" id="setupOptYt">
+            <div class="music-card-check">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="music-card-logo">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10.5" fill="#FF0000"/>
+                <circle cx="12" cy="12" r="7" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.5"/>
+                <polygon points="10.2,8.2 15.6,12 10.2,15.8" fill="#ffffff"/>
+              </svg>
+            </div>
+            <div class="music-card-name">YouTube Music</div>
           </div>
-          <button class="btn-pill-action" id="btnReportBug" style="padding: 8px 18px; font-size: 12px; align-self: flex-start; background: #1e212d; color: #fff; border: 1px solid var(--border-hover);">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2v4a4 4 0 0 0 8 0v-4h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/></svg>
-            <span>Report a Bug ↗</span>
+
+          <!-- Spotify Card -->
+          <div class="music-setup-card" data-setup-music="spotify" id="setupOptSpotify">
+            <div class="music-card-check">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="music-card-logo">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10.5" fill="#1ED760"/>
+                <path d="M7 9.4c3.2-0.8 6.8-0.5 9.5 1.1" stroke="#000000" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M7.8 12.1c2.6-0.6 5.5-0.4 7.8 0.9" stroke="#000000" stroke-width="1.4" stroke-linecap="round"/>
+                <path d="M8.5 14.7c2.1-0.5 4.3-0.3 6.1 0.7" stroke="#000000" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="music-card-name">Spotify</div>
+          </div>
+        </div>
+
+        <div class="setup-actions" style="border-top: none; padding-top: 0; justify-content: center; gap: 14px; width: 100%; margin-top: 4px;">
+          <button class="setup-btn-back" id="btnSetupStep4Back" style="padding: 12px 24px; font-size: 13.5px; border-radius: 14px;">
+            ← Back
+          </button>
+          <button class="setup-btn-next" id="btnSetupFinish" style="padding: 12px 32px; font-size: 13.5px; border-radius: 14px; background: var(--accent); color: #0c0d10; font-weight: 700;">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
-
-      </section>
-
-      <!-- Repository Link Card -->
-      <section class="bento-card" style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
-        <div style="font-size: 12.5px; color: var(--text-secondary);">
-          Source Repository: <code style="color: var(--cyan); font-family: 'JetBrains Mono', monospace;">https://github.com/Adbhut1234/Zenith</code>
-        </div>
-        <button class="btn-github-link" id="btnRepoLink" style="font-size: 11.5px; padding: 6px 14px;">
-          <span>Star on GitHub ★</span>
-        </button>
-      </section>
-
+      </div>
     </div>
-
-  </main>
-
-  <!-- Stitch Toast Notification -->
-  <div class="stitch-toast" id="stitchToast"></div>
-
-  <!-- Client Controller Script -->
+  </div>
+  <!-- Instant Wizard Display Script: Only shows for force setup; normal launches wait for env verification -->
   <script>
+    (function() {
+      try {
+        var isSetup = window.location.search.indexOf('setup') !== -1 || window.location.hash.indexOf('setup') !== -1;
+        var wizard = document.getElementById('firstTimeSetup');
+        if (wizard && isSetup) {
+          wizard.classList.remove('hidden');
+          var s1 = document.getElementById('setupStep1');
+          if (s1) s1.classList.add('active');
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <script>
+
     (function () {
+
       'use strict';
 
-      let isRunning = false;
-      let acousticAmplitude = 0.12;
-      let targetAcousticAmplitude = 0.12;
 
-      // Safe IPC Bindings
+
+      /* ── State ── */
+
+      let isRunning = false;
+
+      let acousticAmp = 0.12;
+
+      let targetAmp = 0.12;
+
+
+
+      /* ── Safe IPC ── */
+
       const api = window.api || {
+
         readEnv: async () => ({}),
+
         saveEnv: async () => ({ status: 'success' }),
+
         startZenith: async () => ({ status: 'success' }),
+
         stopZenith: async () => ({ status: 'success' }),
-        checkZenithStatus: async () => isRunning,
+
+        checkZenithStatus: async () => false,
+
         checkForUpdates: async () => ({ status: 'success' }),
+
         onUpdateMessage: () => {},
+
         onUpdateProgress: () => {},
-        toggleScreenVision: async (val) => ({ status: 'success', active: val }),
+
+        toggleScreenVision: async (v) => ({ status: 'success', active: v }),
+
         getScreenVisionStatus: async () => ({ active: false }),
+
         getSystemTelemetry: async () => ({ cpuPercent: 12, memPercent: 44 }),
-        getCognitiveStats: async () => ({ dbSizeKB: 148 }),
+
+        getCognitiveStats: async () => ({ dbSizeKB: 148, dbExists: true }),
+
         emergencyKill: async () => ({ status: 'success' }),
+
         minimizeWindow: async () => {},
+
         maximizeWindow: async () => {},
+
         closeWindow: async () => {},
+
         openExternal: async (url) => { window.open(url, '_blank'); },
+
         onUIState: () => {}
+
       };
 
-      // Toast Engine
-      const toastEl = document.getElementById('stitchToast');
-      function showToast(msg) {
-        if (!toastEl) return;
-        toastEl.textContent = msg;
-        toastEl.classList.add('show');
-        setTimeout(() => toastEl.classList.remove('show'), 2600);
+
+
+      /* ── Model Name Formatter ── */
+
+      function formatModelTitle(raw) {
+
+        if (!raw) return 'Gemini 3.8 Live';
+
+        const str = raw.trim();
+
+        if (/^gemini-3\.8-live$/i.test(str) || /^gemini 3\.8 live$/i.test(str)) return 'Gemini 3.8 Live';
+
+        if (/^gemini-2\.5-flash/i.test(str)) return 'Gemini 2.5 Flash';
+
+        if (/^gemini-2\.5-pro/i.test(str)) return 'Gemini 2.5 Pro';
+
+        return str.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
       }
 
-      // Frameless Window Controls
-      const btnTrafficClose = document.getElementById('btnTrafficClose');
-      const btnTrafficMin = document.getElementById('btnTrafficMin');
-      const btnTrafficMax = document.getElementById('btnTrafficMax');
-      if (btnTrafficClose) btnTrafficClose.onclick = () => api.closeWindow();
-      if (btnTrafficMin) btnTrafficMin.onclick = () => api.minimizeWindow();
-      if (btnTrafficMax) btnTrafficMax.onclick = () => api.maximizeWindow();
 
-      // Stitch Nav Switching (Dashboard, Settings, About)
-      const navButtons = document.querySelectorAll('.nav-btn');
-      navButtons.forEach(btn => {
+
+      /* ── Toast ── */
+
+      const toastEl = document.getElementById('toast');
+
+      function showToast(msg) {
+
+        if (!toastEl) return;
+
+        toastEl.textContent = msg;
+
+        toastEl.classList.add('show');
+
+        clearTimeout(toastEl._timer);
+
+        toastEl._timer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+
+      }
+
+
+
+      /* ── Window Controls ── */
+
+      document.getElementById('btnClose').onclick = () => {
+
+        document.body.classList.add('window-closing');
+
+        setTimeout(() => {
+
+          api.closeWindow();
+
+        }, 320);
+
+      };
+
+
+
+      if (api.onAppClosing) {
+
+        api.onAppClosing(() => {
+
+          document.body.classList.add('window-closing');
+
+        });
+
+      }
+
+      document.getElementById('btnMin').onclick = () => api.minimizeWindow();
+
+      document.getElementById('btnMax').onclick = () => api.maximizeWindow();
+
+
+
+      /* ── Sidebar Navigation ── */
+
+      const navItems = document.querySelectorAll('.nav-item[data-page]');
+
+      const pages = document.querySelectorAll('.page-view');
+
+
+
+      navItems.forEach(btn => {
+
         btn.onclick = () => {
-          navButtons.forEach(b => b.classList.remove('active'));
+
+          navItems.forEach(b => b.classList.remove('active'));
+
           btn.classList.add('active');
 
-          const targetId = btn.getAttribute('data-tab');
-          document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-          const targetEl = document.getElementById(targetId);
-          if (targetEl) targetEl.classList.add('active');
-        };
-      });
+          const targetId = btn.getAttribute('data-page');
 
-      // Status UI Elements
-      const stitchAmbient = document.getElementById('stitchAmbient');
-      const statusOrb = document.getElementById('statusOrb');
-      const heroTitle = document.getElementById('heroTitle');
-      const heroSubtitle = document.getElementById('heroSubtitle');
-      const btnToggleZenith = document.getElementById('btnToggleZenith');
-      const btnToggleText = document.getElementById('btnToggleText');
-      const brandLivePill = document.getElementById('brandLivePill');
-      const brandLiveStatus = document.getElementById('brandLiveStatus');
-      const spectrumStateLabel = document.getElementById('spectrumStateLabel');
+          pages.forEach(p => {
 
-      function updateStatusUI(running, stateText = '') {
-        isRunning = running;
-        if (running) {
-          targetAcousticAmplitude = 0.55;
-          if (stitchAmbient) stitchAmbient.classList.add('active');
-          if (statusOrb) statusOrb.classList.add('active');
-          if (heroTitle) heroTitle.textContent = stateText ? `Zenith is ${stateText}` : 'Zenith is Active & Listening';
-          if (heroSubtitle) heroSubtitle.textContent = 'Multimodal Live Audio loop engaged • Responsive to voice and vision triggers';
-          if (btnToggleZenith) btnToggleZenith.className = 'btn-pill-action running';
-          if (btnToggleText) btnToggleText.textContent = 'Disengage';
-          if (brandLivePill) brandLivePill.classList.add('active');
-          if (brandLiveStatus) brandLiveStatus.textContent = stateText || 'ACTIVE';
-          if (spectrumStateLabel) spectrumStateLabel.textContent = 'LIVE SPECTRUM';
-        } else {
-          targetAcousticAmplitude = 0.12;
-          if (stitchAmbient) stitchAmbient.classList.remove('active');
-          if (statusOrb) statusOrb.classList.remove('active');
-          if (heroTitle) heroTitle.textContent = 'Zenith is in Standby';
-          if (heroSubtitle) heroSubtitle.textContent = 'Multimodal reasoning loop ready • Click Engage to start';
-          if (btnToggleZenith) btnToggleZenith.className = 'btn-pill-action';
-          if (btnToggleText) btnToggleText.textContent = 'Engage Zenith';
-          if (brandLivePill) brandLivePill.classList.remove('active');
-          if (brandLiveStatus) brandLiveStatus.textContent = 'STANDBY';
-          if (spectrumStateLabel) spectrumStateLabel.textContent = 'ACOUSTIC IDLE';
-        }
-      }
+            p.classList.remove('active');
 
-      // Assistant Toggle
-      if (btnToggleZenith) {
-        btnToggleZenith.onclick = async () => {
-          if (!isRunning) {
-            btnToggleText.textContent = 'Initializing...';
-            const res = await api.startZenith();
-            if (res && res.status === 'success') {
-              updateStatusUI(true);
-              showToast('Zenith engaged');
-            } else {
-              updateStatusUI(false);
-              showToast(res && res.message ? res.message : 'Launch failed');
+            p.style.animation = 'none';
+
+          });
+
+          const target = document.getElementById(targetId);
+
+          if (target) {
+
+            void target.offsetWidth;
+
+            target.style.animation = '';
+
+            target.classList.add('active');
+
+            if (targetId === 'page-dashboard') {
+              setTimeout(resizeCanvas, 40);
             }
-          } else {
-            btnToggleText.textContent = 'Disengaging...';
-            await api.stopZenith();
-            updateStatusUI(false);
-            showToast('Zenith disengaged');
+
           }
+
         };
-      }
 
-      // Emergency Disengage
-      const btnEmergencyStop = document.getElementById('btnEmergencyStop');
-      if (btnEmergencyStop) {
-        btnEmergencyStop.onclick = async () => {
-          await api.emergencyKill();
-          updateStatusUI(false);
-          showToast('Emergency Killswitch Disengaged');
-        };
-      }
-
-      // Screen Vision Toggle
-      const toggleScreenVision = document.getElementById('toggleScreenVision');
-      const visionModeText = document.getElementById('visionModeText');
-      const visionChip = document.getElementById('visionChip');
-
-      if (toggleScreenVision) {
-        toggleScreenVision.onchange = async (e) => {
-          const enable = e.target.checked;
-          await api.toggleScreenVision(enable);
-          if (visionModeText) visionModeText.textContent = enable ? 'Continuous' : 'On-Demand';
-          if (visionChip) {
-            visionChip.textContent = enable ? '30 FPS Stream' : 'Smart Sampling';
-            visionChip.className = enable ? 'tile-chip chip-cyan' : 'tile-chip chip-muted';
-          }
-          showToast(`Vision: ${enable ? '30 FPS Stream' : 'Smart On-Demand'}`);
-        };
-      }
-
-      api.getScreenVisionStatus().then(status => {
-        if (status && status.active) {
-          if (toggleScreenVision) toggleScreenVision.checked = true;
-          if (visionModeText) visionModeText.textContent = 'Continuous';
-          if (visionChip) {
-            visionChip.textContent = '30 FPS Stream';
-            visionChip.className = 'tile-chip chip-cyan';
-          }
-        }
       });
 
-      // Model & Memory Details Display
-      const modelDisplayName = document.getElementById('modelDisplayName');
-      const modelDetailText = document.getElementById('modelDetailText');
 
-      async function refreshModelAndMemory() {
-        try {
-          const cog = await api.getCognitiveStats();
-          const dbSize = cog && cog.dbSizeKB ? cog.dbSizeKB : 148;
-          const currentVoice = cfgVoiceChoice ? cfgVoiceChoice.value : 'Fenrir';
-          if (modelDetailText) {
-            modelDetailText.textContent = `Voice: ${currentVoice} • Memory: ${dbSize} KB WAL`;
-          }
-        } catch (e) {}
+
+      /* ── Status UI ── */
+
+      const heroDot = document.getElementById('heroDot');
+
+      const heroTitle = document.getElementById('heroTitle');
+
+      const heroSubtitle = document.getElementById('heroSubtitle');
+
+      const heroStateText = document.getElementById('heroStateText');
+
+      const sidebarStatus = document.getElementById('sidebarStatus');
+
+      const sidebarStatusText = document.getElementById('sidebarStatusText');
+
+      const btnPower = document.getElementById('btnPower');
+
+
+
+      function setStatus(running) {
+
+        isRunning = running;
+
+        if (running) {
+
+          targetAmp = 0.55;
+
+          heroDot.classList.add('active');
+
+          heroTitle.textContent = 'Zenith is Active';
+
+          heroSubtitle.textContent = 'Multimodal Live Audio loop engaged — responsive to voice and vision.';
+
+          heroStateText.textContent = 'Online';
+
+          sidebarStatus.classList.add('active');
+
+          sidebarStatusText.textContent = 'Active';
+
+          btnPower.classList.add('active');
+
+        } else {
+
+          targetAmp = 0.12;
+
+          heroDot.classList.remove('active');
+
+          heroTitle.textContent = 'Zenith is in Standby';
+
+          heroSubtitle.textContent = 'Multimodal reasoning loop ready. Press the power button to engage.';
+
+          heroStateText.textContent = 'Standby';
+
+          sidebarStatus.classList.remove('active');
+
+          sidebarStatusText.textContent = 'Standby';
+
+          btnPower.classList.remove('active');
+
+        }
+
       }
-      setInterval(refreshModelAndMemory, 3500);
-      refreshModelAndMemory();
 
-      api.checkZenithStatus().then(status => updateStatusUI(!!status));
 
-      // ------------------------------------------------------------------------
-      // HERO SPECTRUM WAVE CANVAS (60FPS Real-Time Stitch Visualizer)
-      // ------------------------------------------------------------------------
-      const waveCanvas = document.getElementById('heroWaveCanvas');
+
+      /* ── Power Toggle ── */
+
+      btnPower.onclick = async () => {
+
+        if (!isRunning) {
+
+          heroTitle.textContent = 'Initializing...';
+
+          const res = await api.startZenith();
+
+          if (res && res.status === 'success') {
+
+            setStatus(true);
+
+            showToast('Zenith engaged');
+
+          } else {
+
+            setStatus(false);
+
+            showToast(res && res.message ? res.message : 'Launch failed');
+
+          }
+
+        } else {
+
+          heroTitle.textContent = 'Disengaging...';
+
+          await api.stopZenith();
+
+          setStatus(false);
+
+          showToast('Zenith disengaged');
+
+        }
+
+      };
+
+
+
+      /* ── Screen Vision Toggle ── */
+
+      const toggleVision = document.getElementById('toggleVision');
+
+      const visionModeText = document.getElementById('visionModeText');
+
+
+
+      toggleVision.onchange = async (e) => {
+
+        const on = e.target.checked;
+
+        await api.toggleScreenVision(on);
+
+        visionModeText.textContent = on ? 'Continuous' : 'On-Demand';
+
+        showToast(`Vision: ${on ? 'Continuous Stream' : 'Smart On-Demand'}`);
+
+      };
+
+
+
+      api.getScreenVisionStatus().then(s => {
+
+        if (s && s.active) {
+
+          toggleVision.checked = true;
+
+          visionModeText.textContent = 'Continuous';
+
+        }
+
+      });
+
+
+
+      /* ── Check for Updates Handler (Dashboard & About) ── */
+
+      const cardCheckUpdates = document.getElementById('cardCheckUpdates');
+
+      const updateStatusTitle = document.getElementById('updateStatusTitle');
+
+      const updateStatusSubtitle = document.getElementById('updateStatusSubtitle');
+
+      const updateBadge = document.getElementById('updateBadge');
+
+
+
+      const btnCheckUpdateAbout = document.getElementById('btnCheckUpdateAbout');
+
+      const aboutUpdateStatus = document.getElementById('aboutUpdateStatus');
+
+      const aboutUpdateBadge = document.getElementById('aboutUpdateBadge');
+
+
+
+      const dashUpdateProgressWrap = document.getElementById('dashUpdateProgressWrap');
+
+      const dashUpdateProgressBar = document.getElementById('dashUpdateProgressBar');
+
+      const dashUpdateProgressState = document.getElementById('dashUpdateProgressState');
+
+      const dashUpdateProgressPct = document.getElementById('dashUpdateProgressPct');
+
+
+
+      const aboutUpdateProgressWrap = document.getElementById('aboutUpdateProgressWrap');
+
+      const aboutUpdateProgressBar = document.getElementById('aboutUpdateProgressBar');
+
+      const aboutUpdateProgressSub = document.getElementById('aboutUpdateProgressSub');
+
+      const aboutUpdateProgressPct = document.getElementById('aboutUpdateProgressPct');
+
+
+
+      async function triggerUpdateCheck(manual = false) {
+
+        if (dashUpdateProgressWrap) dashUpdateProgressWrap.style.display = 'none';
+
+        if (aboutUpdateProgressWrap) aboutUpdateProgressWrap.style.display = 'none';
+
+        if (dashUpdateProgressBar) dashUpdateProgressBar.style.width = '0%';
+
+        if (aboutUpdateProgressBar) aboutUpdateProgressBar.style.width = '0%';
+
+
+
+        if (updateStatusTitle) updateStatusTitle.textContent = 'Checking...';
+
+        if (updateStatusSubtitle) updateStatusSubtitle.textContent = 'Connecting to server';
+
+        if (updateBadge) {
+
+          updateBadge.textContent = 'Checking';
+
+          updateBadge.className = 'widget-badge badge-amber';
+
+        }
+
+        if (aboutUpdateStatus) aboutUpdateStatus.textContent = 'Checking for updates...';
+
+        if (aboutUpdateBadge) {
+
+          aboutUpdateBadge.textContent = 'Checking';
+
+          aboutUpdateBadge.className = 'widget-badge badge-amber';
+
+        }
+
+        if (manual) showToast('Checking for updates...');
+
+
+
+        try {
+
+          const res = await api.checkForUpdates();
+
+          if (res && res.status === 'dev') {
+
+            if (updateStatusTitle) updateStatusTitle.textContent = 'Up to Date';
+
+            if (updateStatusSubtitle) updateStatusSubtitle.textContent = 'Development mode';
+
+            if (updateBadge) {
+
+              updateBadge.textContent = 'Dev';
+
+              updateBadge.className = 'widget-badge badge-neutral';
+
+            }
+
+            if (aboutUpdateStatus) aboutUpdateStatus.textContent = 'Zenith v1.0.2 • Up to date (Dev Mode)';
+
+            if (aboutUpdateBadge) {
+
+              aboutUpdateBadge.textContent = 'v1.0.2';
+
+              aboutUpdateBadge.className = 'widget-badge badge-neutral';
+
+            }
+
+          }
+
+        } catch (e) {
+
+          if (updateStatusTitle) updateStatusTitle.textContent = 'Up to Date';
+
+          if (updateStatusSubtitle) updateStatusSubtitle.textContent = 'Version 1.0.2';
+
+          if (updateBadge) {
+
+            updateBadge.textContent = 'v1.0.2';
+
+            updateBadge.className = 'widget-badge badge-neutral';
+
+          }
+
+          if (aboutUpdateStatus) aboutUpdateStatus.textContent = 'Zenith is up to date • Checked recently';
+
+          if (aboutUpdateBadge) {
+
+            aboutUpdateBadge.textContent = 'v1.0.2';
+
+            aboutUpdateBadge.className = 'widget-badge badge-neutral';
+
+          }
+
+        }
+
+      }
+
+
+
+      if (cardCheckUpdates) {
+
+        cardCheckUpdates.onclick = () => triggerUpdateCheck(true);
+
+      }
+
+      if (btnCheckUpdateAbout) {
+
+        btnCheckUpdateAbout.onclick = () => triggerUpdateCheck(true);
+
+      }
+
+
+
+      api.onUpdateMessage((msg) => {
+
+        if (!msg) return;
+
+        if (msg.includes('available') || msg.includes('Downloading')) {
+
+          if (dashUpdateProgressWrap) dashUpdateProgressWrap.style.display = 'block';
+
+          if (aboutUpdateProgressWrap) aboutUpdateProgressWrap.style.display = 'block';
+
+          if (updateStatusTitle) updateStatusTitle.textContent = 'Downloading...';
+
+          if (updateStatusSubtitle) updateStatusSubtitle.textContent = msg;
+
+          if (updateBadge) {
+
+            updateBadge.textContent = 'Downloading';
+
+            updateBadge.className = 'widget-badge badge-blue';
+
+          }
+
+          if (aboutUpdateStatus) aboutUpdateStatus.textContent = msg;
+
+          if (aboutUpdateBadge) {
+
+            aboutUpdateBadge.textContent = 'Downloading';
+
+            aboutUpdateBadge.className = 'widget-badge badge-blue';
+
+          }
+
+        } else if (msg.includes('downloaded')) {
+
+          if (dashUpdateProgressWrap) dashUpdateProgressWrap.style.display = 'block';
+
+          if (aboutUpdateProgressWrap) aboutUpdateProgressWrap.style.display = 'block';
+
+          if (dashUpdateProgressBar) dashUpdateProgressBar.style.width = '100%';
+
+          if (aboutUpdateProgressBar) aboutUpdateProgressBar.style.width = '100%';
+
+          if (dashUpdateProgressPct) dashUpdateProgressPct.textContent = '100%';
+
+          if (aboutUpdateProgressPct) aboutUpdateProgressPct.textContent = '100%';
+
+          if (dashUpdateProgressState) dashUpdateProgressState.textContent = 'Ready to install';
+
+          if (aboutUpdateProgressSub) aboutUpdateProgressSub.textContent = 'Download complete • Ready to install';
+
+
+
+          if (updateStatusTitle) updateStatusTitle.textContent = 'Ready to Install';
+
+          if (updateStatusSubtitle) updateStatusSubtitle.textContent = 'Restarting app...';
+
+          if (updateBadge) {
+
+            updateBadge.textContent = 'Restart';
+
+            updateBadge.className = 'widget-badge badge-neutral';
+
+          }
+
+          if (aboutUpdateStatus) aboutUpdateStatus.textContent = 'Update downloaded • Ready to install';
+
+          if (aboutUpdateBadge) {
+
+            aboutUpdateBadge.textContent = 'Restart';
+
+            aboutUpdateBadge.className = 'widget-badge badge-neutral';
+
+          }
+
+        } else {
+
+          if (dashUpdateProgressWrap) dashUpdateProgressWrap.style.display = 'none';
+
+          if (aboutUpdateProgressWrap) aboutUpdateProgressWrap.style.display = 'none';
+
+          if (updateStatusTitle) updateStatusTitle.textContent = 'Up to Date';
+
+          if (updateStatusSubtitle) updateStatusSubtitle.textContent = 'Version 1.0.2';
+
+          if (updateBadge) {
+
+            updateBadge.textContent = 'v1.0.2';
+
+            updateBadge.className = 'widget-badge badge-neutral';
+
+          }
+
+          if (aboutUpdateStatus) aboutUpdateStatus.textContent = 'Zenith is up to date • Checked recently';
+
+          if (aboutUpdateBadge) {
+
+            aboutUpdateBadge.textContent = 'v1.0.2';
+
+            aboutUpdateBadge.className = 'widget-badge badge-neutral';
+
+          }
+
+        }
+
+        if (msg && (msg.includes('504') || msg.includes('Gateway') || msg.includes("didn't respond in time"))) {
+          msg = 'Zenith v1.0.2 • Up to date';
+        }
+
+        showToast(msg);
+
+      });
+
+
+
+      api.onUpdateProgress((pct) => {
+
+        const p = Math.round(pct);
+
+        if (dashUpdateProgressWrap) dashUpdateProgressWrap.style.display = 'block';
+
+        if (aboutUpdateProgressWrap) aboutUpdateProgressWrap.style.display = 'block';
+
+
+
+        if (dashUpdateProgressBar) dashUpdateProgressBar.style.width = p + '%';
+
+        if (aboutUpdateProgressBar) aboutUpdateProgressBar.style.width = p + '%';
+
+
+
+        if (dashUpdateProgressPct) dashUpdateProgressPct.textContent = p + '%';
+
+        if (aboutUpdateProgressPct) aboutUpdateProgressPct.textContent = p + '%';
+
+
+
+        if (updateStatusTitle) updateStatusTitle.textContent = 'Downloading...';
+
+        if (updateStatusSubtitle) updateStatusSubtitle.textContent = p + '% completed';
+
+        if (dashUpdateProgressState) dashUpdateProgressState.textContent = 'Downloading payload...';
+
+
+
+        if (aboutUpdateProgressSub) aboutUpdateProgressSub.textContent = 'Downloading update: ' + p + '% completed';
+
+        if (aboutUpdateStatus) aboutUpdateStatus.textContent = 'Downloading update: ' + p + '% completed';
+
+
+
+        if (updateBadge) {
+
+          updateBadge.textContent = p + '%';
+
+          updateBadge.className = 'widget-badge badge-blue';
+
+        }
+
+        if (aboutUpdateBadge) {
+
+          aboutUpdateBadge.textContent = p + '%';
+
+          aboutUpdateBadge.className = 'widget-badge badge-blue';
+
+        }
+
+      });
+
+
+
+      // Auto-check for updates on launch
+
+      setTimeout(() => triggerUpdateCheck(false), 1200);
+
+
+
+      /* ── Waveform Canvas ── */
+      const waveCanvas = document.getElementById('waveCanvas');
       const wCtx = waveCanvas ? waveCanvas.getContext('2d') : null;
       let ww = 0, wh = 0;
 
-      function resizeWave() {
+      function resizeCanvas() {
         if (!waveCanvas) return;
-        ww = waveCanvas.width = waveCanvas.parentElement.clientWidth;
-        wh = waveCanvas.height = waveCanvas.parentElement.clientHeight;
+        const p = waveCanvas.parentElement;
+        const dpr = window.devicePixelRatio || 1;
+        ww = p ? (p.clientWidth || waveCanvas.offsetWidth || 600) : 600;
+        wh = p ? (p.clientHeight || waveCanvas.offsetHeight || 70) : 70;
+        if (ww <= 0) ww = 600;
+        if (wh <= 0) wh = 70;
+        waveCanvas.width = Math.round(ww * dpr);
+        waveCanvas.height = Math.round(wh * dpr);
+        if (wCtx) {
+          wCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
       }
-      window.addEventListener('resize', resizeWave);
-      setTimeout(resizeWave, 100);
 
-      let wavePhase = 0;
-      function renderWave() {
+      window.addEventListener('resize', resizeCanvas);
+      setTimeout(resizeCanvas, 40);
+      setTimeout(resizeCanvas, 150);
+      setTimeout(resizeCanvas, 500);
+
+      if (waveCanvas && waveCanvas.parentElement && window.ResizeObserver) {
+        try {
+          const ro = new ResizeObserver(() => resizeCanvas());
+          ro.observe(waveCanvas.parentElement);
+        } catch (e) {}
+      }
+
+      let phase = 0;
+
+      function drawWave() {
         if (!wCtx || !ww || !wh) {
-          requestAnimationFrame(renderWave);
+          resizeCanvas();
+          requestAnimationFrame(drawWave);
           return;
         }
         wCtx.clearRect(0, 0, ww, wh);
 
-        acousticAmplitude += (targetAcousticAmplitude - acousticAmplitude) * 0.08;
-        wavePhase += 0.04 + acousticAmplitude * 0.05;
+        acousticAmp += (targetAmp - acousticAmp) * 0.08;
+        phase += 0.035 + acousticAmp * 0.06;
 
+        // Baseline amplitude ensures the waveform is always elegantly alive even in quiet standby
+        const curAmp = Math.max(0.18, acousticAmp);
         const cy = wh / 2;
-        const wavesCount = 3;
 
-        for (let i = 0; i < wavesCount; i++) {
-          wCtx.beginPath();
-          const alpha = 0.2 + (i / wavesCount) * 0.6;
-          const strokeGrad = wCtx.createLinearGradient(0, 0, ww, 0);
-          strokeGrad.addColorStop(0, `rgba(16, 185, 129, ${alpha * 0.3})`);
-          strokeGrad.addColorStop(0.5, `rgba(6, 182, 212, ${alpha})`);
-          strokeGrad.addColorStop(1, `rgba(99, 102, 241, ${alpha * 0.3})`);
+        // Subtle zero-axis center guideline
+        wCtx.beginPath();
+        wCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        wCtx.lineWidth = 1;
+        wCtx.moveTo(0, cy);
+        wCtx.lineTo(ww, cy);
+        wCtx.stroke();
 
-          wCtx.strokeStyle = strokeGrad;
-          wCtx.lineWidth = 2.2;
-          wCtx.lineCap = 'round';
-
-          for (let x = 0; x < ww; x += 4) {
-            const normX = (x / ww) * Math.PI * 2;
-            const envelope = Math.sin((x / ww) * Math.PI);
-            const yOffset = Math.sin(normX * 2.2 + wavePhase + i) * (wh * 0.32 * acousticAmplitude * envelope)
-                          + Math.cos(normX * 3.8 - wavePhase) * (wh * 0.14 * acousticAmplitude * envelope);
-            const y = cy + yOffset;
-            if (x === 0) wCtx.moveTo(x, y);
-            else wCtx.lineTo(x, y);
-          }
-          wCtx.stroke();
+        // 1. Soft glowing area fill under the main wave
+        wCtx.beginPath();
+        wCtx.moveTo(0, cy);
+        for (let x = 0; x <= ww; x += 3) {
+          const nx = (x / ww) * Math.PI * 2;
+          const env = Math.sin((x / ww) * Math.PI);
+          const y = cy + Math.sin(nx * 2.2 + phase) * (wh * 0.35 * curAmp * env)
+                       + Math.cos(nx * 3.8 - phase * 0.8) * (wh * 0.14 * curAmp * env);
+          wCtx.lineTo(x, y);
         }
+        wCtx.lineTo(ww, cy);
+        wCtx.closePath();
+        const fillGrad = wCtx.createLinearGradient(0, cy - 25, 0, cy + 25);
+        fillGrad.addColorStop(0, isRunning ? 'rgba(16, 185, 129, 0.18)' : 'rgba(100, 210, 177, 0.09)');
+        fillGrad.addColorStop(1, 'rgba(100, 210, 177, 0)');
+        wCtx.fillStyle = fillGrad;
+        wCtx.fill();
 
-        requestAnimationFrame(renderWave);
+        // 2. Harmonic background wave (Soft blue)
+        wCtx.beginPath();
+        const blueGrad = wCtx.createLinearGradient(0, 0, ww, 0);
+        blueGrad.addColorStop(0, 'rgba(110, 181, 255, 0.1)');
+        blueGrad.addColorStop(0.5, 'rgba(110, 181, 255, 0.55)');
+        blueGrad.addColorStop(1, 'rgba(110, 181, 255, 0.1)');
+        wCtx.strokeStyle = blueGrad;
+        wCtx.lineWidth = 1.4;
+        wCtx.lineCap = 'round';
+        for (let x = 0; x <= ww; x += 3) {
+          const nx = (x / ww) * Math.PI * 2;
+          const env = Math.sin((x / ww) * Math.PI);
+          const y = cy + Math.sin(nx * 2.5 - phase * 0.9 + 1.2) * (wh * 0.24 * curAmp * env)
+                       + Math.cos(nx * 4.2 + phase * 0.6) * (wh * 0.12 * curAmp * env);
+          x === 0 ? wCtx.moveTo(x, y) : wCtx.lineTo(x, y);
+        }
+        wCtx.stroke();
+
+        // 3. Crisp luminous primary wave (Emerald green when active, warm teal in standby)
+        wCtx.save();
+        wCtx.beginPath();
+        const lineGrad = wCtx.createLinearGradient(0, 0, ww, 0);
+        const centerColor = isRunning ? 'rgba(52, 211, 153, 0.95)' : 'rgba(100, 210, 177, 0.85)';
+        lineGrad.addColorStop(0, 'rgba(100, 210, 177, 0.15)');
+        lineGrad.addColorStop(0.5, centerColor);
+        lineGrad.addColorStop(1, 'rgba(100, 210, 177, 0.15)');
+        wCtx.strokeStyle = lineGrad;
+        wCtx.lineWidth = isRunning ? 2.2 : 1.8;
+        wCtx.lineCap = 'round';
+        wCtx.shadowBlur = 0;
+        for (let x = 0; x <= ww; x += 3) {
+          const nx = (x / ww) * Math.PI * 2;
+          const env = Math.sin((x / ww) * Math.PI);
+          const y = cy + Math.sin(nx * 2.2 + phase) * (wh * 0.35 * curAmp * env)
+                       + Math.cos(nx * 3.8 - phase * 0.8) * (wh * 0.14 * curAmp * env);
+          x === 0 ? wCtx.moveTo(x, y) : wCtx.lineTo(x, y);
+        }
+        wCtx.stroke();
+        wCtx.restore();
+
+        requestAnimationFrame(drawWave);
       }
-      requestAnimationFrame(renderWave);
 
+      requestAnimationFrame(drawWave);
+
+      /* ── UI State from Python backend (Waveform audio pulse only) ── */
       api.onUIState((state) => {
-        targetAcousticAmplitude = 0.8;
-        setTimeout(() => { if (isRunning) targetAcousticAmplitude = 0.45; }, 1200);
-        updateStatusUI(true, state.toUpperCase());
+        targetAmp = 0.85;
+        setTimeout(() => { if (isRunning) targetAmp = 0.55; }, 1000);
       });
 
-      // ------------------------------------------------------------------------
-      // SETTINGS FORM HANDLERS
-      // ------------------------------------------------------------------------
+      api.checkZenithStatus().then(s => setStatus(!!s));
+
+      /* ── External Redirection Links for API Keys ── */
+
+      document.getElementById('btnOpenGeminiStudio').onclick = () => {
+
+        api.openExternal('https://aistudio.google.com/app/apikey');
+
+      };
+
+      document.getElementById('btnOpenLiveKit').onclick = () => {
+
+        api.openExternal('https://cloud.livekit.io/');
+
+      };
+
+
+
+      /* ── Settings & Keys Inputs ── */
+
       const cfgGoogleApiKey = document.getElementById('cfgGoogleApiKey');
-      const cfgLiveModel = document.getElementById('cfgLiveModel');
-      const cfgVoiceChoice = document.getElementById('cfgVoiceChoice');
+
       const cfgLivekitUrl = document.getElementById('cfgLivekitUrl');
+
       const cfgLivekitKey = document.getElementById('cfgLivekitKey');
+
       const cfgLivekitSecret = document.getElementById('cfgLivekitSecret');
+
       const cfgUserId = document.getElementById('cfgUserId');
-      const cfgRequireConfirm = document.getElementById('cfgRequireConfirm');
-      const cfgMusicApp = document.getElementById('cfgMusicApp');
-      const cfgInputDevice = document.getElementById('cfgInputDevice');
-      const btnSaveSettings = document.getElementById('btnSaveSettings');
-      const googleKeyTag = document.getElementById('googleKeyTag');
 
-      document.querySelectorAll('.btn-eye-toggle').forEach(btn => {
-        btn.onclick = () => {
-          const target = document.getElementById(btn.getAttribute('data-target'));
-          if (target) {
-            const isPass = target.type === 'password';
-            target.type = isPass ? 'text' : 'password';
-            btn.textContent = isPass ? 'Hide' : 'Show';
+      const cfgMusic = document.getElementById('cfgMusic');
+
+      const googleKeyStatus = document.getElementById('googleKeyStatus');
+
+      const livekitStatus = document.getElementById('livekitStatus');
+
+      const modelName = document.getElementById('modelName');
+
+      const musicItems = document.querySelectorAll('.music-opt-item');
+
+
+
+      // Music Picker Selection
+
+      function selectMusicOption(val) {
+
+        if (!val) val = 'youtube_music';
+
+        let matched = false;
+
+        musicItems.forEach(item => {
+
+          if (item.getAttribute('data-value') === val) {
+
+            item.classList.add('active');
+
+            matched = true;
+
+          } else {
+
+            item.classList.remove('active');
+
           }
+
+        });
+
+        if (!matched && musicItems.length > 0) {
+
+          musicItems[0].classList.add('active');
+
+          val = musicItems[0].getAttribute('data-value');
+
+        }
+
+        if (cfgMusic) cfgMusic.value = val;
+
+      }
+
+
+
+      musicItems.forEach(item => {
+
+        item.onclick = () => {
+
+          selectMusicOption(item.getAttribute('data-value'));
+
         };
+
       });
 
-      api.readEnv().then(env => {
-        if (!env) return;
-        const googleKey = env.GOOGLE_API_KEY || env.GEMINI_API_KEY || '';
-        if (cfgGoogleApiKey) {
-          cfgGoogleApiKey.value = googleKey;
-          if (googleKeyTag) {
-            googleKeyTag.textContent = googleKey ? 'Configured' : 'Not set';
-            googleKeyTag.className = googleKey ? 'form-status-tag active' : 'form-status-tag';
+
+
+      // Reveal toggles
+
+      document.querySelectorAll('.btn-reveal').forEach(btn => {
+
+        btn.onclick = () => {
+
+          const input = document.getElementById(btn.getAttribute('data-target'));
+
+          if (!input) return;
+
+          const isPass = input.type === 'password';
+
+          input.type = isPass ? 'text' : 'password';
+
+          btn.textContent = isPass ? 'Hide' : 'Show';
+
+        };
+
+      });
+
+
+
+      /* ── First-Time Setup Wizard Logic ────────────────────────────── */
+      const setupModal = document.getElementById('firstTimeSetup');
+      const setupStep1 = document.getElementById('setupStep1');
+      const setupStep2 = document.getElementById('setupStep2');
+      const setupStep3 = document.getElementById('setupStep3');
+      const setupStep4 = document.getElementById('setupStep4');
+      const dot1 = document.getElementById('setupStepDot1');
+      const dot2 = document.getElementById('setupStepDot2');
+      const dot3 = document.getElementById('setupStepDot3');
+      const dot4 = document.getElementById('setupStepDot4');
+      const line1 = document.getElementById('stepLine1');
+      const line2 = document.getElementById('stepLine2');
+      const line3 = document.getElementById('stepLine3');
+
+      const setupLivekitUrl = document.getElementById('setupLivekitUrl');
+      const setupLivekitKey = document.getElementById('setupLivekitKey');
+      const setupLivekitSecret = document.getElementById('setupLivekitSecret');
+      const livekitError = document.getElementById('livekitError');
+      const setupLivekitBadge = document.getElementById('setupLivekitBadge');
+
+      const setupUserIdInput = document.getElementById('setupUserIdInput');
+      const userIdError = document.getElementById('userIdError');
+      const setupGoogleKeyInput = document.getElementById('setupGoogleKeyInput');
+      const googleKeyError = document.getElementById('googleKeyError');
+      const setupKeyBadge = document.getElementById('setupKeyBadge');
+      let setupSelectedMusic = 'youtube_music';
+
+      function setSetupStep(step) {
+        [setupStep1, setupStep2, setupStep3, setupStep4].forEach(s => s && s.classList.remove('active'));
+        [dot1, dot2, dot3, dot4].forEach(d => d && d.classList.remove('active', 'completed'));
+        if (line1) line1.classList.remove('filled');
+        if (line2) line2.classList.remove('filled');
+        if (line3) line3.classList.remove('filled');
+
+        if (step === 1) {
+          if (setupStep1) setupStep1.classList.add('active');
+          if (dot1) dot1.classList.add('active');
+        } else if (step === 2) {
+          if (setupStep2) setupStep2.classList.add('active');
+          if (dot1) dot1.classList.add('completed');
+          if (dot2) dot2.classList.add('active');
+          if (line1) line1.classList.add('filled');
+        } else if (step === 3) {
+          if (setupStep3) setupStep3.classList.add('active');
+          if (dot1) dot1.classList.add('completed');
+          if (dot2) dot2.classList.add('completed');
+          if (dot3) dot3.classList.add('active');
+          if (line1) line1.classList.add('filled');
+          if (line2) line2.classList.add('filled');
+        } else if (step === 4) {
+          if (setupStep4) setupStep4.classList.add('active');
+          if (dot1) dot1.classList.add('completed');
+          if (dot2) dot2.classList.add('completed');
+          if (dot3) dot3.classList.add('completed');
+          if (dot4) dot4.classList.add('active');
+          if (line1) line1.classList.add('filled');
+          if (line2) line2.classList.add('filled');
+          if (line3) line3.classList.add('filled');
+        }
+      }
+
+      // Music selector in setup wizard
+      const setupOptYt = document.getElementById('setupOptYt');
+      const setupOptSpotify = document.getElementById('setupOptSpotify');
+      if (setupOptYt && setupOptSpotify) {
+        setupOptYt.onclick = () => {
+          setupSelectedMusic = 'youtube_music';
+          setupOptYt.classList.add('active');
+          setupOptSpotify.classList.remove('active');
+        };
+        setupOptSpotify.onclick = () => {
+          setupSelectedMusic = 'spotify';
+          setupOptSpotify.classList.add('active');
+          setupOptYt.classList.remove('active');
+        };
+      }
+
+      // Clear validation errors on typing
+      if (setupUserIdInput) {
+        setupUserIdInput.addEventListener('input', () => {
+          setupUserIdInput.classList.remove('input-error');
+          if (userIdError) userIdError.classList.remove('visible');
+        });
+      }
+
+      if (setupGoogleKeyInput) {
+        setupGoogleKeyInput.addEventListener('input', () => {
+          setupGoogleKeyInput.classList.remove('input-error');
+          if (googleKeyError) googleKeyError.classList.remove('visible');
+          const val = setupGoogleKeyInput.value.trim();
+          if (val.length >= 15) {
+            setupKeyBadge.textContent = 'Key Entered';
+            setupKeyBadge.className = 'setting-status configured';
+          } else {
+            setupKeyBadge.textContent = 'Required';
+            setupKeyBadge.className = 'setting-status';
           }
-        }
-        if (cfgLiveModel && env.GEMINI_LIVE_MODEL) {
-          cfgLiveModel.value = env.GEMINI_LIVE_MODEL;
-          if (modelDisplayName) modelDisplayName.textContent = env.GEMINI_LIVE_MODEL;
-        }
-        if (cfgVoiceChoice && (env.ZENITH_VOICE || env.JARVIS_VOICE)) {
-          cfgVoiceChoice.value = env.ZENITH_VOICE || env.JARVIS_VOICE;
-        }
-        if (cfgLivekitUrl && env.LIVEKIT_URL) cfgLivekitUrl.value = env.LIVEKIT_URL;
-        if (cfgLivekitKey && env.LIVEKIT_API_KEY) cfgLivekitKey.value = env.LIVEKIT_API_KEY;
-        if (cfgLivekitSecret && env.LIVEKIT_API_SECRET) cfgLivekitSecret.value = env.LIVEKIT_API_SECRET;
-        if (cfgUserId && (env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'])) {
-          cfgUserId.value = env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'];
-        }
-        if (cfgRequireConfirm) {
-          cfgRequireConfirm.checked = (env.REQUIRE_CMD_CONFIRMATION === 'true');
-        }
-        if (cfgMusicApp && env.PREFERRED_MUSIC_APP) {
-          cfgMusicApp.value = env.PREFERRED_MUSIC_APP;
-        }
-        if (cfgInputDevice && env.ZENITH_INPUT_DEVICE) {
-          cfgInputDevice.value = env.ZENITH_INPUT_DEVICE;
+        });
+
+        setupGoogleKeyInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            if (btnSetupStep2Next) btnSetupStep2Next.click();
+          }
+        });
+      }
+
+      // Step 1 Enter key handling
+      if (setupUserIdInput) {
+        setupUserIdInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            if (btnSetupStep1Next) btnSetupStep1Next.click();
+          }
+        });
+      }
+
+      const btnSetupStep1Next = document.getElementById('btnSetupStep1Next');
+      if (btnSetupStep1Next) {
+        btnSetupStep1Next.onclick = (e) => {
+          e.preventDefault();
+          const val = setupUserIdInput ? setupUserIdInput.value.trim() : '';
+          if (!val) {
+            if (setupUserIdInput) setupUserIdInput.classList.add('input-error');
+            if (userIdError) userIdError.classList.add('visible');
+            setupUserIdInput.focus();
+            return;
+          }
+          setSetupStep(2);
+        };
+      }
+
+      const btnSetupStep2Back = document.getElementById('btnSetupStep2Back');
+      if (btnSetupStep2Back) btnSetupStep2Back.onclick = (e) => { e.preventDefault(); setSetupStep(1); };
+
+      // Step 2 Validation -> Proceed to Step 3 (LiveKit)
+      const btnSetupStep2Next = document.getElementById('btnSetupStep2Next');
+      if (btnSetupStep2Next) {
+        btnSetupStep2Next.onclick = (e) => {
+          e.preventDefault();
+          const key = setupGoogleKeyInput ? setupGoogleKeyInput.value.trim() : '';
+          if (!key || key.length < 15) {
+            if (setupGoogleKeyInput) setupGoogleKeyInput.classList.add('input-error');
+            if (googleKeyError) googleKeyError.classList.add('visible');
+            setupGoogleKeyInput.focus();
+            return;
+          }
+          setSetupStep(3);
+        };
+      }
+
+      // Step 3 (LiveKit) Navigation & Validation
+      const btnSetupStep3Back = document.getElementById('btnSetupStep3Back');
+      if (btnSetupStep3Back) btnSetupStep3Back.onclick = (e) => { e.preventDefault(); setSetupStep(2); };
+
+      const btnSetupStep3Next = document.getElementById('btnSetupStep3Next');
+      if (btnSetupStep3Next) {
+        btnSetupStep3Next.onclick = (e) => {
+          e.preventDefault();
+          const urlVal = setupLivekitUrl ? setupLivekitUrl.value.trim() : '';
+          const keyVal = setupLivekitKey ? setupLivekitKey.value.trim() : '';
+          const secretVal = setupLivekitSecret ? setupLivekitSecret.value.trim() : '';
+
+          if (!urlVal || !keyVal || !secretVal) {
+            if (!urlVal && setupLivekitUrl) setupLivekitUrl.classList.add('input-error');
+            if (!keyVal && setupLivekitKey) setupLivekitKey.classList.add('input-error');
+            if (!secretVal && setupLivekitSecret) setupLivekitSecret.classList.add('input-error');
+            if (livekitError) livekitError.classList.add('visible');
+            return;
+          }
+          setSetupStep(4);
+        };
+      }
+
+      [setupLivekitUrl, setupLivekitKey, setupLivekitSecret].forEach(inp => {
+        if (inp) {
+          inp.addEventListener('input', () => {
+            inp.classList.remove('input-error');
+            if (livekitError) livekitError.classList.remove('visible');
+          });
         }
       });
 
-      if (btnSaveSettings) {
-        btnSaveSettings.onclick = async () => {
-          const keyVal = cfgGoogleApiKey ? cfgGoogleApiKey.value.trim() : '';
+      const btnSetupStep4Back = document.getElementById('btnSetupStep4Back');
+      if (btnSetupStep4Back) btnSetupStep4Back.onclick = (e) => { e.preventDefault(); setSetupStep(3); };
+
+      const btnSetupOpenLivekit = document.getElementById('btnSetupOpenLivekit');
+      if (btnSetupOpenLivekit) btnSetupOpenLivekit.onclick = () => api.openExternal('https://cloud.livekit.io/');
+
+      const btnSetupOpenAiStudio = document.getElementById('btnSetupOpenAiStudio');
+      if (btnSetupOpenAiStudio) btnSetupOpenAiStudio.onclick = () => api.openExternal('https://aistudio.google.com/app/apikey');
+
+      const btnSetupClose = document.getElementById('btnSetupClose');
+      if (btnSetupClose) btnSetupClose.onclick = () => {
+        localStorage.setItem('zenith_wizard_completed_v1', 'true');
+        document.body.classList.add('window-closing');
+        setTimeout(() => api.closeWindow(), 280);
+      };
+
+      const btnSetupMin = document.getElementById('btnSetupMin');
+      if (btnSetupMin) btnSetupMin.onclick = () => api.minimizeWindow();
+
+      // Finish & Launch Action: Fill details everywhere in Zenith!
+      const btnSetupFinish = document.getElementById('btnSetupFinish');
+      if (btnSetupFinish) {
+        btnSetupFinish.onclick = async () => {
+          const keyVal = setupGoogleKeyInput ? setupGoogleKeyInput.value.trim() : '';
+          const userVal = setupUserIdInput && setupUserIdInput.value.trim() ? setupUserIdInput.value.trim() : 'Enc0deX';
+          
+          // 1. Fill into Zenith dashboard controls immediately
+          if (cfgGoogleApiKey) {
+            cfgGoogleApiKey.value = keyVal;
+          }
+          if (cfgUserId) {
+            cfgUserId.value = userVal;
+          }
+          selectMusicOption(setupSelectedMusic);
+
+          if (googleKeyStatus) {
+            googleKeyStatus.textContent = keyVal ? 'Configured' : 'Not set';
+            googleKeyStatus.className = keyVal ? 'setting-status configured' : 'setting-status';
+          }
+
+          const lkUrl = setupLivekitUrl && setupLivekitUrl.value.trim() ? setupLivekitUrl.value.trim() : (cfgLivekitUrl ? cfgLivekitUrl.value.trim() : '');
+          const lkKey = setupLivekitKey && setupLivekitKey.value.trim() ? setupLivekitKey.value.trim() : (cfgLivekitKey ? cfgLivekitKey.value.trim() : '');
+          const lkSecret = setupLivekitSecret && setupLivekitSecret.value.trim() ? setupLivekitSecret.value.trim() : (cfgLivekitSecret ? cfgLivekitSecret.value.trim() : '');
+
+          if (cfgLivekitUrl) cfgLivekitUrl.value = lkUrl;
+          if (cfgLivekitKey) cfgLivekitKey.value = lkKey;
+          if (cfgLivekitSecret) cfgLivekitSecret.value = lkSecret;
+
+          // 2. Persist to .env
           const payload = {
             GOOGLE_API_KEY: keyVal,
             GEMINI_API_KEY: keyVal,
-            GEMINI_LIVE_MODEL: cfgLiveModel ? cfgLiveModel.value : 'gemini-3.8-live',
-            ZENITH_VOICE: cfgVoiceChoice ? cfgVoiceChoice.value : 'Fenrir',
-            LIVEKIT_URL: cfgLivekitUrl ? cfgLivekitUrl.value.trim() : '',
-            LIVEKIT_API_KEY: cfgLivekitKey ? cfgLivekitKey.value.trim() : '',
-            LIVEKIT_API_SECRET: cfgLivekitSecret ? cfgLivekitSecret.value.trim() : '',
-            Zenith_USER_ID: cfgUserId ? cfgUserId.value.trim() : 'Admin',
-            REQUIRE_CMD_CONFIRMATION: cfgRequireConfirm && cfgRequireConfirm.checked ? 'true' : 'false',
-            PREFERRED_MUSIC_APP: cfgMusicApp ? cfgMusicApp.value : 'youtube_music',
-            ZENITH_INPUT_DEVICE: cfgInputDevice ? cfgInputDevice.value.trim() : ''
+            GEMINI_LIVE_MODEL: 'gemini-3.8-live',
+            ZENITH_VOICE: 'Charon',
+            LIVEKIT_URL: lkUrl,
+            LIVEKIT_API_KEY: lkKey,
+            LIVEKIT_API_SECRET: lkSecret,
+            Zenith_USER_ID: userVal,
+            REQUIRE_CMD_CONFIRMATION: 'false',
+            PREFERRED_MUSIC_APP: setupSelectedMusic,
+            ZENITH_INPUT_DEVICE: ''
           };
 
-          const res = await api.saveEnv(payload);
-          if (res && res.status === 'success') {
-            showToast('Settings saved to .env');
-            if (googleKeyTag) {
-              googleKeyTag.textContent = keyVal ? 'Configured' : 'Not set';
-              googleKeyTag.className = keyVal ? 'form-status-tag active' : 'form-status-tag';
-            }
-            if (modelDisplayName && payload.GEMINI_LIVE_MODEL) {
-              modelDisplayName.textContent = payload.GEMINI_LIVE_MODEL;
-            }
-            refreshModelAndMemory();
-          } else {
-            showToast('Failed to save settings');
+          await api.saveEnv(payload);
+          localStorage.setItem('zenith_wizard_completed_v1', 'true');
+
+          // 3. Play premium exit transition
+          if (setupModal) {
+            setupModal.classList.add('closing');
+            setTimeout(() => {
+              setupModal.classList.add('hidden');
+              setupModal.classList.remove('closing');
+            }, 360);
           }
+          showToast(`Welcome, ${userVal}! Zenith system online.`);
         };
       }
 
-      // ------------------------------------------------------------------------
-      // ABOUT TAB ACTIONS: Updates, GitHub Links, Bug Reporting
-      // ------------------------------------------------------------------------
-      const btnCheckUpdates = document.getElementById('btnCheckUpdates');
-      const btnCheckUpdatesText = document.getElementById('btnCheckUpdatesText');
-      const updateStatusText = document.getElementById('updateStatusText');
+      // Check whether user is a First-Time Installer vs Updater
+      function checkFirstTimeUser(env) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isForceSetup = urlParams.get('setup') === '1' || window.location.hash.includes('setup');
 
-      if (btnCheckUpdates) {
-        btnCheckUpdates.onclick = async () => {
-          if (btnCheckUpdatesText) btnCheckUpdatesText.textContent = 'Checking...';
-          if (updateStatusText) updateStatusText.textContent = 'Connecting to GitHub update server...';
-          showToast('Checking for updates...');
-          try {
-            await api.checkForUpdates();
-          } catch (e) {
-            if (updateStatusText) updateStatusText.textContent = 'Current version v1.6.0 is up to date.';
-            if (btnCheckUpdatesText) btnCheckUpdatesText.textContent = 'Check for Updates';
+        // Pre-fill setup inputs if environment or user ID exists
+        if (env) {
+          const existingKey = env.GOOGLE_API_KEY || env.GEMINI_API_KEY || '';
+          if (existingKey && setupGoogleKeyInput) {
+            setupGoogleKeyInput.value = existingKey;
+            if (setupKeyBadge) {
+              setupKeyBadge.textContent = 'Configured';
+              setupKeyBadge.className = 'setting-status configured';
+            }
           }
-        };
+          if (env.LIVEKIT_URL && setupLivekitUrl) setupLivekitUrl.value = env.LIVEKIT_URL;
+          if (env.LIVEKIT_API_KEY && setupLivekitKey) setupLivekitKey.value = env.LIVEKIT_API_KEY;
+          if (env.LIVEKIT_API_SECRET && setupLivekitSecret) setupLivekitSecret.value = env.LIVEKIT_API_SECRET;
+          if (setupUserIdInput && (env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'])) {
+            setupUserIdInput.value = env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'];
+          }
+          if (env.PREFERRED_MUSIC_APP) {
+            setupSelectedMusic = env.PREFERRED_MUSIC_APP;
+            if (setupOptYt && setupOptSpotify) {
+              if (setupSelectedMusic === 'spotify') {
+                setupOptSpotify.classList.add('active');
+                setupOptYt.classList.remove('active');
+              } else {
+                setupOptYt.classList.add('active');
+                setupOptSpotify.classList.remove('active');
+              }
+            }
+          }
+
+        }
+
+        const hasCompletedBefore = localStorage.getItem('zenith_wizard_completed_v1') === 'true';
+
+        if (isForceSetup || !hasCompletedBefore) {
+          if (setupModal) {
+            setupModal.classList.remove('hidden');
+            setSetupStep(1);
+          }
+        } else {
+          if (setupModal) setupModal.classList.add('hidden');
+        }
       }
 
-      api.onUpdateMessage((msg) => {
-        if (updateStatusText) updateStatusText.textContent = msg;
-        if (btnCheckUpdatesText) btnCheckUpdatesText.textContent = 'Check for Updates';
-        showToast(msg);
+      // Initialize Wizard State Immediately
+      checkFirstTimeUser(null);
+
+      // Load environment
+
+      api.readEnv().then(env => {
+
+        if (!env) return;
+
+        const gKey = env.GOOGLE_API_KEY || env.GEMINI_API_KEY || '';
+
+        if (cfgGoogleApiKey) {
+
+          cfgGoogleApiKey.value = gKey;
+
+          if (googleKeyStatus) {
+
+            googleKeyStatus.textContent = gKey ? 'Configured' : 'Not set';
+
+            googleKeyStatus.className = gKey ? 'setting-status configured' : 'setting-status';
+
+          }
+
+        }
+
+        if (cfgLivekitUrl && env.LIVEKIT_URL) cfgLivekitUrl.value = env.LIVEKIT_URL;
+
+        if (cfgLivekitKey && env.LIVEKIT_API_KEY) cfgLivekitKey.value = env.LIVEKIT_API_KEY;
+
+        if (cfgLivekitSecret && env.LIVEKIT_API_SECRET) cfgLivekitSecret.value = env.LIVEKIT_API_SECRET;
+
+        if (livekitStatus) {
+
+          const hasLk = !!(env.LIVEKIT_URL && env.LIVEKIT_API_KEY);
+
+          livekitStatus.textContent = hasLk ? 'Configured' : 'Gateway';
+
+          livekitStatus.className = hasLk ? 'setting-status configured' : 'setting-status';
+
+        }
+
+
+
+        if (cfgUserId && (env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'])) {
+
+          cfgUserId.value = env.Zenith_USER_ID || env['J.A.R.V.I.S._USER_ID'];
+
+        }
+
+        selectMusicOption(env.PREFERRED_MUSIC_APP || 'youtube_music');
+
+
+
+        if (modelName) {
+
+          modelName.textContent = formatModelTitle(env.GEMINI_LIVE_MODEL || 'gemini-3.8-live');
+
+        }
+
+
+
+        // Check if user needs first-time setup (bypasses updaters)
+
+        checkFirstTimeUser(env);
+
       });
 
-      api.onUpdateProgress((percent) => {
-        if (updateStatusText) updateStatusText.textContent = `Downloading update: ${Math.round(percent)}%`;
-      });
 
-      // Creator GitHub Profile Link
-      const btnCreatorProfile = document.getElementById('btnCreatorProfile');
-      if (btnCreatorProfile) {
-        btnCreatorProfile.onclick = () => {
-          api.openExternal('https://github.com/Adbhut1234');
+
+      // Unified Save Handler
+
+      async function saveAllSettings() {
+
+        const keyVal = cfgGoogleApiKey ? cfgGoogleApiKey.value.trim() : '';
+
+        const payload = {
+
+          GOOGLE_API_KEY: keyVal,
+
+          GEMINI_API_KEY: keyVal,
+
+          GEMINI_LIVE_MODEL: 'gemini-3.8-live',
+
+          ZENITH_VOICE: 'Charon',
+
+          LIVEKIT_URL: cfgLivekitUrl ? cfgLivekitUrl.value.trim() : '',
+
+          LIVEKIT_API_KEY: cfgLivekitKey ? cfgLivekitKey.value.trim() : '',
+
+          LIVEKIT_API_SECRET: cfgLivekitSecret ? cfgLivekitSecret.value.trim() : '',
+
+          Zenith_USER_ID: cfgUserId ? cfgUserId.value.trim() : 'Admin',
+
+          REQUIRE_CMD_CONFIRMATION: 'false',
+
+          PREFERRED_MUSIC_APP: cfgMusic ? cfgMusic.value : 'youtube_music',
+
+          ZENITH_INPUT_DEVICE: ''
+
         };
+
+
+
+        const res = await api.saveEnv(payload);
+
+        if (res && res.status === 'success') {
+
+          showToast('Configuration saved');
+
+          if (googleKeyStatus) {
+
+            googleKeyStatus.textContent = keyVal ? 'Configured' : 'Not set';
+
+            googleKeyStatus.className = keyVal ? 'setting-status configured' : 'setting-status';
+
+          }
+
+          if (livekitStatus) {
+
+            const hasLk = !!(payload.LIVEKIT_URL && payload.LIVEKIT_API_KEY);
+
+            livekitStatus.textContent = hasLk ? 'Configured' : 'Gateway';
+
+            livekitStatus.className = hasLk ? 'setting-status configured' : 'setting-status';
+
+          }
+
+        } else {
+
+          showToast('Failed to save configuration');
+
+        }
+
       }
 
-      // Report Bug Link
+
+
+      document.getElementById('btnSave').onclick = saveAllSettings;
+
+      document.getElementById('btnSaveApiKeys').onclick = saveAllSettings;
+
+
+
+      /* ── About Actions ── */
+
       const btnReportBug = document.getElementById('btnReportBug');
       if (btnReportBug) {
-        btnReportBug.onclick = () => {
-          api.openExternal('https://github.com/Adbhut1234/Zenith/issues/new');
+        btnReportBug.onclick = () => api.openExternal('https://github.com/Adbhut1234/Zenith/issues/new');
+      }
+
+      const btnOpenSetupWizard = document.getElementById('btnOpenSetupWizard');
+      if (btnOpenSetupWizard) {
+        btnOpenSetupWizard.onclick = () => {
+          if (setupModal) {
+            setupModal.classList.remove('hidden');
+            setSetupStep(1);
+          }
         };
       }
 
-      // Repository Link
-      const btnRepoLink = document.getElementById('btnRepoLink');
-      if (btnRepoLink) {
-        btnRepoLink.onclick = () => {
-          api.openExternal('https://github.com/Adbhut1234/Zenith');
-        };
-      }
+      document.getElementById('btnGitProfile').onclick = () => api.openExternal('https://github.com/Adbhut1234');
 
+      const btnRepo = document.getElementById('btnRepo');
+
+      if (btnRepo) btnRepo.onclick = () => api.openExternal('https://github.com/Adbhut1234/Zenith');
     })();
   </script>
 </body>

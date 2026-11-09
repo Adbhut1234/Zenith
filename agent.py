@@ -4,12 +4,18 @@ if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
     sys.stderr.reconfigure(encoding='utf-8')
 
+try:
+    import cv2
+    if not hasattr(cv2, '__version__'):
+        cv2.__version__ = '5.0.0'
+except Exception:
+    pass
+
 from dotenv import load_dotenv
 
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions, ChatContext
-from livekit.plugins import noise_cancellation
-from livekit.plugins import google
+from livekit.plugins import noise_cancellation, google, silero
 from prompts import AGENT_INSTRUCTION, SESSION_INSTRUCTION
 from agent_tools.web import get_weather, search_web, send_email, open_website, control_browser, launch_chrome_with_control, autonomous_web_task, stop_current_task
 from zenith_memory import (
@@ -79,27 +85,43 @@ from agent_tools.music import play_music, control_music
 
 class Assistant(Agent):
     def __init__(self, chat_ctx=None, custom_instructions=None) -> None:
-        voice_choice = os.getenv("ZENITH_VOICE", os.getenv("JARVIS_VOICE", "Fenrir")).strip()
+        voice_choice = os.getenv("ZENITH_VOICE", os.getenv("JARVIS_VOICE", "Charon")).strip()
         model_choice = os.getenv("GEMINI_LIVE_MODEL", "gemini-3.8-live").strip()
+        
+        # Neural Voice Activity Detector (filters background TV, distant chatter & ambient room noise)
+        try:
+            voice_filter_vad = silero.VAD.load(
+                activation_threshold=0.68,
+                min_speech_duration=0.15,
+                min_silence_duration=0.65
+            )
+        except Exception as e:
+            import logging
+            logging.warning(f"Silero VAD fallback to default: {e}")
+            voice_filter_vad = None
+
         super().__init__(
             instructions=custom_instructions or AGENT_INSTRUCTION,
+            vad=voice_filter_vad,
             llm=google.beta.realtime.RealtimeModel(
                  model=model_choice,
                  voice=voice_choice,
-                 temperature=0.6,
+                 temperature=0.28,
+                 input_audio_transcription=genai_types.AudioTranscriptionConfig(),
+                 output_audio_transcription=genai_types.AudioTranscriptionConfig(),
                  tool_response_scheduling=genai_types.FunctionResponseScheduling.INTERRUPT,
             ),
             turn_handling=TurnHandlingOptions(
                 endpointing=EndpointingOptions(
-                    min_delay=0.5,
-                    max_delay=1.2,
+                    min_delay=0.85,
+                    max_delay=2.0,
                 ),
                 preemptive_generation=PreemptiveGenerationOptions(
                     enabled=False,
                 ),
                 interruption=InterruptionOptions(
                     enabled=True,
-                    min_duration=0.4,
+                    min_duration=0.7,
                 ),
             ),
             tools=[
@@ -309,8 +331,11 @@ async def entrypoint(ctx: agents.JobContext):
     except Exception as e:
         logging.warning(f"Could not load procedural playbooks on boot: {e}")
 
-    # Append session instructions
-    dynamic_instructions += f"\n\n{SESSION_INSTRUCTION}"
+    # Append session instructions with live dynamic values
+    import datetime
+    now_dt = datetime.datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
+    session_inst = SESSION_INSTRUCTION.replace("{current_datetime}", now_dt).replace("{now_playing}", "None / Idle")
+    dynamic_instructions += f"\n\n{session_inst}"
 
     agent = Assistant(chat_ctx=initial_ctx, custom_instructions=dynamic_instructions)
     
@@ -348,6 +373,11 @@ async def entrypoint(ctx: agents.JobContext):
                 update_ui("waiting")
                 interaction_state["last_active"] = asyncio.get_event_loop().time()
                 interaction_state["state"] = "waiting"
+            elif event.new_state in ["idle", "listening"]:
+                print(">>> UI TRIGGER: AGENT IDLE <<<")
+                update_ui("idle")
+                interaction_state["last_active"] = asyncio.get_event_loop().time()
+                interaction_state["state"] = "idle"
 
     @session.on("error")
     def on_session_error(err):

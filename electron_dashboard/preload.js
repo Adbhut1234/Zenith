@@ -18,12 +18,14 @@ contextBridge.exposeInMainWorld('api', {
   maximizeWindow: () => ipcRenderer.invoke('window-maximize'),
   closeWindow: () => ipcRenderer.invoke('window-close'),
   openExternal: (url) => ipcRenderer.invoke('open-external', url),
-  onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state))
+  onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state)),
+  onAppClosing: (callback) => ipcRenderer.on('app-closing', () => callback())
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
   onUIState: (callback) => ipcRenderer.on('ui-state', (event, state) => callback(state)),
   onMusicEvent: (callback) => ipcRenderer.on('music-event', (event, data) => callback(data)),
   onWeatherEvent: (callback) => ipcRenderer.on('weather-event', (event, data) => callback(data)),
-  setIgnoreMouseEvents: (ignore, options) => ipcRenderer.send('set-ignore-mouse-events', ignore, options)
+  setIgnoreMouseEvents: (ignore, options) => ipcRenderer.send('set-ignore-mouse-events', ignore, options),
+  onAppClosing: (callback) => ipcRenderer.on('app-closing', () => callback())
 });

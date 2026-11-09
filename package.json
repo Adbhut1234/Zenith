@@ -1,7 +1,7 @@
 {
   "name": "zenith",
-  "version": "1.6.0",
-  "description": "Zenith AI Desktop Assistant — Vision-Grade Cognitive Agent",
+  "version": "1.0.2",
+  "description": "Zenith AI Desktop Assistant \u2014 Vision-Grade Cognitive Agent",
   "private": true,
   "scripts": {
     "start": "npm --prefix electron_dashboard start",

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14161f"/>
+      <stop offset="50%" stop-color="#0d0e13"/>
+      <stop offset="100%" stop-color="#07080a"/>
+    </linearGradient>
+
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255, 255, 255, 0.28)"/>
+      <stop offset="45%" stop-color="rgba(100, 210, 177, 0.45)"/>
+      <stop offset="100%" stop-color="rgba(56, 189, 248, 0.18)"/>
+    </linearGradient>
+
+    <linearGradient id="zenithTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a7f3d0"/>
+      <stop offset="30%" stop-color="#34d399"/>
+      <stop offset="70%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+
+    <linearGradient id="zenithBlade" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="45%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#67e8f9"/>
+    </linearGradient>
+
+    <radialGradient id="apexGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(52, 211, 153, 0.22)"/>
+      <stop offset="60%" stop-color="rgba(6, 182, 212, 0.06)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Base Squircle -->
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="2.5"/>
+
+  <!-- Radial Glow Atmosphere -->
+  <circle cx="256" cy="256" r="170" fill="url(#apexGlow)"/>
+
+  <!-- Zenith Apex Monogram -->
+  <!-- Top Wing -->
+  <path d="M 136 156 L 376 156 C 388 156 396 168 390 178 L 298 280 L 232 280 L 314 196 L 140 196 C 128 196 124 180 136 156 Z" fill="url(#zenithTeal)"/>
+
+  <!-- Diagonal Core Blade -->
+  <path d="M 376 156 L 160 356 L 226 356 L 390 178 Z" fill="url(#zenithBlade)" opacity="0.95"/>
+
+  <!-- Bottom Foundation -->
+  <path d="M 376 356 L 136 356 C 124 356 116 344 122 334 L 214 232 L 280 232 L 198 316 L 372 316 C 384 316 388 332 376 356 Z" fill="url(#zenithTeal)"/>
+
+  <!-- Apex Celestial Spark -->
+  <circle cx="376" cy="156" r="7" fill="#ffffff"/>
+  <circle cx="136" cy="356" r="5" fill="#a7f3d0"/>
+</svg>

@@ -41,7 +41,6 @@ log*.txt
 node_modules/
 dist/
 build/
-web/
 *.zip
 *.db
 zenith_mem_db/
@@ -56,3 +55,6 @@ GSD-STYLE.md
 PROJECT_RULES.md
 model_capabilities.yaml
 scripts/
+
+*.log
+.antideploy.json

@@ -7,62 +7,91 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Drag Titlebar & macOS Traffic Light Close Button -->
   <div class="titlebar">
+    <div class="traffic-lights">
+      <button id="close-btn" class="traffic-dot dot-close" title="Close Installer">
+        <svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg>
+      </button>
+    </div>
     <div class="drag-region"></div>
-    <button id="close-btn" class="close-btn">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-    </button>
   </div>
 
   <div class="installer-container">
+    <!-- Left Showcase Panel -->
     <div class="left-panel">
-      <div class="logo-container">
-        <img src="logo.png?v=2" alt="Zenith" class="logo-image">
-        <h1 class="logo-text">ZENITH</h1>
-        <p class="tagline">The future of assistance.</p>
+      <div class="brand-showcase">
+        <img src="icon.png" alt="Zenith Logo" class="logo-image">
+        <div class="brand-title-row">
+          <h1 class="logo-text">Zenith</h1>
+        </div>
+        <p class="tagline">Autonomous multimodal voice & vision operating system.</p>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <span>Gemini Live Multimodal Audio</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <span>Sovereign Local Vector Memory</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-dot"></span>
+            <span>Set-of-Mark Screen Grounding</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <span>Architected by</span>
+        <strong style="color: var(--text-primary); font-weight: 600;">Enc0deX</strong>
       </div>
     </div>
     
+    <!-- Right Interactive Panel -->
     <div class="right-panel">
       <div class="content-wrapper">
-        <h2 id="main-title">Ready to Install</h2>
-        <p id="sub-title">Zenith will be installed to your local application data folder.</p>
-        
+        <div class="header-block">
+          <h2 id="main-title">Ready to Install</h2>
+          <p id="sub-title">Configure your installation preferences and destination.</p>
+        </div>
         
         <div id="options-container" class="options-container">
           <div class="input-group">
             <label for="install-path">Install Location</label>
             <div class="path-row">
-              <input type="text" id="install-path" readonly>
+              <input type="text" id="install-path" spellcheck="false" readonly>
               <button id="browse-btn" class="secondary-btn">Browse</button>
             </div>
           </div>
           <div class="checkbox-group">
-            <label class="custom-checkbox">
+            <label class="custom-checkbox" for="desktop-shortcut">
               <input type="checkbox" id="desktop-shortcut" checked>
-              <span class="checkmark"></span>
-              Create Desktop Shortcut
+              <span>Create Desktop Shortcut</span>
             </label>
-            <label class="custom-checkbox">
+            <label class="custom-checkbox" for="start-shortcut">
               <input type="checkbox" id="start-shortcut" checked>
-              <span class="checkmark"></span>
-              Create Start Menu Shortcut
+              <span>Create Start Menu Shortcut</span>
             </label>
           </div>
         </div>
 
+        <!-- Live Download & Extraction Progress -->
         <div id="progress-container" class="hidden">
+          <div class="progress-header">
+            <span class="progress-title" id="progress-label">Downloading Payload</span>
+            <span class="progress-pct" id="progress-percent">0%</span>
+          </div>
           <div class="progress-bar-bg">
             <div id="progress-bar" class="progress-bar-fill"></div>
           </div>
-          <p id="status-text">Preparing...</p>
+          <p id="status-text">Connecting to release distribution server...</p>
         </div>
 
         <div class="actions" id="action-buttons">
-          <button id="install-btn" class="primary-btn">Accept and Install</button>
-          <button id="retry-btn" class="secondary-btn hidden" style="width: 100%; border: 1px solid rgba(255,100,100,0.5); color: #ff8888;">Retry Installation</button>
+          <button id="install-btn" class="primary-btn">Install Zenith</button>
+          <button id="retry-btn" class="secondary-btn hidden" style="width: 100%; border: 1px solid rgba(255,107,107,0.4); color: var(--accent-red); padding: 12px; font-weight: 600;">Retry Installation</button>
         </div>
       </div>
     </div>
@@ -82,6 +111,8 @@
     
     const progressBar = document.getElementById('progress-bar');
     const statusText = document.getElementById('status-text');
+    const progressPercent = document.getElementById('progress-percent');
+    const progressLabel = document.getElementById('progress-label');
     const mainTitle = document.getElementById('main-title');
     const subTitle = document.getElementById('sub-title');
 
@@ -89,15 +120,20 @@
     const desktopShortcut = document.getElementById('desktop-shortcut');
     const startShortcut = document.getElementById('start-shortcut');
 
-    // Get default path
+    // Get default installation path
     ipcRenderer.invoke('get-default-path').then(defaultPath => {
-      installPathInput.value = defaultPath;
+      if (defaultPath) installPathInput.value = defaultPath;
     });
 
+    // Smooth Closing Animation
     closeBtn.addEventListener('click', () => {
-      ipcRenderer.send('close-installer');
+      document.body.classList.add('window-closing');
+      setTimeout(() => {
+        ipcRenderer.send('close-installer');
+      }, 300);
     });
 
+    // Directory Picker
     browseBtn.addEventListener('click', async () => {
       const selectedPath = await ipcRenderer.invoke('select-directory');
       if (selectedPath) {
@@ -105,16 +141,19 @@
       }
     });
 
+    // Install Action
     const startInstall = () => {
-      // Start install
       actionButtons.classList.add('hidden');
       retryBtn.classList.add('hidden');
       optionsContainer.classList.add('hidden');
       progressContainer.classList.remove('hidden');
       
       mainTitle.innerText = "Installing Zenith";
-      subTitle.innerText = "Please wait while we set things up for you.";
-      statusText.style.color = '#94a3b8'; // Reset color
+      subTitle.innerText = "Please wait while we package the system onto your machine.";
+      statusText.style.color = 'var(--text-secondary)';
+      statusText.innerText = "Connecting to release server...";
+      progressBar.style.width = '0%';
+      progressPercent.innerText = '0%';
       
       const options = {
         destDir: installPathInput.value,
@@ -130,22 +169,34 @@
 
     ipcRenderer.on('install-status', (event, status) => {
       statusText.innerText = status;
+      if (status.includes('Extracting')) {
+        progressLabel.innerText = "Extracting Assets";
+      } else if (status.includes('Shortcut')) {
+        progressLabel.innerText = "Finalizing Setup";
+      } else if (status.includes('Success') || status.includes('Complete')) {
+        progressLabel.innerText = "Installation Complete";
+        progressBar.style.width = '100%';
+        progressPercent.innerText = '100%';
+      }
     });
     
     ipcRenderer.on('install-error', (event, errorMessage) => {
       progressContainer.classList.remove('hidden');
       progressBar.style.width = '0%';
+      progressPercent.innerText = '0%';
+      progressLabel.innerText = "Installation Interrupted";
       statusText.innerText = errorMessage;
-      statusText.style.color = '#ff6b6b';
+      statusText.style.color = 'var(--accent-red)';
       
-      // Show retry button
       actionButtons.classList.remove('hidden');
       installBtn.classList.add('hidden');
       retryBtn.classList.remove('hidden');
     });
 
     ipcRenderer.on('install-progress', (event, percent) => {
-      progressBar.style.width = percent + '%';
+      const p = Math.round(percent);
+      progressBar.style.width = p + '%';
+      progressPercent.innerText = p + '%';
     });
   </script>
 </body>
