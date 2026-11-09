@@ -3845,20 +3845,41 @@
 
     // Global API Key Prompt Modal Handlers (Accessible from HTML and JS)
     window.showApiKeyPromptModal = function() {
-      const modal = document.getElementById('apiKeyPromptModal');
+      var modal = document.getElementById('apiKeyPromptModal');
       if (modal) modal.style.display = 'flex';
     };
 
     window.dismissApiKeyModal = function() {
-      const modal = document.getElementById('apiKeyPromptModal');
+      var modal = document.getElementById('apiKeyPromptModal');
       if (modal) modal.style.display = 'none';
     };
 
     window.goToApiKeysPage = function() {
       window.dismissApiKeyModal();
-      const apikeysNavBtn = document.querySelector('.nav-item[data-page="page-apikeys"]');
-      if (apikeysNavBtn) apikeysNavBtn.click();
+      var apikeysNavBtn = document.querySelector('.nav-item[data-page="page-apikeys"]');
+      if (apikeysNavBtn) {
+        apikeysNavBtn.click();
+      } else {
+        var allNav = document.querySelectorAll('.nav-item');
+        allNav.forEach(function(b) { b.classList.remove('active'); });
+        var allPages = document.querySelectorAll('.page-view');
+        allPages.forEach(function(p) { p.classList.remove('active'); });
+        var targetPage = document.getElementById('page-apikeys');
+        if (targetPage) targetPage.classList.add('active');
+      }
       setTimeout(function() {
+        var input = document.getElementById('cfgGoogleApiKey');
+        if (input) {
+          input.focus();
+          input.classList.remove('input-highlight-pulse');
+          void input.offsetWidth;
+          input.classList.add('input-highlight-pulse');
+          setTimeout(function() { input.classList.remove('input-highlight-pulse'); }, 2200);
+        }
+      }, 120);
+    };
+
+    (function() {
         const input = document.getElementById('cfgGoogleApiKey');
         if (input) {
           input.focus();
@@ -5291,39 +5312,12 @@
   </script>
 
   <!-- ================================================================
-       API KEY MISSING MODAL POPUP
-       ================================================================ -->
-  <div id="apiKeyPromptModal" class="api-key-modal-overlay">
-    <div class="api-key-modal-card">
-      <div class="api-key-modal-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="7.5" cy="15.5" r="5.5"/>
-          <path d="m21 2-9.6 9.6"/>
-          <path d="m15.5 7.5 3 3L22 7l-3-3"/>
-        </svg>
-      </div>
-      <div class="api-key-modal-title">API Key Required</div>
-      <div class="api-key-modal-desc">
-        Zenith cannot initialize without a Google Gemini API key. Please configure your API key to activate voice synthesis, visual perception, and multimodal reasoning.
-      </div>
-      <div class="api-key-modal-actions">
-        <button class="btn-modal-cancel" id="btnDismissApiKeyModal">Cancel</button>
-        <button class="btn-modal-enter" id="btnGoToApiKeys">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-          Enter API Key
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ================================================================
        ZENITH THEMED COMPACT API KEY MODAL
        ================================================================ -->
-  <div id="apiKeyPromptModal" class="api-key-modal-overlay" onclick="if(event.target===this) window.dismissApiKeyModal()">
-    <div class="api-key-modal-card">
+  <div id="apiKeyPromptModal" class="api-key-modal-overlay" style="-webkit-app-region: no-drag;" onclick="if(event.target===this) window.dismissApiKeyModal()">
+    <div class="api-key-modal-card" style="-webkit-app-region: no-drag;">
       <div class="api-key-modal-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="7.5" cy="15.5" r="5.5"/>
           <path d="m21 2-9.6 9.6"/>
           <path d="m15.5 7.5 3 3L22 7l-3-3"/>
@@ -5333,9 +5327,9 @@
       <div class="api-key-modal-desc">
         Please configure your Google Gemini API key to activate Zenith voice synthesis, vision, and reasoning loops.
       </div>
-      <div class="api-key-modal-actions">
-        <button type="button" class="btn-modal-cancel" id="btnDismissApiKeyModal" onclick="window.dismissApiKeyModal()">Cancel</button>
-        <button type="button" class="btn-modal-enter" id="btnGoToApiKeys" onclick="window.goToApiKeysPage()">
+      <div class="api-key-modal-actions" style="-webkit-app-region: no-drag;">
+        <button type="button" class="btn-modal-cancel" id="btnDismissApiKeyModal" style="-webkit-app-region: no-drag; cursor: pointer;" onclick="window.dismissApiKeyModal()">Cancel</button>
+        <button type="button" class="btn-modal-enter" id="btnGoToApiKeys" style="-webkit-app-region: no-drag; cursor: pointer;" onclick="window.goToApiKeysPage()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           Enter API Key
         </button>
@@ -5343,5 +5337,24 @@
     </div>
   </div>
 
+  <script>
+    // Bulletproof Event Delegation for Modal Buttons (Capturing phase)
+    document.addEventListener('click', function(e) {
+      var cancelBtn = e.target.closest('#btnDismissApiKeyModal');
+      if (cancelBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.dismissApiKeyModal();
+        return;
+      }
+      var enterBtn = e.target.closest('#btnGoToApiKeys');
+      if (enterBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.goToApiKeysPage();
+        return;
+      }
+    }, true);
+  </script>
 </body>
 </html>
