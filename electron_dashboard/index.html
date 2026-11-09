@@ -2649,6 +2649,122 @@
       box-shadow: 0 0 10px rgba(100, 210, 177, 0.4);
     }
 
+  
+    /* ================================================================
+       API KEY MISSING MODAL & FOCUS PULSE
+       ================================================================ */
+    .api-key-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: modalFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .api-key-modal-card {
+      background: linear-gradient(180deg, #181922 0%, #0e0f14 100%);
+      border: 1px solid rgba(255, 180, 50, 0.3);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85), 0 0 45px rgba(255, 180, 50, 0.15);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 440px;
+      padding: 30px 26px 26px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .api-key-modal-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: rgba(255, 180, 50, 0.12);
+      border: 1px solid rgba(255, 180, 50, 0.35);
+      color: #ffb432;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      box-shadow: 0 0 28px rgba(255, 180, 50, 0.25);
+    }
+    .api-key-modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .api-key-modal-desc {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.68);
+      line-height: 1.55;
+      margin-bottom: 24px;
+      max-width: 380px;
+    }
+    .api-key-modal-actions {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-modal-cancel:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+    }
+    .btn-modal-enter {
+      flex: 1.35;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ffb432 0%, #ff9500 100%);
+      border: none;
+      color: #0c0d10;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(255, 180, 50, 0.35);
+      transition: all 0.2s;
+    }
+    .btn-modal-enter:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(255, 180, 50, 0.55);
+    }
+    @keyframes keyHighlightPulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 180, 50, 0.7); border-color: rgba(255, 180, 50, 0.9); }
+      50% { box-shadow: 0 0 0 8px rgba(255, 180, 50, 0.3); border-color: rgba(255, 180, 50, 1); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 180, 50, 0); border-color: rgba(255, 255, 255, 0.15); }
+    }
+    .input-highlight-pulse {
+      animation: keyHighlightPulse 2.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
   </style>
 
 </head>
@@ -3870,40 +3986,80 @@
 
       /* ── Power Toggle ── */
 
+      function showApiKeyPromptModal() {
+        const modal = document.getElementById('apiKeyPromptModal');
+        if (modal) modal.style.display = 'flex';
+      }
+
+      function hideApiKeyPromptModal() {
+        const modal = document.getElementById('apiKeyPromptModal');
+        if (modal) modal.style.display = 'none';
+      }
+
+      const btnGoToApiKeys = document.getElementById('btnGoToApiKeys');
+      if (btnGoToApiKeys) {
+        btnGoToApiKeys.onclick = () => {
+          hideApiKeyPromptModal();
+          const apikeysNavBtn = document.querySelector('.nav-item[data-page="page-apikeys"]');
+          if (apikeysNavBtn) apikeysNavBtn.click();
+          setTimeout(() => {
+            const input = document.getElementById('cfgGoogleApiKey');
+            if (input) {
+              input.focus();
+              input.classList.remove('input-highlight-pulse');
+              void input.offsetWidth;
+              input.classList.add('input-highlight-pulse');
+              setTimeout(() => input.classList.remove('input-highlight-pulse'), 2500);
+            }
+          }, 120);
+        };
+      }
+
+      const btnDismissApiKeyModal = document.getElementById('btnDismissApiKeyModal');
+      if (btnDismissApiKeyModal) {
+        btnDismissApiKeyModal.onclick = hideApiKeyPromptModal;
+      }
+
+      const apiKeyPromptModal = document.getElementById('apiKeyPromptModal');
+      if (apiKeyPromptModal) {
+        apiKeyPromptModal.onclick = (e) => {
+          if (e.target === apiKeyPromptModal) hideApiKeyPromptModal();
+        };
+      }
+
       btnPower.onclick = async () => {
-
         if (!isRunning) {
+          // Pre-check for API key in input or environment
+          const gKeyInput = document.getElementById('cfgGoogleApiKey');
+          const enteredKey = gKeyInput && gKeyInput.value ? gKeyInput.value.trim() : '';
+          const isMissing = !enteredKey || enteredKey === 'your_google_api_key' || enteredKey === 'your_api_key' || enteredKey.length < 8;
 
-          heroTitle.textContent = 'Initializing...';
-
-          const res = await api.startZenith();
-
-          if (res && res.status === 'success') {
-
-            setStatus(true);
-
-            showToast('Zenith engaged');
-
-          } else {
-
+          if (isMissing) {
+            heroTitle.textContent = 'Zenith is in Standby';
             setStatus(false);
-
-            showToast(res && res.message ? res.message : 'Launch failed');
-
+            showApiKeyPromptModal();
+            return;
           }
 
+          heroTitle.textContent = 'Initializing...';
+          const res = await api.startZenith();
+          if (res && res.status === 'success') {
+            setStatus(true);
+            showToast('Zenith engaged');
+          } else {
+            setStatus(false);
+            if (res && (res.code === 'MISSING_API_KEY' || (res.message && res.message.toLowerCase().includes('api key')))) {
+              showApiKeyPromptModal();
+            } else {
+              showToast(res && res.message ? res.message : 'Launch failed');
+            }
+          }
         } else {
-
           heroTitle.textContent = 'Disengaging...';
-
           await api.stopZenith();
-
           setStatus(false);
-
           showToast('Zenith disengaged');
-
         }
-
       };
 
 
@@ -4988,5 +5144,32 @@
       if (btnRepo) btnRepo.onclick = () => api.openExternal('https://github.com/Adbhut1234/Zenith');
     })();
   </script>
+
+  <!-- ================================================================
+       API KEY MISSING MODAL POPUP
+       ================================================================ -->
+  <div id="apiKeyPromptModal" class="api-key-modal-overlay">
+    <div class="api-key-modal-card">
+      <div class="api-key-modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="7.5" cy="15.5" r="5.5"/>
+          <path d="m21 2-9.6 9.6"/>
+          <path d="m15.5 7.5 3 3L22 7l-3-3"/>
+        </svg>
+      </div>
+      <div class="api-key-modal-title">API Key Required</div>
+      <div class="api-key-modal-desc">
+        Zenith cannot initialize without a Google Gemini API key. Please configure your API key to activate voice synthesis, visual perception, and multimodal reasoning.
+      </div>
+      <div class="api-key-modal-actions">
+        <button class="btn-modal-cancel" id="btnDismissApiKeyModal">Cancel</button>
+        <button class="btn-modal-enter" id="btnGoToApiKeys">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          Enter API Key
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
