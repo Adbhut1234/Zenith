@@ -2765,6 +2765,123 @@
       animation: keyHighlightPulse 2.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
+  
+    /* ================================================================
+       ZENITH THEMED COMPACT API KEY MODAL
+       ================================================================ */
+    .api-key-modal-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 9, 12, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: modalFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .api-key-modal-card {
+      background: #13141a;
+      border: 1px solid var(--border-medium);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 0, 0, 0.35);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 340px;
+      padding: 20px 20px 18px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .api-key-modal-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent-amber-soft);
+      border: 1px solid rgba(255, 184, 77, 0.22);
+      color: var(--accent-amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      box-shadow: 0 0 16px rgba(255, 184, 77, 0.15);
+    }
+    .api-key-modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .api-key-modal-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      max-width: 280px;
+    }
+    .api-key-modal-actions {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s var(--ease-out);
+    }
+    .btn-modal-cancel:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+      border-color: var(--border-focus);
+    }
+    .btn-modal-enter {
+      flex: 1.25;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+      border: none;
+      color: #0c0d10;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(100, 210, 177, 0.25);
+      transition: all 0.18s var(--ease-out);
+    }
+    .btn-modal-enter:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(100, 210, 177, 0.4);
+    }
+    @keyframes keyHighlightPulse {
+      0% { box-shadow: 0 0 0 0 rgba(100, 210, 177, 0.7); border-color: rgba(100, 210, 177, 0.9); }
+      50% { box-shadow: 0 0 0 6px rgba(100, 210, 177, 0.25); border-color: rgba(100, 210, 177, 1); }
+      100% { box-shadow: 0 0 0 0 rgba(100, 210, 177, 0); border-color: var(--border-medium); }
+    }
+    .input-highlight-pulse {
+      animation: keyHighlightPulse 2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
   </style>
 
 </head>
@@ -3725,6 +3842,34 @@
   </div>
   <!-- Instant Wizard Display Script: Only shows for force setup; normal launches wait for env verification -->
   <script>
+
+    // Global API Key Prompt Modal Handlers (Accessible from HTML and JS)
+    window.showApiKeyPromptModal = function() {
+      const modal = document.getElementById('apiKeyPromptModal');
+      if (modal) modal.style.display = 'flex';
+    };
+
+    window.dismissApiKeyModal = function() {
+      const modal = document.getElementById('apiKeyPromptModal');
+      if (modal) modal.style.display = 'none';
+    };
+
+    window.goToApiKeysPage = function() {
+      window.dismissApiKeyModal();
+      const apikeysNavBtn = document.querySelector('.nav-item[data-page="page-apikeys"]');
+      if (apikeysNavBtn) apikeysNavBtn.click();
+      setTimeout(function() {
+        const input = document.getElementById('cfgGoogleApiKey');
+        if (input) {
+          input.focus();
+          input.classList.remove('input-highlight-pulse');
+          void input.offsetWidth;
+          input.classList.add('input-highlight-pulse');
+          setTimeout(function() { input.classList.remove('input-highlight-pulse'); }, 2200);
+        }
+      }, 140);
+    };
+
     (function() {
       try {
         var isSetup = window.location.search.indexOf('setup') !== -1 || window.location.hash.indexOf('setup') !== -1;
@@ -5165,6 +5310,33 @@
         <button class="btn-modal-cancel" id="btnDismissApiKeyModal">Cancel</button>
         <button class="btn-modal-enter" id="btnGoToApiKeys">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          Enter API Key
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       ZENITH THEMED COMPACT API KEY MODAL
+       ================================================================ -->
+  <div id="apiKeyPromptModal" class="api-key-modal-overlay" onclick="if(event.target===this) window.dismissApiKeyModal()">
+    <div class="api-key-modal-card">
+      <div class="api-key-modal-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="7.5" cy="15.5" r="5.5"/>
+          <path d="m21 2-9.6 9.6"/>
+          <path d="m15.5 7.5 3 3L22 7l-3-3"/>
+        </svg>
+      </div>
+      <div class="api-key-modal-title">API Key Required</div>
+      <div class="api-key-modal-desc">
+        Please configure your Google Gemini API key to activate Zenith voice synthesis, vision, and reasoning loops.
+      </div>
+      <div class="api-key-modal-actions">
+        <button type="button" class="btn-modal-cancel" id="btnDismissApiKeyModal" onclick="window.dismissApiKeyModal()">Cancel</button>
+        <button type="button" class="btn-modal-enter" id="btnGoToApiKeys" onclick="window.goToApiKeysPage()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           Enter API Key
         </button>
       </div>
