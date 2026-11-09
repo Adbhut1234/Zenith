@@ -544,6 +544,42 @@ ipcMain.handle('start-zenith', () => {
       return { status: 'error', message: 'Zenith is already online.' };
     }
 
+    // Verify Google Gemini API Key is configured before launching
+    let googleApiKey = '';
+    const checkPaths = [ENV_PATH, path.join(app.getPath('userData'), '.env')];
+    for (const p of checkPaths) {
+      if (fs.existsSync(p)) {
+        try {
+          const envTxt = fs.readFileSync(p, 'utf-8');
+          envTxt.split(/\r?\n/).forEach(line => {
+            if (line.includes('=') && !line.trim().startsWith('#')) {
+              const [rawKey, ...rest] = line.split('=');
+              const key = rawKey.trim();
+              let val = rest.join('=').trim().replace(/^["']|["']$/g, '');
+              if ((key === 'GOOGLE_API_KEY' || key === 'GEMINI_API_KEY') && val) {
+                googleApiKey = val;
+              }
+            }
+          });
+        } catch (_) {}
+      }
+      if (googleApiKey) break;
+    }
+
+    const isMissingKey = !googleApiKey || 
+      googleApiKey.trim() === '' || 
+      googleApiKey.includes('your_google_api_key') || 
+      googleApiKey.includes('your_api_key') || 
+      googleApiKey.trim().length < 8;
+
+    if (isMissingKey) {
+      return {
+        status: 'error',
+        code: 'MISSING_API_KEY',
+        message: 'Google Gemini API key required. Please enter your API key in Settings before launching Zenith.'
+      };
+    }
+
     const backendDir = app.isPackaged
       ? process.resourcesPath
       : path.join(__dirname, '..');
