@@ -1,6 +1,6 @@
 {
   "name": "electron_dashboard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "publish": {
       "provider": "github",
       "owner": "Adbhut1234",
-      "repo": "JARVIS"
+      "repo": "Zenith"
     },
     "extraResources": [
       {
@@ -34,16 +34,20 @@
         "to": "zenith_backend"
       },
       {
-        "from": "..",
+        "from": "../dist_github",
         "to": ".",
         "filter": [
           "agent_tools/**/*",
           "mcp_client/**/*",
-          "templates/**/*",
+          "pyarmor_runtime_*/**/*",
           "agent.py",
           ".env.example",
           "generate_token.py",
           "prompts.py",
+          "prompts_data1.py",
+          "prompts_data2.py",
+          "zenith_memory.py",
+          "manage_local_memory.py",
           "computer_use.py",
           "uia_control.py",
           "ui_state.py",
@@ -62,7 +66,9 @@
   },
   "dependencies": {
     "electron-updater": "^6.8.9",
+    "jiti": "^2.7.0",
     "livekit-client": "^2.22.3",
-    "livekit-server-sdk": "^2.19.0"
+    "livekit-server-sdk": "^2.19.0",
+    "mime-db": "^1.54.0"
   }
 }

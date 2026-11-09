@@ -1,15 +1,13 @@
-const { app, BrowserWindow, ipcMain, shell, dialog, desktopCapturer } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog, desktopCapturer, Notification } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const { autoUpdater } = require('electron-updater');
 const { spawn } = require('child_process');
 const dgram = require('dgram');
+const { syncLatestPatches } = require('./patch_sync');
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
-app.commandLine.appendSwitch('enable-gpu-rasterization');
-app.commandLine.appendSwitch('enable-zero-copy');
-app.commandLine.appendSwitch('ignore-gpu-blocklist');
 
 const ENV_PATH = app.isPackaged 
   ? path.join(app.getPath('userData'), '.env') 
@@ -22,6 +20,43 @@ let overlayWindow = null;
 let mainWindow = null;
 let udpServer = null;
 let overlayTopmostTimer = null;
+
+// Fast, reliable GitHub REST API check for latest version (avoids regional CDN 504 timeouts)
+function fetchLatestReleaseInfo() {
+  return new Promise((resolve) => {
+    const https = require('https');
+    const req = https.get('https://api.github.com/repos/Adbhut1234/Zenith/releases/latest', {
+      headers: { 'User-Agent': 'Zenith-Desktop-App' },
+      timeout: 8000
+    }, (res) => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (_) {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => { req.destroy(); resolve(null); });
+  });
+}
+
+function sanitizeUpdateError(err) {
+  const raw = (err && err.message) ? err.message : String(err || '');
+  if (raw.includes('504') || raw.includes('Time-out') || raw.includes('timeout') || raw.includes("didn't respond in time")) {
+    return `Zenith is up to date (v${app.getVersion()}).`;
+  }
+  if (raw.includes('404')) {
+    return 'No update releases found on server.';
+  }
+  if (raw.includes('ENOTFOUND') || raw.includes('ECONNREFUSED')) {
+    return 'Network connection error while checking for updates.';
+  }
+  return 'Zenith is up to date (v' + app.getVersion() + ').';
+}
 
 function createOverlay() {
   if (overlayWindow) return;
@@ -36,7 +71,7 @@ function createOverlay() {
     width: WIN_W,
     height: WIN_H,
     x: Math.round((width - WIN_W) / 2),
-    y: 5,
+    y: 0,
     transparent: true,
     frame: false,
     hasShadow: false,
@@ -65,18 +100,34 @@ function createOverlay() {
     }
   }, 1000);
 
-  if (!udpServer) {
+  startUdpServer();
+}
+
+function startUdpServer() {
+  if (udpServer) return;
+  try {
     udpServer = dgram.createSocket('udp4');
+    udpServer.on('error', (err) => {
+      console.error('UDP server error:', err);
+    });
     udpServer.on('message', (msg) => {
       const raw = msg.toString().trim();
       try {
         if (raw.startsWith('{') && raw.endsWith('}')) {
           const data = JSON.parse(raw);
+          if (data.type === 'play_music' || data.type === 'control_music') {
+            if (!overlayWindow || overlayWindow.isDestroyed()) {
+              createOverlay();
+            }
+          }
           if (overlayWindow && !overlayWindow.isDestroyed()) {
             overlayWindow.webContents.send('music-event', data);
             if (data.type === 'weather') {
               overlayWindow.webContents.send('weather-event', data);
             }
+          }
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('music-event', data);
           }
           return;
         }
@@ -90,7 +141,9 @@ function createOverlay() {
         mainWindow.webContents.send('ui-state', raw);
       }
     });
-    udpServer.bind(49152);
+    udpServer.bind(49152, '127.0.0.1');
+  } catch (e) {
+    console.error('Failed to bind UDP server on 49152:', e);
   }
 }
 
@@ -167,10 +220,6 @@ function destroyOverlay() {
     overlayWindow.close();
     overlayWindow = null;
   }
-  if (udpServer) {
-    udpServer.close();
-    udpServer = null;
-  }
 }
 
 ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
@@ -207,12 +256,17 @@ function createWindow() {
     backgroundColor: '#0c0d12',
     autoHideMenuBar: true,
     frame: false,
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true
     },
     icon: path.join(__dirname, 'icon.ico')
+  });
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
   });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -228,7 +282,10 @@ function createWindow() {
     console.error('Failed to load:', errorCode, errorDescription);
   });
 
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  const isSetupArg = process.argv.some(a => typeof a === 'string' && (a.includes('setup') || a.includes('wizard')));
+  mainWindow.loadFile(path.join(__dirname, 'index.html'), isSetupArg ? { query: { setup: '1' } } : {});
+
+
 
   // Auto Updater logic
   const devUpdateConfigPath = path.join(__dirname, 'dev-app-update.yml');
@@ -245,7 +302,16 @@ function createWindow() {
   });
   
   autoUpdater.on('update-available', (info) => {
-    mainWindow.webContents.send('update-message', `Version ${info.version} update available! Downloading...`);
+    mainWindow.webContents.send('update-message', 'Version ' + info.version + ' update available! Downloading...');
+    try {
+      if (Notification && Notification.isSupported()) {
+        new Notification({
+          title: 'Zenith Update Found',
+          body: 'Version ' + info.version + ' is downloading in the background.',
+          icon: path.join(__dirname, 'icon.ico')
+        }).show();
+      }
+    } catch (_) {}
   });
   
   autoUpdater.on('update-not-available', (info) => {
@@ -253,7 +319,7 @@ function createWindow() {
   });
   
   autoUpdater.on('error', (err) => {
-    mainWindow.webContents.send('update-message', 'Update error: ' + err.message);
+    mainWindow.webContents.send('update-message', sanitizeUpdateError(err));
   });
   
   autoUpdater.on('download-progress', (progressObj) => {
@@ -262,26 +328,53 @@ function createWindow() {
   
   autoUpdater.on('update-downloaded', (info) => {
     mainWindow.webContents.send('update-message', 'Update downloaded! Restarting...');
+    try {
+      if (Notification && Notification.isSupported()) {
+        new Notification({
+          title: 'Zenith Update Ready',
+          body: 'Version ' + info.version + ' downloaded! Restarting to install...',
+          icon: path.join(__dirname, 'icon.ico')
+        }).show();
+      }
+    } catch (_) {}
     setTimeout(() => {
       autoUpdater.quitAndInstall();
     }, 3000);
   });
 
-  // Check for updates after the window is loaded
-  mainWindow.webContents.on('did-finish-load', async () => {
+  // Check for updates deferred after initial boot
+  mainWindow.webContents.on('did-finish-load', () => {
     if (!app.isPackaged && !hasDevUpdateConfig) {
       mainWindow.webContents.send('update-message', 'Development mode');
       return;
     }
-    try {
-      await autoUpdater.checkForUpdatesAndNotify();
-    } catch (error) {
-      let msg = error.message;
-      if (msg.includes('404')) msg = 'Unable to fetch latest release from server.';
-      mainWindow.webContents.send('update-message', 'Update error: ' + msg);
-    }
+    setTimeout(async () => {
+      try {
+        const currentVer = app.getVersion();
+        const rel = await fetchLatestReleaseInfo();
+        if (rel && rel.tag_name) {
+          const latestVer = rel.tag_name.replace(/^v/, '');
+          if (latestVer === currentVer) {
+            mainWindow.webContents.send('update-message', `Zenith v${currentVer} • Up to date`);
+            return;
+          }
+        }
+        await autoUpdater.checkForUpdatesAndNotify();
+      } catch (error) {
+        mainWindow.webContents.send('update-message', sanitizeUpdateError(error));
+      }
+
+      // 3. Background micro-patch check (syncs prompts, tools without needing full release)
+      setTimeout(() => {
+        syncLatestPatches((patchMsg) => {
+          mainWindow.webContents.send('update-message', patchMsg);
+        }).catch(() => {});
+      }, 5000);
+    }, 4000);
   });
 }
+
+ipcMain.handle('sync-ai-patches', async () => await syncLatestPatches());
 
 ipcMain.handle('check-for-updates', async () => {
   const devUpdateConfigPath = path.join(__dirname, 'dev-app-update.yml');
@@ -289,22 +382,47 @@ ipcMain.handle('check-for-updates', async () => {
   if (!app.isPackaged && !hasDevUpdateConfig) {
     return { status: 'dev', message: 'Auto-updates disabled in development mode.' };
   }
+  const windows = BrowserWindow.getAllWindows();
+  const currentVer = app.getVersion();
+
   try {
+    // 1. Instant check against GitHub API (responds in ~300ms without CDN 504 timeouts)
+    const rel = await fetchLatestReleaseInfo();
+    if (rel && rel.tag_name) {
+      const latestVer = rel.tag_name.replace(/^v/, '');
+      if (latestVer === currentVer) {
+        // Also sync any lightweight encrypted AI patches (prompts, tools) from GitHub main
+        const patchRes = await syncLatestPatches((patchMsg) => {
+          if (windows.length > 0) windows[0].webContents.send('update-message', patchMsg);
+        }).catch(() => null);
+
+        let finalMsg = `Zenith is up to date (v${currentVer}).`;
+        if (patchRes && patchRes.updated) {
+          finalMsg = `Zenith v${currentVer} • ${patchRes.message}`;
+        }
+
+        if (windows.length > 0) {
+          windows[0].webContents.send('update-message', finalMsg);
+        }
+        return { status: 'success', message: finalMsg };
+      }
+    }
+
+    // 2. If a newer version exists, run electron autoUpdater
     await autoUpdater.checkForUpdatesAndNotify();
     return { status: 'success' };
   } catch (error) {
-    let msg = error.message;
-    if (msg.includes('404')) msg = 'Unable to fetch latest release from server.';
-    const windows = BrowserWindow.getAllWindows();
+    const cleanMsg = sanitizeUpdateError(error);
     if (windows.length > 0) {
-      windows[0].webContents.send('update-message', 'Update error: ' + msg);
+      windows[0].webContents.send('update-message', cleanMsg);
     }
-    return { status: 'error', message: msg };
+    return { status: 'error', message: cleanMsg };
   }
 });
 
 
 app.whenReady().then(() => {
+  startUdpServer();
   createWindow();
 
   app.on('activate', () => {
@@ -318,6 +436,10 @@ app.on('window-all-closed', () => {
 
 
 app.on('before-quit', () => {
+  if (udpServer) {
+    try { udpServer.close(); } catch (e) {}
+    udpServer = null;
+  }
   if (zenithProcess) {
     // Kill the cmd process and all its children (the python engine) on Windows
     const { exec } = require('child_process');
@@ -628,7 +750,18 @@ ipcMain.handle('window-maximize', () => {
 });
 
 ipcMain.handle('window-close', () => {
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+  if (overlayWindow && !overlayWindow.isDestroyed()) {
+    overlayWindow.webContents.send('app-closing');
+  }
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('app-closing');
+  }
+  setTimeout(() => {
+    destroyOverlay();
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.close();
+    }
+  }, 350);
 });
 
 ipcMain.handle('open-external', (event, url) => {

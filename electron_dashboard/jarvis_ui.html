@@ -22,10 +22,10 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 520px;
-      height: 48px;
-      z-index: 10000;
-      pointer-events: auto;
+      width: 580px;
+      height: 52px;
+      z-index: 1000;
+      pointer-events: none;
       background: transparent;
     }
 
@@ -118,7 +118,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      z-index: 9999;
+      z-index: 10005;
     }
 
     #amb {
@@ -159,6 +159,29 @@
       opacity: 0;
       transform: translateY(-80px) scale(0.92);
       pointer-events: none;
+    }
+
+    /* ── Cinematic Closing Animation ──────────────────── */
+    #pill.closing {
+      opacity: 0 !important;
+      transform: translateY(-85px) scale(0.8) !important;
+      filter: blur(8px) brightness(0.6) !important;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, filter 0.32s ease !important;
+      pointer-events: none !important;
+    }
+
+    #amb.closing {
+      opacity: 0 !important;
+      transform: translate(-50%, -100px) scale(0.6) !important;
+      transition: opacity 0.32s ease, transform 0.32s ease !important;
+    }
+
+    #zenith-bar.closing {
+      opacity: 0 !important;
+      transform: translateX(-50%) translateY(-24px) scale(0.85) !important;
+      filter: blur(8px) brightness(0.6) !important;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, filter 0.32s ease !important;
+      pointer-events: none !important;
     }
 
     #pill.off {
@@ -336,6 +359,13 @@
       cursor: pointer;
       color: rgba(255, 255, 255, 0.85);
       transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+      pointer-events: auto;
+      user-select: none;
+      -webkit-app-region: no-drag;
+    }
+
+    .m-btn svg, .m-btn path {
+      pointer-events: none;
     }
 
     .m-btn:hover {
@@ -1107,12 +1137,17 @@
     let currentMusicTrack = null;
     let isHovered = false;
     let slideUpTimer = null;
-    const SLIDE_STAY_DURATION = 4000; // 4.0s stay before auto sliding up
+    const SLIDE_STAY_DURATION = 5500; // 5.5s (5-6 seconds stay before auto sliding up)
     let currentRawState = 'startup';
 
-    function shouldSlideUp() {
-      if (isHovered) return false;
-      // Keep pill down while actively communicating
+    function shouldSlideUp(force = false) {
+      if (isHovered && !force) return false;
+      // When music is actively playing, only active mic input (user speaking) keeps pill down
+      if (isMusicActive) {
+        if (currentRawState === 'listening') return false;
+        return true;
+      }
+      // For general assistant voice interaction
       if (currentRawState === 'listening' || currentRawState === 'thinking' || currentRawState === 'speaking' || currentRawState === 'tool') {
         return false;
       }
@@ -1129,21 +1164,19 @@
       $amb.style.opacity = '1';
       $amb.style.transform = 'translate(-50%, -50%)';
 
-      if (stayDuration > 0 && !isHovered) {
+      if (stayDuration > 0) {
         slideUpTimer = setTimeout(() => {
-          if (shouldSlideUp()) {
-            slideUp();
-          }
+          slideUp(true); // Auto slide up after 5-6s timer expires!
         }, stayDuration);
       }
     }
 
-    function slideUp() {
+    function slideUp(force = false) {
       if (slideUpTimer) {
         clearTimeout(slideUpTimer);
         slideUpTimer = null;
       }
-      if (!shouldSlideUp()) return;
+      if (!shouldSlideUp(force)) return;
 
       $pill.classList.add('slid-up');
       $amb.style.opacity = '0';
@@ -1161,13 +1194,9 @@
         clearTimeout(slideUpTimer);
         slideUpTimer = null;
       }
-      if (shouldSlideUp()) {
-        slideUpTimer = setTimeout(() => {
-          if (shouldSlideUp()) {
-            slideUp();
-          }
-        }, SLIDE_STAY_DURATION);
-      }
+      slideUpTimer = setTimeout(() => {
+        slideUp(true);
+      }, SLIDE_STAY_DURATION);
     }
 
     function updatePlayPauseIcon() {
@@ -1197,9 +1226,10 @@
       if (isMusicActive) {
         if (name === 'hidden' || name === 'idle') {
           restoreMusicState();
+          resetSlideTimer();
           return;
         }
-        slideDown(0);
+        slideDown(SLIDE_STAY_DURATION);
       }
 
       const s = STATES[name] || STATES.idle;
@@ -1351,7 +1381,11 @@
     function setState(state) {
       if (!state) return;
       if (state.startsWith('custom:')) {
-        slideDown(0);
+        if (isMusicActive) {
+          slideDown(SLIDE_STAY_DURATION);
+        } else {
+          slideDown(0);
+        }
         setCustomText(state.substring(7));
       } else if (state === 'idle') {
         if (!isMusicActive) {
@@ -1415,8 +1449,9 @@
     // ── Music Control Button Listeners ─────────────────────────────────
     $btnPP.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       if ($audio.paused) {
-        $audio.play().catch(e => console.error(e));
+        $audio.play().catch(e => console.error("Audio resume error:", e));
       } else {
         $audio.pause();
       }
@@ -1426,16 +1461,27 @@
 
     $btnPrev.addEventListener('click', (e) => {
       e.stopPropagation();
-      $audio.currentTime = 0;
-      $audio.play().catch(e => console.error(e));
+      e.preventDefault();
+      if ($audio.currentTime > 4) {
+        $audio.currentTime = 0;
+      } else {
+        $audio.currentTime = Math.max(0, $audio.currentTime - 10);
+      }
+      if ($audio.paused) {
+        $audio.play().catch(e => console.error(e));
+      }
       updatePlayPauseIcon();
       resetSlideTimer();
     });
 
     $btnNext.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       if ($audio.duration && !isNaN($audio.duration)) {
-        $audio.currentTime = Math.max(0, $audio.duration - 1);
+        $audio.currentTime = Math.min($audio.duration - 2, $audio.currentTime + 15);
+      }
+      if ($audio.paused) {
+        $audio.play().catch(e => console.error(e));
       }
       updatePlayPauseIcon();
       resetSlideTimer();
@@ -1443,21 +1489,33 @@
 
     $btnClose.addEventListener('click', (e) => {
       e.stopPropagation();
-      $audio.pause();
-      isMusicActive = false;
-      currentMusicTrack = null;
-      if (slideUpTimer) {
-        clearTimeout(slideUpTimer);
-        slideUpTimer = null;
-      }
-      $thumbWrap.style.display = 'none';
-      $disc.style.display = 'none';
-      $previewCard.classList.remove('show');
-      $orb.style.display = 'block';
-      $mControls.style.display = 'none';
-      $pbg.style.display = 'flex';
-      $pill.classList.remove('slid-up');
-      go('hidden');
+      e.preventDefault();
+      
+      // Trigger cinematic closing animation
+      $pill.classList.add('closing');
+      $amb.classList.add('closing');
+      if ($previewCard) $previewCard.classList.remove('show');
+      if ($weatherCard) $weatherCard.classList.remove('show');
+
+      setTimeout(() => {
+        $audio.pause();
+        $audio.currentTime = 0;
+        isMusicActive = false;
+        currentMusicTrack = null;
+        if (slideUpTimer) {
+          clearTimeout(slideUpTimer);
+          slideUpTimer = null;
+        }
+        $thumbWrap.style.display = 'none';
+        $disc.style.display = 'none';
+        $orb.style.display = 'block';
+        $mControls.style.display = 'none';
+        $pbg.style.display = 'flex';
+        $pill.classList.remove('closing');
+        $amb.classList.remove('closing');
+        $pill.classList.add('slid-up');
+        go('hidden');
+      }, 350);
     });
 
     // Clicking or hovering thumbnail triggers expanded preview card
@@ -1481,7 +1539,10 @@
       $disc.style.display = 'flex';
     };
 
-    $audio.addEventListener('play', updatePlayPauseIcon);
+    $audio.addEventListener('play', () => {
+      updatePlayPauseIcon();
+      resetSlideTimer();
+    });
     $audio.addEventListener('pause', updatePlayPauseIcon);
     $audio.addEventListener('ended', () => {
       updatePlayPauseIcon();
@@ -1512,9 +1573,19 @@
       restoreMusicState();
 
       if (data.stream_url) {
-        $audio.src = data.stream_url;
-        $audio.load();
-        $audio.play().catch(e => console.error("Audio stream playback error", e));
+        try {
+          $audio.pause();
+          $audio.currentTime = 0;
+          $audio.volume = 1.0;
+          $audio.src = data.stream_url;
+          $audio.load();
+          const p = $audio.play();
+          if (p !== undefined) {
+            p.catch(e => console.error("Audio stream playback error:", e));
+          }
+        } catch (err) {
+          console.error("Audio initialization error:", err);
+        }
       }
 
       // Show pill for 4.5s stay then auto slide up
@@ -1522,7 +1593,7 @@
     }
 
     function handleMusicControl(data) {
-      const action = data.action;
+      const action = (data.action || '').toLowerCase().trim();
       if (action === 'pause') {
         $audio.pause();
         updatePlayPauseIcon();
@@ -1539,8 +1610,29 @@
         }
         updatePlayPauseIcon();
         resetSlideTimer();
+      } else if (action === 'next' || action === 'skip' || action === 'forward') {
+        if ($audio.duration && !isNaN($audio.duration)) {
+          $audio.currentTime = Math.min($audio.duration - 2, $audio.currentTime + 15);
+        }
+        if ($audio.paused) {
+          $audio.play().catch(e => console.error(e));
+        }
+        updatePlayPauseIcon();
+        slideDown(SLIDE_STAY_DURATION);
+      } else if (action === 'prev' || action === 'previous' || action === 'restart' || action === 'rewind') {
+        if ($audio.currentTime > 4) {
+          $audio.currentTime = 0;
+        } else {
+          $audio.currentTime = Math.max(0, $audio.currentTime - 10);
+        }
+        if ($audio.paused) {
+          $audio.play().catch(e => console.error(e));
+        }
+        updatePlayPauseIcon();
+        slideDown(SLIDE_STAY_DURATION);
       } else if (action === 'stop' || action === 'close') {
         $audio.pause();
+        $audio.currentTime = 0;
         isMusicActive = false;
         currentMusicTrack = null;
         if (slideUpTimer) {
@@ -1597,17 +1689,24 @@
         if (previewTimer) clearTimeout(previewTimer);
         if (weatherCardTimer) clearTimeout(weatherCardTimer);
 
-        // Slide down smoothly when hovering top trigger or pill
-        if ($pill.classList.contains('slid-up') || $pill.classList.contains('off') || overTop) {
+        if (!isInteractive) {
+          isInteractive = true;
+          if (window.electronAPI && window.electronAPI.setIgnoreMouseEvents) {
+            window.electronAPI.setIgnoreMouseEvents(false);
+          }
+        }
+
+        const isSlidUp = $pill.classList.contains('slid-up') || $pill.classList.contains('off');
+
+        // On hovering top trigger or when pill was slid up: slide down and stay for 5-6 seconds!
+        if (isSlidUp || overTop) {
           if (!isMusicActive && (currentRawState === 'hidden' || currentRawState === 'idle')) {
             go('idle');
           }
-          slideDown(0);
+          slideDown(SLIDE_STAY_DURATION);
         } else {
-          if (slideUpTimer) {
-            clearTimeout(slideUpTimer);
-            slideUpTimer = null;
-          }
+          // If already visible and user is actively interacting with controls, refresh 5.5s timer
+          resetSlideTimer();
         }
 
         // On hovering over pill while weather is active, show detailed whole day report!
@@ -1711,6 +1810,16 @@
           } else if (data.type === 'weather') {
             handleWeatherReport(data);
           }
+        });
+      }
+      if (window.electronAPI.onAppClosing) {
+        window.electronAPI.onAppClosing(() => {
+          const bar = document.getElementById('zenith-bar');
+          if (bar) bar.classList.add('closing');
+          $pill.classList.add('closing');
+          $amb.classList.add('closing');
+          if ($previewCard) $previewCard.classList.remove('show');
+          if ($weatherCard) $weatherCard.classList.remove('show');
         });
       }
     }

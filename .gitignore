@@ -22,6 +22,7 @@ __pycache__/
 !pyarmor_runtime*/*.so
 
 # Temporary build folders
+dist_github/
 temp_build/
 temp_split_web_test/
 temp_dist_web_split/
@@ -54,3 +55,6 @@ GSD-STYLE.md
 PROJECT_RULES.md
 model_capabilities.yaml
 scripts/
+
+*.log
+.antideploy.json

@@ -14,6 +14,8 @@ function createWindow() {
     frame: false,
     transparent: true,
     resizable: false,
+    center: true,
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -22,6 +24,12 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.center();
+    mainWindow.show();
+    mainWindow.focus();
+  });
 }
 
 app.whenReady().then(createWindow);
@@ -51,15 +59,10 @@ ipcMain.on('install-app', async (event, options) => {
   try {
     event.sender.send('install-status', 'Preparing installation...');
     
-    // Pointing to GitHub Releases for fast, trusted distribution
-    const payloadUrl = 'https://github.com/Adbhut1234/JARVIS/releases/download/v1.0.1/zenith.zip';
-
     // Use options or fallback to default
     const destDir = options && options.destDir 
       ? options.destDir 
       : path.join(process.env.LOCALAPPDATA, 'Programs', 'Zenith');
-      
-    const tempZipPath = path.join(app.getPath('temp'), 'zenith_payload.zip');
 
     // Make sure destination exists and is clean
     if (fs.existsSync(destDir)) {
@@ -81,9 +84,115 @@ ipcMain.on('install-app', async (event, options) => {
     }
     await fs.ensureDir(destDir);
 
-    event.sender.send('install-status', 'Downloading main application files...');
+    const tempExePath = path.join(app.getPath('temp'), 'Zenith-Setup-1.0.2.exe');
 
-    // Download logic
+    // 1. Check if an offline setup package is already present on disk (instant install, skip 590MB download)
+    const localCandidates = [
+      path.join(__dirname, 'Zenith-Setup-1.0.2.exe'),
+      path.join(__dirname, '..', 'electron_dashboard', 'dist', 'Zenith-Setup-1.0.2.exe'),
+      path.join(process.cwd(), 'Zenith-Setup-1.0.2.exe')
+    ];
+
+    let foundLocal = false;
+    for (const loc of localCandidates) {
+      if (fs.existsSync(loc) && fs.statSync(loc).size > 100000000) {
+        console.log('Found local setup package at:', loc);
+        event.sender.send('install-status', 'Found local installation package, preparing setup...');
+        event.sender.send('install-progress', 40);
+        await fs.copy(loc, tempExePath);
+        event.sender.send('install-progress', 85);
+        foundLocal = true;
+        break;
+      }
+    }
+
+    if (!foundLocal) {
+      event.sender.send('install-status', 'Connecting to high-speed release mirror...');
+
+      // Resilient endpoints:
+      // Endpoint 1: GitHub API asset endpoint redirects directly to Azure Blob storage (bypasses CDN 504 timeouts)
+      // Endpoint 2: Direct release URL
+      // Endpoint 3: Release v1.0.1 fallback
+      const downloadEndpoints = [
+        {
+          url: 'https://api.github.com/repos/Adbhut1234/Zenith/releases/assets/702045937',
+          headers: { 'User-Agent': 'Zenith-Windows-Installer', 'Accept': 'application/octet-stream' }
+        },
+        {
+          url: 'https://github.com/Adbhut1234/Zenith/releases/download/v1.0.2/Zenith-Setup-1.0.2.exe',
+          headers: { 'User-Agent': 'Zenith-Windows-Installer' }
+        },
+        {
+          url: 'https://github.com/Adbhut1234/Zenith/releases/download/v1.0.1/Zenith-Setup-1.0.1.exe',
+          headers: { 'User-Agent': 'Zenith-Windows-Installer' }
+        }
+      ];
+
+      let stream = null;
+      let totalBytes = 0;
+
+      for (const ep of downloadEndpoints) {
+        try {
+          console.log('Attempting download from:', ep.url);
+          const response = await axios({
+            url: ep.url,
+            method: 'GET',
+            headers: ep.headers,
+            maxRedirects: 10,
+            timeout: 30000,
+            responseType: 'stream'
+          });
+
+          if (response.status === 200) {
+            stream = response.data;
+            totalBytes = parseInt(response.headers['content-length'] || 0, 10);
+            console.log('Connected to mirror, size:', totalBytes);
+            break;
+          }
+        } catch (fetchErr) {
+          console.warn('Endpoint failed:', ep.url, fetchErr.message);
+        }
+      }
+
+      if (!stream) {
+        throw new Error('All download mirrors timed out or were unreachable. Please verify your internet connection or run the offline installer directly.');
+      }
+
+      event.sender.send('install-status', 'Downloading main application files...');
+      const writer = fs.createWriteStream(tempExePath);
+
+      let downloadedBytes = 0;
+      stream.on('data', (chunk) => {
+        downloadedBytes += chunk.length;
+        if (totalBytes > 0) {
+          const percent = Math.min(85, Math.round((downloadedBytes / totalBytes) * 85));
+          event.sender.send('install-progress', percent);
+        }
+      });
+
+      stream.pipe(writer);
+
+      await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      });
+    }
+
+    event.sender.send('install-progress', 90);
+    event.sender.send('install-status', 'Installing Zenith silently...');
+    await new Promise((resolve) => {
+      exec(`"${tempExePath}" /S`, () => resolve());
+    });
+
+    fs.remove(tempExePath).catch(() => {});
+    event.sender.send('install-progress', 100);
+    event.sender.send('install-status', 'Installation complete! Launching Zenith...');
+    setTimeout(() => {
+      app.quit();
+    }, 1500);
+    return;
+
+    // Fallback zip download logic
     const writer = fs.createWriteStream(tempZipPath);
 
     const response = await axios({
@@ -93,7 +202,6 @@ ipcMain.on('install-app', async (event, options) => {
       onDownloadProgress: (progressEvent) => {
         if (progressEvent.total) {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          // Scale download from 0% to 70% of the overall progress bar
           event.sender.send('install-progress', Math.floor(percentCompleted * 0.7));
         }
       }
@@ -109,7 +217,6 @@ ipcMain.on('install-app', async (event, options) => {
     event.sender.send('install-progress', 75);
     event.sender.send('install-status', 'Extracting files (Hardware Accelerated)...');
 
-    // Extract logic: Try native Windows 10+ tar for 10x faster extraction, fallback to JS
     try {
       await new Promise((resolve, reject) => {
         exec(`tar -xf "${tempZipPath}" -C "${destDir}"`, { maxBuffer: 1024 * 1024 * 10 }, (err) => {
@@ -122,7 +229,6 @@ ipcMain.on('install-app', async (event, options) => {
       await extract(tempZipPath, { dir: destDir });
     }
 
-    // Clean up temp zip
     await fs.remove(tempZipPath);
 
     event.sender.send('install-progress', 80);
@@ -153,37 +259,80 @@ ipcMain.on('install-app', async (event, options) => {
     });
     fs.remove(tempRegScript).catch(()=>{});
 
-    event.sender.send('install-status', 'Creating shortcuts...');
+    event.sender.send('install-status', 'Configuring system shortcuts...');
 
-    // Create Desktop Shortcut using PowerShell
-    const desktopPath = path.join(process.env.USERPROFILE, 'Desktop', 'Zenith.lnk');
-    const startMenuPath = path.join(process.env.APPDATA, 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Zenith.lnk');
+    // Helper to create valid Windows .lnk shortcuts via Windows Script Host (works without PS execution restrictions)
+    const createWindowsShortcut = (shortcutPath, targetPath, workingDir, iconPath) => {
+      const vbsPath = path.join(app.getPath('temp'), `zenith_sc_${Date.now()}_${Math.random().toString(36).substring(2, 6)}.vbs`);
+      const vbsLines = [
+        'Set ws = CreateObject("WScript.Shell")',
+        `Set sc = ws.CreateShortcut(${JSON.stringify(shortcutPath)})`,
+        `sc.TargetPath = ${JSON.stringify(targetPath)}`,
+        `sc.WorkingDirectory = ${JSON.stringify(workingDir || path.dirname(targetPath))}`
+      ];
+      if (iconPath) {
+        vbsLines.push(`sc.IconLocation = ${JSON.stringify(iconPath + ',0')}`);
+      }
+      vbsLines.push('sc.Save');
 
-    const createShortcutPS = (shortcutPath, targetPath) => {
-      return `
-        $WshShell = New-Object -comObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut("${shortcutPath}")
-        $Shortcut.TargetPath = "${targetPath}"
-        $Shortcut.WorkingDirectory = "${path.dirname(targetPath)}"
-        $Shortcut.Save()
-      `;
+      fs.writeFileSync(vbsPath, vbsLines.join('\r\n'), 'utf8');
+      try {
+        require('child_process').execSync(`cscript //nologo "${vbsPath}"`, { windowsHide: true });
+      } finally {
+        try { fs.unlinkSync(vbsPath); } catch (_) {}
+      }
     };
 
-    let psCommand = '';
-    if (options && options.createDesktop) {
-      psCommand += createShortcutPS(desktopPath, exePath) + '\n';
-    }
-    if (options && options.createStartMenu) {
-      psCommand += createShortcutPS(startMenuPath, exePath) + '\n';
+    // 1. Desktop Shortcut (Handles both UserProfile\Desktop and OneDrive\Desktop if present)
+    const desktopDirs = new Set([
+      app.getPath('desktop'),
+      process.env.USERPROFILE ? path.join(process.env.USERPROFILE, 'Desktop') : null
+    ]);
+
+    const shouldCreateDesktop = Boolean(options && options.createDesktop);
+    for (const dir of desktopDirs) {
+      if (!dir) continue;
+      const lnkPath = path.join(dir, 'Zenith.lnk');
+      if (shouldCreateDesktop) {
+        try {
+          fs.ensureDirSync(dir);
+          createWindowsShortcut(lnkPath, exePath, destDir, exePath);
+        } catch (scErr) {
+          console.error('Failed to create desktop shortcut in', dir, scErr);
+        }
+      } else {
+        // Explicitly unchecked: ensure shortcut is not present
+        try {
+          if (fs.existsSync(lnkPath)) {
+            fs.removeSync(lnkPath);
+          }
+        } catch (rmErr) {
+          console.error('Failed to remove desktop shortcut in', dir, rmErr);
+        }
+      }
     }
 
-    if (psCommand) {
-      const tempShortcutScript = path.join(app.getPath('temp'), 'zenith_shortcut.ps1');
-      await fs.writeFile(tempShortcutScript, psCommand);
-      await new Promise((resolve) => {
-        exec(`powershell -ExecutionPolicy Bypass -File "${tempShortcutScript}"`, () => resolve());
-      });
-      fs.remove(tempShortcutScript).catch(()=>{});
+    // 2. Start Menu Shortcut
+    const startMenuDir = path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Start Menu', 'Programs');
+    const startMenuLnk = path.join(startMenuDir, 'Zenith.lnk');
+    const shouldCreateStartMenu = Boolean(options && options.createStartMenu);
+
+    if (shouldCreateStartMenu) {
+      try {
+        fs.ensureDirSync(startMenuDir);
+        createWindowsShortcut(startMenuLnk, exePath, destDir, exePath);
+      } catch (scErr) {
+        console.error('Failed to create Start Menu shortcut', scErr);
+      }
+    } else {
+      // Explicitly unchecked: ensure shortcut is not present
+      try {
+        if (fs.existsSync(startMenuLnk)) {
+          fs.removeSync(startMenuLnk);
+        }
+      } catch (rmErr) {
+        console.error('Failed to remove Start Menu shortcut', rmErr);
+      }
     }
 
     event.sender.send('install-progress', 100);
