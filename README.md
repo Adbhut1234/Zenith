@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./web/zenith_logo.svg" alt="Zenith Logo" width="120" />
+  <img src="./web/logo.png" alt="Zenith Logo" width="110" />
   <h1>Zenith</h1>
   <p><strong>Autonomous Multimodal Desktop Agent</strong></p>
   <p>Real-time bidirectional voice & vision assistant powered by LiveKit WebRTC, Google Gemini Live API, and on-device SQLite vector memory.</p>
@@ -15,7 +15,7 @@
 
   <p>
     <a href="#-architecture">Architecture</a> •
-    <a href="#-visual-interface-tour">Interface Tour</a> •
+    <a href="#-video-demonstration">Video Demo</a> •
     <a href="#-core-capabilities">Capabilities</a> •
     <a href="#-why-zenith-comparison">Comparison</a> •
     <a href="#-quickstart">Quickstart</a> •
@@ -64,42 +64,22 @@ Zenith couples a **sub-second real-time streaming pipeline** with **deliberative
 
 ---
 
-## 📸 Visual Interface Tour
+## 🎥 Video Demonstration
 
-<table align="center" width="100%">
-  <tr>
-    <td width="50%" align="center">
-      <img src="./web/images/zenith-voice-overlay.png" alt="Zenith Voice Overlay" width="100%" />
-      <br />
-      <strong>Real-Time Spoken Persona & Floating HUD</strong>
-      <br />
-      <em>Sub-second duplex voice interaction with dynamic state indicators.</em>
-    </td>
-    <td width="50%" align="center">
-      <img src="./web/images/zenith-screen-vision.png" alt="Zenith Screen Vision" width="100%" />
-      <br />
-      <strong>Multimodal Screen Inspection & Grounding</strong>
-      <br />
-      <em>Continuous desktop sight powered by Set-of-Marks coordinate mapping.</em>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" align="center">
-      <img src="./web/images/app-dashboard.png" alt="Control Center Dashboard" width="100%" />
-      <br />
-      <strong>Mission Control & System Diagnostics</strong>
-      <br />
-      <em>Live monitoring of neural latency, memory integrity, and active processes.</em>
-    </td>
-    <td width="50%" align="center">
-      <img src="./web/images/zenith-settings-view.png" alt="Settings & API Configuration" width="100%" />
-      <br />
-      <strong>Local Security & Hardware Settings</strong>
-      <br />
-      <em>On-device configuration for emergency stop triggers, audio feeds, and credentials.</em>
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <a href="https://youtu.be/DEMO_VIDEO_URL">
+    <img src="./web/images/zenith-screen-vision.png" alt="Watch Zenith Live Demo" width="95%" style="border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.4);" />
+  </a>
+  <br />
+  <p><em>▶️ <strong>Watch Zenith in Action:</strong> Real-Time Voice, Multimodal Vision & Windows Automation</em></p>
+</div>
+
+### System Workflow Demonstration:
+* **Duplex Voice Interaction:** Sub-second speech input & spoken feedback with interruption handling over LiveKit WebRTC.
+* **Multimodal Screen Grounding:** Continuous desktop vision and UI coordinate extraction using Set-of-Marks (SoM) badges.
+* **Persistent Shell & Error Reflection:** Autonomous terminal execution where errors are automatically diagnosed and saved into SQLite procedural playbooks.
+* **On-Device Memory Matrix:** Knowledge graph traversal and vector cosine similarity search with zero external cloud dependencies.
+* **Instant Safety Killswitch:** Hardware and process halt via voice command or keyboard shortcut in < 5ms.
 
 ---
 
