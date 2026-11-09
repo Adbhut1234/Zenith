@@ -13,7 +13,7 @@
 
   <br />
 
-  <img src="./web/images/zenith-dashboard-active.png" alt="Zenith Desktop Dashboard" width="90%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+  <img src="./web/images/zenith-dashboard.png" alt="Zenith Desktop Dashboard" width="90%" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
 </div>
 
 ---
