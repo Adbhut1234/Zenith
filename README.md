@@ -2,8 +2,6 @@
   <h1>🤖 Zenith</h1>
   <p><i>Just A Rather Very Intelligent System — Vision-Grade Cognitive Desktop Agent</i></p>
   <p>A multimodal, autonomous desktop assistant powered by LiveKit WebRTC and Google's Gemini Multimodal Live API, featuring Vision-grade cognitive reasoning, neuroplastic self-healing, and a sovereign local memory matrix.</p>
-  <br />
-  <img src="web/images/zenith_demo.gif" alt="Zenith Live Assistant Demo" width="92%" style="border-radius: 10px;" />
 </div>
 
 ---
@@ -177,3 +175,11 @@ You may not copy, modify, distribute, or use this software for commercial purpos
 Built and maintained by **Enc0deX**.
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/enc0dex)
+
+---
+
+## 🎬 Live Demonstration
+
+<div align="center">
+  <img src="web/images/zenith_demo.gif" alt="Zenith Desktop Demonstration" width="90%" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+</div>
