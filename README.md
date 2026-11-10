@@ -5,6 +5,7 @@
   <p>Real-time bidirectional voice & vision assistant powered by LiveKit WebRTC, Gemini Live API, and on-device SQLite vector memory.</p>
 
   <p>
+    <a href="https://zenith-jjq.pages.dev/"><img src="https://img.shields.io/badge/Website-zenith--jjq.pages.dev-00f5a0?style=flat-square&logo=cloudflare&logoColor=black" alt="Website" /></a>
     <img src="https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat-square&logo=windows&logoColor=white" alt="Windows" />
     <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" /></a>
     <img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js" />
