@@ -1,138 +1,142 @@
 <div align="center">
-  <img src="./web/logo.png" alt="Zenith Logo" width="90" />
-  <h1>Zenith</h1>
-  <p><strong>Autonomous Multimodal Desktop Agent for Windows</strong></p>
-  <p>Real-time bidirectional voice & vision assistant powered by LiveKit WebRTC, Gemini Live API, and on-device SQLite vector memory.</p>
-
-  <p>
-    <img src="https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat-square&logo=windows&logoColor=white" alt="Windows" />
-    <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" /></a>
-    <img src="https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js" />
-    <a href="https://livekit.io"><img src="https://img.shields.io/badge/LiveKit-WebRTC-0070F3?style=flat-square&logo=webrtc&logoColor=white" alt="LiveKit WebRTC" /></a>
-    <a href="https://ai.google.dev"><img src="https://img.shields.io/badge/Gemini-Live_API-4285F4?style=flat-square&logo=google&logoColor=white" alt="Gemini Live API" /></a>
-    <a href="https://www.sqlite.org"><img src="https://img.shields.io/badge/Memory-On--Device_SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite Memory" /></a>
-  </p>
-
+  <h1>🤖 Zenith</h1>
+  <p><i>Just A Rather Very Intelligent System — Vision-Grade Cognitive Desktop Agent</i></p>
+  <p>A multimodal, autonomous desktop assistant powered by LiveKit WebRTC and Google's Gemini Multimodal Live API, featuring Vision-grade cognitive reasoning, neuroplastic self-healing, and a sovereign local memory matrix.</p>
   <br />
-
-  <img src="./web/images/zenith-dashboard.png" alt="Zenith Desktop Dashboard" width="90%" />
+  <img src="web/images/zenith_demo.gif" alt="Zenith Live Assistant Demo" width="92%" style="border-radius: 10px;" />
 </div>
 
 ---
 
-## Highlights
+## ⚡ What's New (Vision Cognitive Architecture)
 
-- ⚡ **Low-Latency Duplex Voice:** Full-duplex conversational audio streaming over LiveKit WebRTC with live speech interruption.
-- 👁️ **Desktop Perception:** Targeted UI navigation combining Set-of-Marks (SoM) visual bounding badges with Windows UI Automation (`pywinauto`).
-- 🧠 **On-Device Vector Memory:** 100% local SQLite vector storage with NumPy cosine similarity — conversation memory and facts never leave your machine.
-- 🛠️ **Error-Aware Shell & Playbooks:** Maintains persistent PowerShell state across turns and automatically saves procedural recovery playbooks from shell errors.
-- 🛑 **Software Emergency Killswitch:** Near-instant automation abort and hardware input release callable via voice command or keyboard shortcut.
+- **🧠 Subconscious Deep Thinker (System 2 Reasoning):** When faced with complex coding bugs, multi-step system tasks, or strategic trade-offs, Zenith engages its deliberative subconscious matrix (`deep_reasoning_matrix`) to simulate failure modes, evaluate counterfactuals, and formulate optimal execution plans.
+- **⚡ Neuroplasticity & Self-Healing Playbooks:** Powered by an automated post-mortem reflection engine (`procedural_memory.py`). Whenever a terminal command, UI automation action, or screen click encounters an error, Zenith diagnoses the root cause and records a permanent procedural playbook into SQLite so it never repeats the mistake.
+- **📝 Stream of Consciousness (Working Memory Scratchpad):** Maintains an active cognitive scratchpad (`working_memory.py`) across conversation turns, tracking the active mission goal, subtask completion checklists, intermediate hypotheses, and ambient sensory signals. Restores unfinished tasks automatically upon boot.
+- **⚖️ The Council of Overlays (Dialectical Debate):** Inspired by Vision's multi-layered mind (J.A.R.V.I.S., Stark, Banner, and Ultron). When evaluating high-stakes architectural choices or competing approaches, Zenith convenes The Architect, The Skeptic, and The Pragmatist to debate trade-offs and synthesize a unified consensus.
+- **🌙 The Dream Cycle (Proactive Idle Cognition):** While you work, Zenith's background dream cycle quietly reconciles unresolved ambient signals (copied compiler errors, completed processes) and pre-computes fixes before you even ask.
+- **⚛️ Code Phasing & Molecular Inspection:** Inspired by Vision's phasing abilities. Uses native Python AST parsing (`code_phasing.py`) to dissect and map classes, functions, signatures, and docstrings across entire codebases in milliseconds with **zero token cost**.
+- **🚨 Universal Emergency Motor Killswitch:** A zero-latency atomic killswitch (`emergency_stop_all`) triggered verbally ("Stop everything", "Abort", "Freeze", "Ruk jao") to instantly disengage screen automation, UI clicks, web browsing, and terminal processes in < 5ms while releasing all hardware key locks.
+- **🏛️ "The Ship of Theseus" Memory Evolution:** Temporal contradiction reconciliation that prevents factual drift as your habits, career, and tools evolve over time, automatically archiving superseded beliefs while preserving historical provenance.
+- **🩺 Stark-Style Automated System Diagnostics:** An instant 5-point self-diagnostic inspection (`diagnose_system_health`) reporting live neural latency, SQLite integrity (`PRAGMA integrity_check`), persistent shell readiness, hardware resource load, and background cognitive loops.
+- **🔒 100% Free & Sovereign Local Memory:** Completely retired third-party cloud memory platforms (Mem0) in favor of an embedded SQLite database (`zenith_memory.db`) with local vector embeddings, Knowledge Graph traversal, and a dedicated CLI manager (`manage_local_memory.py`).
 
 ---
 
-## Architecture
+## ⚙️ Core System Architecture
 
 ```
-[ Microphone / Screen ] ──(WebRTC)──> [ LiveKit Engine ] ──> [ Gemini Live API ]
-                                                                     │
-                                                                     ▼
-[ Desktop Automation ] <── [ Persistent Shell ] <── [ System 2 Reasoning ]
-(UIA + Set-of-Marks)       (Stateful PowerShell)              │
-                                                              ▼
-                                                   [ SQLite Vector Store ]
-                                                   (Local Facts & Playbooks)
+┌────────────────────────────────────────────────────────────────────────┐
+│                 Frontal Voice Interface (J.A.R.V.I.S.)                 │
+│              LiveKit Real-Time Audio Streaming (Ultra-Fast)            │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+    ┌───────────────────────────────┼───────────────────────────────┐
+    ▼                               ▼                               ▼
+┌────────────────────────┐ ┌────────────────────────┐ ┌─────────────────────┐
+│ Subconscious Reasoner  │ │ Council of Overlays    │ │ The Dream Cycle     │
+│ Deliberative System 2  │ │ Multi-Perspective      │ │ Idle Proactive      │
+│ (The Mind Stone)       │ │ Dialectical Synthesis  │ │ Synthesis Engine    │
+│ deep_thinker.py        │ │ council_of_overlays.py │ │ dream_cycle.py      │
+└───────────┬────────────┘ └───────────┬────────────┘ └──────────┬──────────┘
+            │                          │                         │
+            ▼                          ▼                         ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ Working Memory Scratchpad (Stream of Consciousness)                   │
+│ Active Mission Goal • Subtask Checklist • Sensory Signals              │
+│ working_memory.py  [SQLite: zenith_working_memory]                    │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ Neuroplasticity & Procedural Playbooks (Experience Engine)            │
+│ Post-Mortem Error Reflection • Self-Healing Playbooks                  │
+│ procedural_memory.py [SQLite: zenith_playbooks, zenith_reflections]   │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ Sovereign Memory Matrix & Epistemic Evolution                         │
+│ Facts • Knowledge Graph • Ship of Theseus Temporal Versioning          │
+│ zenith_memory.db [SQLite + NumPy Vector Cosine Similarity]            │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Core Modules & Project Structure
+## 🛠️ Core Capabilities
 
-| Module | Location | Purpose |
-| :--- | :--- | :--- |
-| **Agent Core Daemon** | `agent.py` | Orchestrates the LiveKit worker session and Gemini Live multimodal streaming loop. |
-| **System 2 Planner** | `agent_tools/deep_thinker.py` | Deliberative planner that simulates and validates multi-step CLI operations before execution. |
-| **Procedural Memory** | `agent_tools/procedural_memory.py` | Diagnoses terminal errors and logs procedural recovery playbooks to SQLite. |
-| **Working Memory** | `agent_tools/working_memory.py` | Cross-turn active cognitive scratchpad tracking task checklists and intermediate hypotheses. |
-| **AST Code Indexer** | `agent_tools/code_phasing.py` | Python AST parser that extracts symbols and signatures across repos with 0 LLM token cost. |
-| **Emergency Stop** | `agent_tools/emergency.py` | Atomic killswitch that halts spawned processes and releases hardware keys. |
-| **Desktop Automation** | `uia_control.py` / `som_grounding.py` | Native Windows UIA controls paired with Set-of-Marks coordinate mapping. |
-| **Local Memory Matrix** | `zenith_memory.py` | Embedded SQLite database storing vector embeddings, entity graphs, and fact versions. |
+- **🧠 Sovereign Local Memory (SQLite + Vector RAG):** 100% private on-device memory with knowledge graph entity traversal and procedural playbooks.
+- **👁️ Native UI Automation (UIA) & Set-of-Marks (SoM):** Combines headless Windows UI Automation (`pywinauto`) with Set-of-Marks visual badges for precision desktop navigation without coordinate guessing.
+- **💻 Stateful Persistent PowerShell:** Maintains `$PWD`, environment variables, and active virtual environments across turns with self-healing POSIX-to-PowerShell translation.
+- **🌐 Autonomous Web Agent:** End-to-end web automation via `browser-use` and Playwright for form-filling, product comparisons, and research.
+- **🚨 Atomic Safety Controls:** Universal emergency motor killswitch halts runaway tasks and releases hardware inputs in < 5ms.
+- **👁️ Enhanced Multimodal Sight:** Cascading dual-model vision (`gemini-3.5-flash-lite` ➔ `gemini-2.5-flash`) for real-time screen inspection.
+- **🗣️ Low-Latency Spoken Persona:** Human-like, loyal, and technically brilliant persona reflecting J.A.R.V.I.S. with English, Hindi, and Hinglish fluency.
+- **🎨 Stark Dynamic Island HUD:** Sleek, always-on-top glassmorphic overlay reflecting cognitive states (`💡 Deep Deliberation`, `🧠 Overlays Debating`, `⚛️ Phasing Codebase`, `🛑 EMERGENCY STOP`).
 
 ---
 
-## Quickstart
+## 🚀 System Initialization Sequence (Setup)
 
-### Prerequisites
-* **Operating System:** Windows 10 or 11 (required for Windows UI Automation & persistent PowerShell)
-* **Python:** 3.10 or higher
-* **Node.js:** 18 or higher (for the Electron dashboard)
-* **API Keys:** Google Gemini API ([AI Studio](https://aistudio.google.com/app/apikey)) and LiveKit Cloud ([LiveKit](https://cloud.livekit.io/))
+To bring Zenith online, follow these initialization steps:
 
-### 1. Clone & Set Up Python Environment
+1. **Construct Environment:** Create a new Python virtual environment:
+   ```powershell
+   python -m venv venv
+   ```
+2. **Engage Environment:** Activate the virtual environment:
+   ```powershell
+   .\venv\Scripts\activate
+   ```
+3. **Install Dependencies:**
+   ```powershell
+   pip install -r requirements.txt
+   ```
+4. **Configure Constants:** 
+   - Create a `.env` file from `.env.example`.
+   - Add your `GOOGLE_API_KEY` (from Google AI Studio — free tier).
+   - Add your `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` (from LiveKit Cloud).
+   - *(Optional)* Add `GMAIL_USER` and `GMAIL_APP_PASSWORD` for automated email dispatch.
+5. **Install Dashboard Dependencies:**
+   ```powershell
+   cd electron_dashboard
+   npm install
+   cd ..
+   ```
+6. **Deploy:** 
+   - **Launch Dashboard (Recommended):**
+     ```powershell
+     cd electron_dashboard
+     npm start
+     ```
+   - **Standalone Console Mode:**
+     ```powershell
+     python agent.py console
+     ```
+
+---
+
+## 📊 Managing Local Memory
+
+Zenith includes a dedicated CLI utility to inspect, export, and manage your sovereign local SQLite memory:
+
 ```powershell
-git clone https://github.com/Adbhut1234/Zenith.git
-cd Zenith
-
-python -m venv venv
-.\venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 2. Configure Credentials
-Copy `.env.example` to `.env`:
-```powershell
-cp .env.example .env
-```
-Add your Gemini and LiveKit keys to `.env`:
-```env
-GOOGLE_API_KEY=your_gemini_api_key
-LIVEKIT_URL=wss://your-project.livekit.cloud
-LIVEKIT_API_KEY=your_livekit_api_key
-LIVEKIT_API_SECRET=your_livekit_api_secret
-```
-
-### 3. Launch
-```powershell
-# Option A: Full Electron Dashboard
-cd electron_dashboard
-npm install
-npm start
-
-# Option B: Lightweight Console Mode (from project root)
-python agent.py console
-```
-
----
-
-## 🔒 Safety, Privacy & Limitations
-
-* **Confirmation Safeguard:** Zenith supports confirmation gating (`REQUIRE_CMD_CONFIRMATION=true` in `.env`) so the agent pauses and asks for user approval before executing sensitive commands.
-* **Privacy Boundary:** Audio and active screen frames stream via WebRTC to Google Gemini and LiveKit for real-time model inference. All conversation memory, user facts, and error playbooks remain **100% on-device in `zenith_memory.db`**.
-* **Emergency Abort:** Say *"Stop everything"*, *"Abort"*, or *"Freeze"* (or trigger the emergency shortcut) to immediately kill active automation tasks and release hardware input locks.
-* **Platform Support:** Zenith is experimental and currently **Windows-only**, relying on native Windows UI Automation (UIA) and PowerShell session state.
-
----
-
-## Memory Management
-
-Zenith includes a CLI to inspect and manage your local SQLite memory matrix:
-
-```powershell
-# View summary of stored facts, playbooks, and knowledge graph
+# View summary of active facts, playbooks, and knowledge graph
 python manage_local_memory.py
 
-# Export local memory snapshot to JSON backup
+# Export memory matrix snapshot to JSON
 python manage_local_memory.py --export backup.json
 
-# Clear active memory facts for a specific profile
+# Clear active facts for a specific user
 python manage_local_memory.py --user Admin --clear
 ```
 
 ---
 
-## Verification & Tests
+## 🧪 Testing the Cognitive Suite
 
-To run the verification test suite covering cognitive loops, procedural memory, and the emergency stop:
+To run the complete 6-point verification test suite covering deliberative reasoning, neuroplasticity, working memory, emergency stop, Ship of Theseus evolution, and automated diagnostics:
 
 ```powershell
 python tests/test_vision_cognitive_suite.py
@@ -140,6 +144,36 @@ python tests/test_vision_cognitive_suite.py
 
 ---
 
-## License
+## 🔑 API Keys Guide
 
-Copyright (c) 2026 **Enc0deX**. All Rights Reserved.
+Zenith requires only **two** free services:
+
+### 1. Google Gemini API (Neural Brain — 100% Free Tier)
+- Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
+- Sign in with your Google account and click **Create API key**.
+- Paste it as `GOOGLE_API_KEY` in your `.env` file.
+
+### 2. LiveKit Cloud (Real-Time Audio Transport)
+- Sign up at [LiveKit Cloud](https://cloud.livekit.io/) (free tier includes ample monthly minutes).
+- Go to **Settings** > **Keys** and copy:
+  - `LIVEKIT_URL` (WebSocket URL)
+  - `LIVEKIT_API_KEY`
+  - `LIVEKIT_API_SECRET`
+
+*(No third-party memory subscriptions or credit cards needed!)*
+
+---
+
+## 📜 License
+
+Copyright (c) 2026 Enc0deX. **All Rights Reserved.** 
+
+You may not copy, modify, distribute, or use this software for commercial purposes without explicit written permission.
+
+---
+
+## 👨‍💻 Author & Support
+
+Built and maintained by **Enc0deX**.
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/enc0dex)
