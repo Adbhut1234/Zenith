@@ -143,3 +143,12 @@ python tests/test_vision_cognitive_suite.py
 ## License
 
 Copyright (c) 2026 **Enc0deX**. All Rights Reserved.
+
+---
+
+## 🎬 Live Demonstration
+
+<div align="center">
+  <img src="./web/images/zenith_demo.gif" alt="Zenith Desktop Demonstration" width="90%" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+</div>
+
