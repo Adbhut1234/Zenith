@@ -2,6 +2,8 @@
   <h1>🤖 Zenith</h1>
   <p><i>Just A Rather Very Intelligent System — Vision-Grade Cognitive Desktop Agent</i></p>
   <p>A multimodal, autonomous desktop assistant powered by LiveKit WebRTC and Google's Gemini Multimodal Live API, featuring Vision-grade cognitive reasoning, neuroplastic self-healing, and a sovereign local memory matrix.</p>
+  <br />
+  <img src="web/images/zenith_demo.gif" alt="Zenith Desktop Live Demo" width="92%" style="border-radius: 10px;" />
 </div>
 
 ---
